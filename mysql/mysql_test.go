@@ -73,7 +73,7 @@ var createTables = []string{
 	//	)`,
 }
 
-var expectedTables = []Table{
+var tableDefs = []Table{
 	Table{
 		Name: "abc", Schema: "dbsql_test",
 		Columns: []Column{
@@ -433,132 +433,132 @@ func TestGetTables(t *testing.T) {
 		return
 	}
 	for i, v := range tables {
-		if v.Name != expectedTables[i].Name {
-			t.Errorf("name: got %q want %q", v.Name, expectedTables[i].Name)
+		if v.Name != tableDefs[i].Name {
+			t.Errorf("name: got %q want %q", v.Name, tableDefs[i].Name)
 			continue
 		}
-		if v.Typ != expectedTables[i].Typ {
-			t.Errorf("Type: got %q want %q", v.Typ, expectedTables[i].Typ)
+		if v.Typ != tableDefs[i].Typ {
+			t.Errorf("Type: got %q want %q", v.Typ, tableDefs[i].Typ)
 			continue
 		}
-		if v.Engine != expectedTables[i].Engine {
-			t.Errorf("Engine: got %q want %q", v.Engine, expectedTables[i].Engine)
+		if v.Engine != tableDefs[i].Engine {
+			t.Errorf("Engine: got %q want %q", v.Engine, tableDefs[i].Engine)
 			continue
 		}
-		if v.Collation != expectedTables[i].Collation {
-			t.Errorf("Collation: got %q want %q", v.Collation, expectedTables[i].Collation)
+		if v.Collation != tableDefs[i].Collation {
+			t.Errorf("Collation: got %q want %q", v.Collation, tableDefs[i].Collation)
 			continue
 		}
-		if v.Comment != expectedTables[i].Comment {
-			t.Errorf("Comment: got %q want %q", v.Comment, expectedTables[i].Comment)
+		if v.Comment != tableDefs[i].Comment {
+			t.Errorf("Comment: got %q want %q", v.Comment, tableDefs[i].Comment)
 			continue
 		}
 		// handle columns
 		for j, col := range v.Columns {
-			if col.Name != expectedTables[i].Columns[j].Name {
-				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", v.Name, col.Name, col.Name, expectedTables[i].Columns[j].Name)
+			if col.Name != tableDefs[i].Columns[j].Name {
+				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", v.Name, col.Name, col.Name, tableDefs[i].Columns[j].Name)
 				continue
 			}
-			if col.OrdinalPosition != expectedTables[i].Columns[j].OrdinalPosition {
-				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", v.Name, col.Name, col.OrdinalPosition, expectedTables[i].Columns[j].OrdinalPosition)
+			if col.OrdinalPosition != tableDefs[i].Columns[j].OrdinalPosition {
+				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", v.Name, col.Name, col.OrdinalPosition, tableDefs[i].Columns[j].OrdinalPosition)
 				continue
 			}
-			if col.Default.Valid != expectedTables[i].Columns[j].Default.Valid {
-				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", v.Name, col.Name, col.Default.Valid, expectedTables[i].Columns[j].Default.Valid)
+			if col.Default.Valid != tableDefs[i].Columns[j].Default.Valid {
+				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", v.Name, col.Name, col.Default.Valid, tableDefs[i].Columns[j].Default.Valid)
 				continue
 			}
 			if col.Default.Valid {
-				if col.Default.String != expectedTables[i].Columns[j].Default.String {
-					t.Errorf("%s.%s DEFAULT String: got %s want %s", v.Name, col.Name, col.Default.String, expectedTables[i].Columns[j].Default.String)
+				if col.Default.String != tableDefs[i].Columns[j].Default.String {
+					t.Errorf("%s.%s DEFAULT String: got %s want %s", v.Name, col.Name, col.Default.String, tableDefs[i].Columns[j].Default.String)
 				}
 				continue
 			}
-			if col.IsNullable != expectedTables[i].Columns[j].IsNullable {
-				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", v.Name, col.Name, col.IsNullable, expectedTables[i].Columns[j].IsNullable)
+			if col.IsNullable != tableDefs[i].Columns[j].IsNullable {
+				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", v.Name, col.Name, col.IsNullable, tableDefs[i].Columns[j].IsNullable)
 				continue
 			}
-			if col.DataType != expectedTables[i].Columns[j].DataType {
-				t.Errorf("%s.%s DATA_TYPE: got %q want %q", v.Name, col.Name, col.DataType, expectedTables[i].Columns[j].DataType)
+			if col.DataType != tableDefs[i].Columns[j].DataType {
+				t.Errorf("%s.%s DATA_TYPE: got %q want %q", v.Name, col.Name, col.DataType, tableDefs[i].Columns[j].DataType)
 				continue
 			}
-			if col.CharMaxLen.Valid != expectedTables[i].Columns[j].CharMaxLen.Valid {
-				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", v.Name, col.Name, col.CharMaxLen.Valid, expectedTables[i].Columns[j].CharMaxLen.Valid)
+			if col.CharMaxLen.Valid != tableDefs[i].Columns[j].CharMaxLen.Valid {
+				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", v.Name, col.Name, col.CharMaxLen.Valid, tableDefs[i].Columns[j].CharMaxLen.Valid)
 				continue
 			}
 			if col.CharMaxLen.Valid {
-				if col.CharMaxLen.Int64 != expectedTables[i].Columns[j].CharMaxLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", v.Name, col.Name, col.CharMaxLen.Int64, expectedTables[i].Columns[j].CharMaxLen.Int64)
+				if col.CharMaxLen.Int64 != tableDefs[i].Columns[j].CharMaxLen.Int64 {
+					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", v.Name, col.Name, col.CharMaxLen.Int64, tableDefs[i].Columns[j].CharMaxLen.Int64)
 				}
 				continue
 			}
-			if col.CharOctetLen.Valid != expectedTables[i].Columns[j].CharOctetLen.Valid {
-				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", v.Name, col.Name, col.CharOctetLen.Valid, expectedTables[i].Columns[j].CharOctetLen.Valid)
+			if col.CharOctetLen.Valid != tableDefs[i].Columns[j].CharOctetLen.Valid {
+				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", v.Name, col.Name, col.CharOctetLen.Valid, tableDefs[i].Columns[j].CharOctetLen.Valid)
 				continue
 			}
 			if col.CharOctetLen.Valid {
-				if col.CharOctetLen.Int64 != expectedTables[i].Columns[j].CharOctetLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", v.Name, col.Name, col.CharOctetLen.Int64, expectedTables[i].Columns[j].CharOctetLen.Int64)
+				if col.CharOctetLen.Int64 != tableDefs[i].Columns[j].CharOctetLen.Int64 {
+					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", v.Name, col.Name, col.CharOctetLen.Int64, tableDefs[i].Columns[j].CharOctetLen.Int64)
 				}
 				continue
 			}
-			if col.NumericPrecision.Valid != expectedTables[i].Columns[j].NumericPrecision.Valid {
-				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", v.Name, col.Name, col.NumericPrecision.Valid, expectedTables[i].Columns[j].NumericPrecision.Valid)
+			if col.NumericPrecision.Valid != tableDefs[i].Columns[j].NumericPrecision.Valid {
+				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", v.Name, col.Name, col.NumericPrecision.Valid, tableDefs[i].Columns[j].NumericPrecision.Valid)
 				continue
 			}
 			if col.NumericPrecision.Valid {
-				if col.NumericPrecision.Int64 != expectedTables[i].Columns[j].NumericPrecision.Int64 {
-					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", v.Name, col.Name, col.NumericPrecision.Int64, expectedTables[i].Columns[j].NumericPrecision.Int64)
+				if col.NumericPrecision.Int64 != tableDefs[i].Columns[j].NumericPrecision.Int64 {
+					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", v.Name, col.Name, col.NumericPrecision.Int64, tableDefs[i].Columns[j].NumericPrecision.Int64)
 				}
 				continue
 			}
-			if col.NumericScale.Valid != expectedTables[i].Columns[j].NumericScale.Valid {
-				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", v.Name, col.Name, col.NumericScale.Valid, expectedTables[i].Columns[j].NumericScale.Valid)
+			if col.NumericScale.Valid != tableDefs[i].Columns[j].NumericScale.Valid {
+				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", v.Name, col.Name, col.NumericScale.Valid, tableDefs[i].Columns[j].NumericScale.Valid)
 				continue
 			}
 			if col.NumericScale.Valid {
-				if col.NumericScale.Int64 == expectedTables[i].Columns[j].NumericScale.Int64 {
-					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", v.Name, col.NumericScale.Int64, expectedTables[i].Columns[j].NumericScale.Int64)
+				if col.NumericScale.Int64 == tableDefs[i].Columns[j].NumericScale.Int64 {
+					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", v.Name, col.NumericScale.Int64, tableDefs[i].Columns[j].NumericScale.Int64)
 				}
 				continue
 			}
-			if col.CharacterSet.Valid != expectedTables[i].Columns[j].CharacterSet.Valid {
-				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", v.Name, col.Name, col.CharacterSet.Valid, expectedTables[i].Columns[j].CharacterSet.Valid)
+			if col.CharacterSet.Valid != tableDefs[i].Columns[j].CharacterSet.Valid {
+				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", v.Name, col.Name, col.CharacterSet.Valid, tableDefs[i].Columns[j].CharacterSet.Valid)
 				continue
 			}
 			if col.CharacterSet.Valid {
-				if col.CharacterSet.String != expectedTables[i].Columns[j].CharacterSet.String {
-					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", v.Name, col.Name, col.CharacterSet.String, expectedTables[i].Columns[j].CharacterSet.String)
+				if col.CharacterSet.String != tableDefs[i].Columns[j].CharacterSet.String {
+					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", v.Name, col.Name, col.CharacterSet.String, tableDefs[i].Columns[j].CharacterSet.String)
 				}
 				continue
 			}
-			if col.Collation.Valid != expectedTables[i].Columns[j].Collation.Valid {
-				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", v.Name, col.Name, col.Collation.Valid, expectedTables[i].Columns[j].Collation.Valid)
+			if col.Collation.Valid != tableDefs[i].Columns[j].Collation.Valid {
+				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", v.Name, col.Name, col.Collation.Valid, tableDefs[i].Columns[j].Collation.Valid)
 				continue
 			}
 			if col.Collation.Valid {
-				if col.Collation.String == expectedTables[i].Columns[j].Collation.String {
-					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", v.Name, col.Name, col.Collation.String, expectedTables[i].Columns[j].Collation.String)
+				if col.Collation.String == tableDefs[i].Columns[j].Collation.String {
+					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", v.Name, col.Name, col.Collation.String, tableDefs[i].Columns[j].Collation.String)
 				}
 				continue
 			}
-			if col.Typ != expectedTables[i].Columns[j].Typ {
-				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", v.Name, col.Name, col.Typ, expectedTables[i].Columns[j].Typ)
+			if col.Typ != tableDefs[i].Columns[j].Typ {
+				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", v.Name, col.Name, col.Typ, tableDefs[i].Columns[j].Typ)
 				continue
 			}
-			if col.Key != expectedTables[i].Columns[j].Key {
-				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", v.Name, col.Name, col.Key, expectedTables[i].Columns[j].Key)
+			if col.Key != tableDefs[i].Columns[j].Key {
+				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", v.Name, col.Name, col.Key, tableDefs[i].Columns[j].Key)
 				continue
 			}
-			if col.Extra != expectedTables[i].Columns[j].Extra {
-				t.Errorf("%s.%s EXTRA: got %q want %q", v.Name, col.Name, col.Extra, expectedTables[i].Columns[j].Extra)
+			if col.Extra != tableDefs[i].Columns[j].Extra {
+				t.Errorf("%s.%s EXTRA: got %q want %q", v.Name, col.Name, col.Extra, tableDefs[i].Columns[j].Extra)
 				continue
 			}
-			if col.Privileges != expectedTables[i].Columns[j].Privileges {
-				t.Errorf("%s.%s PRIVILEGES: got %q want %q", v.Name, col.Name, col.Privileges, expectedTables[i].Columns[j].Privileges)
+			if col.Privileges != tableDefs[i].Columns[j].Privileges {
+				t.Errorf("%s.%s PRIVILEGES: got %q want %q", v.Name, col.Name, col.Privileges, tableDefs[i].Columns[j].Privileges)
 				continue
 			}
-			if col.Comment != expectedTables[i].Columns[j].Comment {
-				t.Errorf("%s.%s COMMENT: got %q want %q", v.Name, col.Name, col.Comment, expectedTables[i].Columns[j].Comment)
+			if col.Comment != tableDefs[i].Columns[j].Comment {
+				t.Errorf("%s.%s COMMENT: got %q want %q", v.Name, col.Name, col.Comment, tableDefs[i].Columns[j].Comment)
 				continue
 			}
 		}
