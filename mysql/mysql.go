@@ -13,10 +13,12 @@
 package mysql
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/mohae/mixedcase"
 )
 
 const schema = "information_schema"
@@ -112,6 +114,46 @@ type Table struct {
 	Comment   string
 }
 
+// Go creates the struct definition an returns the resulting bytes.
+// TODO: should this accept a writer instead?
+func (t *Table) Go() ([]byte, error) {
+	var buf bytes.Buffer
+	n, err := buf.WriteString("type ")
+	if err != nil {
+		return nil, err
+	}
+	n, err = buf.WriteString(mixedcase.Exported(t.Name))
+	if err != nil {
+		return nil, err
+	}
+	n, err = buf.WriteString(" struct {\n")
+	if err != nil {
+		return nil, err
+	}
+
+	// write the column defs
+	for _, col := range t.Columns {
+		err = buf.WriteByte('\t')
+		if err != nil {
+			return nil, err
+		}
+		buf.Write(col.Go())
+		if err != nil {
+			return nil, err
+		}
+		err = buf.WriteByte('\n')
+		if err != nil {
+			return nil, err
+		}
+	}
+	n, err = buf.WriteString("}\n")
+	if err != nil {
+		return nil, err
+	}
+	_ = n // add short write handling
+	return buf.Bytes(), nil
+}
+
 type Column struct {
 	Name             string
 	OrdinalPosition  uint64
@@ -129,4 +171,54 @@ type Column struct {
 	Extra            string
 	Privileges       string
 	Comment          string
+}
+
+func (c *Column) Go() []byte {
+	n := make([]byte, 0, len(c.Name)+16) // add enough cap to handle most datatypes w/o growing
+	n = append(n, []byte(mixedcase.Exported(c.Name))...)
+	n = append(n, ' ')
+	if c.IsNullable == "YES" {
+		switch c.DataType {
+		case "int", "tinyint", "smallint", "mediumint", "bigint":
+			return append(n, []byte("sql.NullInt64")...)
+		case "decimal":
+			return append(n, []byte("sql.NullFloat64")...)
+		case "timestamp", "date", "datetime":
+			return append(n, []byte("mysql.NullTime")...)
+		case "tinyblob", "blob", "mediumblob", "longblob",
+			"tinytext", "text", "mediumtext", "longtext",
+			"binary", "varbinary":
+			return append(n, []byte("[]byte")...)
+		case "time", "year", "enum", "set":
+			return append(n, []byte("sql.NullString")...)
+		default:
+			return append(n, []byte(c.DataType)...)
+		}
+	}
+	switch c.DataType {
+	case "int":
+		return append(n, []byte("int32")...)
+	case "tinyint":
+		return append(n, []byte("int8")...)
+	case "smallint":
+		return append(n, []byte("int16")...)
+	case "mediumint":
+		return append(n, []byte("int32")...)
+	case "bigint":
+		return append(n, []byte("int64")...)
+	case "char", "varchar":
+		return append(n, []byte("string")...)
+	case "decimal":
+		return append(n, []byte("float64")...)
+	case "timestamp", "date", "datetime":
+		return append(n, []byte("mysql.NullTime")...)
+	case "tinyblob", "blob", "mediumblob", "longblob",
+		"tinytext", "text", "mediumtext", "longtext",
+		"binary", "varbinary":
+		return append(n, []byte("[]byte")...)
+	case "time", "year", "enum", "set":
+		return append(n, []byte("string")...)
+	default:
+		return append(n, []byte(c.DataType)...)
+	}
 }

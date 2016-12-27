@@ -1,0 +1,3 @@
+This directory contains sql files to create a test database and populate with basic data that is consistent with what the _test.go files create and use for mysql tests. The main.go file is used to validate the generated code during development.
+
+This stuff is used as a development and validation aid for things that are not currently put in tests and may not ever be in tests.

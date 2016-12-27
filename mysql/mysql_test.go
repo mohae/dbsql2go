@@ -28,6 +28,19 @@ var createTables = []string{
 		created TIMESTAMP
 	)
 	CHARACTER SET latin1 COLLATE latin1_swedish_ci`,
+	`CREATE TABLE abc_nn (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		code CHAR(12) UNIQUE NOT NULL,
+		description VARCHAR(20) NOT NULL,
+		tiny TINYINT NOT NULL,
+		small SMALLINT NOT NULL,
+		medium MEDIUMINT NOT NULL,
+		ger INTEGER NOT NULL,
+		big BIGINT NOT NULL,
+		cost DECIMAL NOT NULL,
+		created TIMESTAMP
+	)
+	CHARACTER SET latin1 COLLATE latin1_swedish_ci`,
 	`CREATE TABLE def (
 		id INT AUTO_INCREMENT PRIMARY KEY,
 		d_date DATE,
@@ -38,11 +51,28 @@ var createTables = []string{
 		a_set SET('a', 'b', 'c')
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
+	`CREATE TABLE def_nn (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		d_date DATE NOT NULL,
+		d_datetime DATETIME NOT NULL,
+		d_time TIME NOT NULL,
+		d_year YEAR NOT NULL,
+		size ENUM('small', 'med', 'large') NOT NULL,
+		a_set SET('1', '2', '3') NOT NULL
+	)
+	CHARACTER SET utf8 COLLATE utf8_general_ci`,
 	`CREATE TABLE ghi (
 		tiny_stuff TINYBLOB,
 		stuff BLOB,
 		med_stuff MEDIUMBLOB,
 		long_stuff LONGBLOB
+	)
+	CHARACTER SET utf8 COLLATE utf8_general_ci`,
+	`CREATE TABLE ghi_nn (
+		tiny_stuff TINYBLOB NOT NULL,
+		stuff BLOB NOT NULL,
+		med_stuff MEDIUMBLOB NOT NULL,
+		long_stuff LONGBLOB NOT NULL
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
 	`CREATE TABLE jkl (
@@ -55,6 +85,16 @@ var createTables = []string{
 		var_bin VARBINARY(12)
 	)
 	CHARACTER SET ascii COLLATE ascii_general_ci`,
+	`CREATE TABLE jkl_nn (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		tiny_txt TINYTEXT NOT NULL,
+		txt TEXT NOT NULL,
+		med_txt MEDIUMTEXT NOT NULL,
+		long_txt LONGTEXT NOT NULL,
+		bin BINARY(3) NOT NULL,
+		var_bin VARBINARY(12) NOT NULL
+	)
+	CHARACTER SET ascii COLLATE ascii_general_ci`,
 	`CREATE TABLE mno (
 		id INT AUTO_INCREMENT PRIMARY KEY,
 		geo GEOMETRY,
@@ -65,6 +105,18 @@ var createTables = []string{
 		multi_lstring MULTILINESTRING,
 		multi_polygon MULTIPOLYGON,
 		geo_collection GEOMETRYCOLLECTION
+	)
+	CHARACTER SET utf8 COLLATE utf8_general_ci`,
+	`CREATE TABLE mno_nn (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		geo GEOMETRY NOT NULL,
+		pt POINT NOT NULL,
+		lstring LINESTRING NOT NULL,
+		poly POLYGON NOT NULL,
+		multi_pt MULTIPOINT NOT NULL,
+		multi_lstring MULTILINESTRING NOT NULL,
+		multi_polygon MULTIPOLYGON NOT NULL,
+		geo_collection GEOMETRYCOLLECTION NOT NULL
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
 	//	`CREATE TABLE pqr (
@@ -162,6 +214,93 @@ var tableDefs = []Table{
 		Collation: "latin1_swedish_ci", Comment: "",
 	},
 	Table{
+		Name: "abc_nn", Schema: "dbsql_test",
+		Columns: []Column{
+			Column{
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "code", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "char", CharMaxLen: sql.NullInt64{Int64: 12, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "char(12)",
+				Key: "UNI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "description", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "varchar", CharMaxLen: sql.NullInt64{Int64: 20, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 20, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "varchar(20)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "tiny", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "tinyint", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 3, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "tinyint(4)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "small", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "smallint", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 5, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "smallint(6)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "medium", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "mediumint", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 7, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "mediumint(9)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "ger", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "big", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "bigint", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 19, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "bigint(20)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "cost", OrdinalPosition: 9, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "decimal", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "decimal(10,0)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "created", OrdinalPosition: 10, Default: sql.NullString{String: "CURRENT_TIMESTAMP", Valid: true},
+				IsNullable: "NO", DataType: "timestamp", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "timestamp",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+		},
+		Typ: "BASE TABLE", Engine: "InnoDB",
+		Collation: "latin1_swedish_ci", Comment: "",
+	},
+	Table{
 		Name: "def", Schema: "dbsql_test",
 		Columns: []Column{
 			Column{
@@ -225,6 +364,69 @@ var tableDefs = []Table{
 		Collation: "utf8_general_ci", Comment: "",
 	},
 	Table{
+		Name: "def_nn", Schema: "dbsql_test",
+		Columns: []Column{
+			Column{
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "d_date", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "date", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "date",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "d_datetime", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "datetime", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "datetime",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "d_time", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "time", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "time",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "d_year", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "year", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "year(4)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "size", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "enum", CharMaxLen: sql.NullInt64{Int64: 5, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 15, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "enum('small','medium','large')",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "a_set", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "set", CharMaxLen: sql.NullInt64{Int64: 5, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 15, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "set('a','b','c')",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+		},
+		Typ: "BASE TABLE", Engine: "InnoDB",
+		Collation: "utf8_general_ci", Comment: "",
+	},
+	Table{
 		Name: "ghi", Schema: "dbsql_test",
 		Columns: []Column{
 			Column{
@@ -254,6 +456,45 @@ var tableDefs = []Table{
 			Column{
 				Name: "long_stuff", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "longblob", CharMaxLen: sql.NullInt64{Int64: 4294967295, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "longblob",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+		},
+		Typ: "BASE TABLE", Engine: "InnoDB",
+		Collation: "utf8_general_ci", Comment: "",
+	},
+	Table{
+		Name: "ghi_nn", Schema: "dbsql_test",
+		Columns: []Column{
+			Column{
+				Name: "tiny_stuff", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "tinyblob", CharMaxLen: sql.NullInt64{Int64: 255, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "tinyblob",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "stuff", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "blob", CharMaxLen: sql.NullInt64{Int64: 65535, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "blob",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "med_stuff", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "mediumblob", CharMaxLen: sql.NullInt64{Int64: 16777215, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "mediumblob",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "long_stuff", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "longblob", CharMaxLen: sql.NullInt64{Int64: 4294967295, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "longblob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
@@ -317,6 +558,69 @@ var tableDefs = []Table{
 			Column{
 				Name: "var_bin", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "varbinary", CharMaxLen: sql.NullInt64{Int64: 12, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "varbinary(12)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+		},
+		Typ: "BASE TABLE", Engine: "InnoDB",
+		Collation: "ascii_general_ci", Comment: "",
+	},
+	Table{
+		Name: "jkl_nn", Schema: "dbsql_test",
+		Columns: []Column{
+			Column{
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "tiny_txt", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "tinytext", CharMaxLen: sql.NullInt64{Int64: 255, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "tinytext",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "txt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "text", CharMaxLen: sql.NullInt64{Int64: 65535, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "text",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "med_txt", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "mediumtext", CharMaxLen: sql.NullInt64{Int64: 16777215, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "mediumtext",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "long_txt", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "longtext", CharMaxLen: sql.NullInt64{Int64: 4294967295, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "longtext",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "bin", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "binary", CharMaxLen: sql.NullInt64{Int64: 3, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 3, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "binary(3)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "var_bin", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "varbinary", CharMaxLen: sql.NullInt64{Int64: 12, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "varbinary(12)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
@@ -405,6 +709,168 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: "InnoDB",
 		Collation: "utf8_general_ci", Comment: "",
 	},
+	Table{
+		Name: "mno_nn", Schema: "dbsql_test",
+		Columns: []Column{
+			Column{
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "geo", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "geometry", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "geometry",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "pt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "point", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "point",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "lstring", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "linestring", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "linestring",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "poly", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "polygon", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "polygon",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "multi_pt", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "multipoint", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "multipoint",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "multi_lstring", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "multilinestring", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "multilinestring",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "multi_polygon", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "multipolygon", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "multipolygon",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "geo_collection", OrdinalPosition: 9, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "geometrycollection", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "geometrycollection",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+		},
+		Typ: "BASE TABLE", Engine: "InnoDB",
+		Collation: "utf8_general_ci", Comment: "",
+	},
+}
+
+var tableDefsString = []string{
+	`type Abc struct {
+	ID int32
+	Code string
+	Description string
+	Tiny sql.NullInt64
+	Small sql.NullInt64
+	Medium sql.NullInt64
+	Ger sql.NullInt64
+	Big sql.NullInt64
+	Cost sql.NullFloat64
+	Created mysql.NullTime
+}
+`,
+	`type AbcNn struct {
+	ID int32
+	Code string
+	Description string
+	Tiny int8
+	Small int16
+	Medium int32
+	Ger int32
+	Big int64
+	Cost float64
+	Created mysql.NullTime
+}
+`,
+	`type Def struct {
+	ID int32
+	DDate mysql.NullTime
+	DDatetime mysql.NullTime
+	DTime sql.NullString
+	DYear sql.NullString
+	Size sql.NullString
+	ASet sql.NullString
+}
+`,
+	`type DefNn struct {
+	ID int32
+	DDate mysql.NullTime
+	DDatetime mysql.NullTime
+	DTime string
+	DYear string
+	Size string
+	ASet string
+}
+`,
+	`type Ghi struct {
+	TinyStuff []byte
+	Stuff []byte
+	MedStuff []byte
+	LongStuff []byte
+}
+`,
+	`type GhiNn struct {
+	TinyStuff []byte
+	Stuff []byte
+	MedStuff []byte
+	LongStuff []byte
+}
+`,
+	`type Jkl struct {
+	ID int32
+	TinyTxt []byte
+	Txt []byte
+	MedTxt []byte
+	LongTxt []byte
+	Bin []byte
+	VarBin []byte
+}
+`,
+	`type JklNn struct {
+	ID int32
+	TinyTxt []byte
+	Txt []byte
+	MedTxt []byte
+	LongTxt []byte
+	Bin []byte
+	VarBin []byte
+}
+`,
 }
 
 func TestMain(m *testing.M) {
@@ -562,6 +1028,16 @@ func TestGetTables(t *testing.T) {
 				continue
 			}
 		}
+	}
+}
+
+func TestGenerateNames(t *testing.T) {
+	def, err := tableDefs[1].Go()
+	if err != nil {
+		t.Error(err)
+	}
+	if tableDefsString[1] != string(def) {
+		t.Errorf("got %q; want %q", string(def), tableDefsString[1])
 	}
 }
 
