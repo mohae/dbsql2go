@@ -16,6 +16,7 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
+	"go/format"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mohae/mixedcase"
@@ -154,6 +155,18 @@ func (t *Table) Go() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// GoFmt creates a formatted struct definition an returns the resulting bytes.
+// TODO: should this accept a writer instead?
+func (t *Table) GoFmt() ([]byte, error) {
+	b, err := t.Go()
+	if err != nil {
+		return nil, err
+	}
+	return format.Source(b)
+}
+
+// Column holds all information about the columns in a database as provided by
+// MySQL's information schema.
 type Column struct {
 	Name             string
 	OrdinalPosition  uint64

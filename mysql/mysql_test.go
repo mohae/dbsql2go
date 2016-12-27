@@ -873,6 +873,89 @@ var tableDefsString = []string{
 `,
 }
 
+var fmtdTableDefsString = []string{
+	`type Abc struct {
+	ID          int32
+	Code        string
+	Description string
+	Tiny        sql.NullInt64
+	Small       sql.NullInt64
+	Medium      sql.NullInt64
+	Ger         sql.NullInt64
+	Big         sql.NullInt64
+	Cost        sql.NullFloat64
+	Created     mysql.NullTime
+}
+`,
+	`type AbcNn struct {
+	ID          int32
+	Code        string
+	Description string
+	Tiny        int8
+	Small       int16
+	Medium      int32
+	Ger         int32
+	Big         int64
+	Cost        float64
+	Created     mysql.NullTime
+}
+`,
+	`type Def struct {
+	ID        int32
+	DDate     mysql.NullTime
+	DDatetime mysql.NullTime
+	DTime     sql.NullString
+	DYear     sql.NullString
+	Size      sql.NullString
+	ASet      sql.NullString
+}
+`,
+	`type DefNn struct {
+	ID        int32
+	DDate     mysql.NullTime
+	DDatetime mysql.NullTime
+	DTime     string
+	DYear     string
+	Size      string
+	ASet      string
+}
+`,
+	`type Ghi struct {
+	TinyStuff []byte
+	Stuff     []byte
+	MedStuff  []byte
+	LongStuff []byte
+}
+`,
+	`type GhiNn struct {
+	TinyStuff []byte
+	Stuff     []byte
+	MedStuff  []byte
+	LongStuff []byte
+}
+`,
+	`type Jkl struct {
+	ID      int32
+	TinyTxt []byte
+	Txt     []byte
+	MedTxt  []byte
+	LongTxt []byte
+	Bin     []byte
+	VarBin  []byte
+}
+`,
+	`type JklNn struct {
+	ID      int32
+	TinyTxt []byte
+	Txt     []byte
+	MedTxt  []byte
+	LongTxt []byte
+	Bin     []byte
+	VarBin  []byte
+}
+`,
+}
+
 func TestMain(m *testing.M) {
 	db, err := NewMySQLDB(server, user, password, testDB)
 	if err != nil {
