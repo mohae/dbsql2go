@@ -1031,13 +1031,18 @@ func TestGetTables(t *testing.T) {
 	}
 }
 
-func TestGenerateNames(t *testing.T) {
-	def, err := tableDefs[1].Go()
-	if err != nil {
-		t.Error(err)
-	}
-	if tableDefsString[1] != string(def) {
-		t.Errorf("got %q; want %q", string(def), tableDefsString[1])
+func TestGenerateDefs(t *testing.T) {
+	for i, def := range tableDefs {
+		if i == 7 { // geospatial is not yet implemented; so skip
+			break
+		}
+		d, err := def.Go()
+		if err != nil {
+			t.Error("%s: %s", def.Name, err)
+		}
+		if tableDefsString[i] != string(d) {
+			t.Errorf("%s: got %q; want %q", def.Name, string(d), tableDefsString[i])
+		}
 	}
 }
 
