@@ -12,6 +12,34 @@
 // limitations under the License.
 package dbsql2go
 
+import "strings"
+
+const (
+	Unsupported DBType = iota
+	MySQL
+)
+
+//go:generate stringer -type=DBType
+type DBType int
+
+func ParseDBType(s string) (DBType, error) {
+	v := strings.ToLower(s)
+	switch v {
+	case "mysql":
+		return MySQL, nil
+	default:
+		return Unsupported, UnsupportedDBErr{Value: s}
+	}
+}
+
+type UnsupportedDBErr struct {
+	Value string
+}
+
+func (u UnsupportedDBErr) Error() string {
+	return u.Value + " is not a supported database system"
+}
+
 // Table is a generalized table struct. Each supported database will embed
 // this struct
 type Tabler interface {
