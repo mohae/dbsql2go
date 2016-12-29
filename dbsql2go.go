@@ -54,11 +54,3 @@ type Tabler interface {
 	Go() ([]byte, error)
 	GoFmt() ([]byte, error)
 }
-
-// Column represents a column within a table.
-type Column struct {
-	Name     string      // Name of the column
-	Datatype string      // Datatype of the column
-	NotNull  bool        // If the column is NOT NULL
-	Default  interface{} // Default value; if applicable
-}
