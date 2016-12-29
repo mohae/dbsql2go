@@ -127,7 +127,7 @@ var createTables = []string{
 
 var tableDefs = []Table{
 	Table{
-		Name: "abc", Schema: "dbsql_test",
+		name: "abc", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -211,10 +211,10 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "latin1_swedish_ci", Comment: "",
+		collation: "latin1_swedish_ci", Comment: "",
 	},
 	Table{
-		Name: "abc_nn", Schema: "dbsql_test",
+		name: "abc_nn", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -298,10 +298,10 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "latin1_swedish_ci", Comment: "",
+		collation: "latin1_swedish_ci", Comment: "",
 	},
 	Table{
-		Name: "def", Schema: "dbsql_test",
+		name: "def", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -361,10 +361,10 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "utf8_general_ci", Comment: "",
+		collation: "utf8_general_ci", Comment: "",
 	},
 	Table{
-		Name: "def_nn", Schema: "dbsql_test",
+		name: "def_nn", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -424,10 +424,10 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "utf8_general_ci", Comment: "",
+		collation: "utf8_general_ci", Comment: "",
 	},
 	Table{
-		Name: "ghi", Schema: "dbsql_test",
+		name: "ghi", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "tiny_stuff", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -463,10 +463,10 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "utf8_general_ci", Comment: "",
+		collation: "utf8_general_ci", Comment: "",
 	},
 	Table{
-		Name: "ghi_nn", Schema: "dbsql_test",
+		name: "ghi_nn", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "tiny_stuff", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -502,10 +502,10 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "utf8_general_ci", Comment: "",
+		collation: "utf8_general_ci", Comment: "",
 	},
 	Table{
-		Name: "jkl", Schema: "dbsql_test",
+		name: "jkl", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -565,10 +565,10 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "ascii_general_ci", Comment: "",
+		collation: "ascii_general_ci", Comment: "",
 	},
 	Table{
-		Name: "jkl_nn", Schema: "dbsql_test",
+		name: "jkl_nn", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -628,10 +628,10 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "ascii_general_ci", Comment: "",
+		collation: "ascii_general_ci", Comment: "",
 	},
 	Table{
-		Name: "mno", Schema: "dbsql_test",
+		name: "mno", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -707,10 +707,10 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "utf8_general_ci", Comment: "",
+		collation: "utf8_general_ci", Comment: "",
 	},
 	Table{
-		Name: "mno_nn", Schema: "dbsql_test",
+		name: "mno_nn", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -786,7 +786,7 @@ var tableDefs = []Table{
 			},
 		},
 		Typ: "BASE TABLE", Engine: "InnoDB",
-		Collation: "utf8_general_ci", Comment: "",
+		collation: "utf8_general_ci", Comment: "",
 	},
 }
 
@@ -957,157 +957,161 @@ var fmtdTableDefsString = []string{
 }
 
 func TestMain(m *testing.M) {
-	db, err := NewMySQLDB(server, user, password, testDB)
+	db, err := New(server, user, password, testDB)
 	if err != nil {
 		panic(err)
 		return
 	}
-	defer TeardownTestDB(db) // this always tries to run, that way a partial setup is still torndown
-	err = SetupTestDB(db)
+	defer TeardownTestDB(db.(*DB)) // this always tries to run, that way a partial setup is still torndown
+	err = SetupTestDB(db.(*DB))
 	if err != nil {
 		panic(err)
 	}
 	m.Run()
 }
 
-func TestGetTables(t *testing.T) {
-	m, err := NewMySQLDB(server, user, password, testDB)
+func TestTables(t *testing.T) {
+	m, err := New(server, user, password, testDB)
 	if err != nil {
 		t.Errorf("unexpected connection error: %s", err)
 		return
 	}
-	tables, err := m.GetTables()
+	tables, err := m.Tables()
 	if err != nil {
 		t.Errorf("unexpected error getting table information: %s", err)
 		return
 	}
 	for i, v := range tables {
-		if v.Name != tableDefs[i].Name {
-			t.Errorf("name: got %q want %q", v.Name, tableDefs[i].Name)
+		tbl, ok := v.(*Table)
+		if !ok {
+			t.Errorf("%s: assertion error; was not a Table", tableDefs[i].Name)
+		}
+		if tbl.Name() != tableDefs[i].name {
+			t.Errorf("name: got %q want %q", tbl.Name, tableDefs[i].Name)
 			continue
 		}
-		if v.Typ != tableDefs[i].Typ {
-			t.Errorf("Type: got %q want %q", v.Typ, tableDefs[i].Typ)
+		if tbl.Typ != tableDefs[i].Typ {
+			t.Errorf("Type: got %q want %q", tbl.Typ, tableDefs[i].Typ)
 			continue
 		}
-		if v.Engine != tableDefs[i].Engine {
-			t.Errorf("Engine: got %q want %q", v.Engine, tableDefs[i].Engine)
+		if tbl.Engine != tableDefs[i].Engine {
+			t.Errorf("Engine: got %q want %q", tbl.Engine, tableDefs[i].Engine)
 			continue
 		}
-		if v.Collation != tableDefs[i].Collation {
-			t.Errorf("Collation: got %q want %q", v.Collation, tableDefs[i].Collation)
+		if tbl.Collation() != tableDefs[i].collation {
+			t.Errorf("Collation: got %q want %q", tbl.Collation, tableDefs[i].Collation)
 			continue
 		}
-		if v.Comment != tableDefs[i].Comment {
-			t.Errorf("Comment: got %q want %q", v.Comment, tableDefs[i].Comment)
+		if tbl.Comment != tableDefs[i].Comment {
+			t.Errorf("Comment: got %q want %q", tbl.Comment, tableDefs[i].Comment)
 			continue
 		}
 		// handle columns
-		for j, col := range v.Columns {
+		for j, col := range tbl.Columns {
 			if col.Name != tableDefs[i].Columns[j].Name {
-				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", v.Name, col.Name, col.Name, tableDefs[i].Columns[j].Name)
+				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", tbl.Name, col.Name, col.Name, tableDefs[i].Columns[j].Name)
 				continue
 			}
 			if col.OrdinalPosition != tableDefs[i].Columns[j].OrdinalPosition {
-				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", v.Name, col.Name, col.OrdinalPosition, tableDefs[i].Columns[j].OrdinalPosition)
+				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", tbl.Name, col.Name, col.OrdinalPosition, tableDefs[i].Columns[j].OrdinalPosition)
 				continue
 			}
 			if col.Default.Valid != tableDefs[i].Columns[j].Default.Valid {
-				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", v.Name, col.Name, col.Default.Valid, tableDefs[i].Columns[j].Default.Valid)
+				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", tbl.Name, col.Name, col.Default.Valid, tableDefs[i].Columns[j].Default.Valid)
 				continue
 			}
 			if col.Default.Valid {
 				if col.Default.String != tableDefs[i].Columns[j].Default.String {
-					t.Errorf("%s.%s DEFAULT String: got %s want %s", v.Name, col.Name, col.Default.String, tableDefs[i].Columns[j].Default.String)
+					t.Errorf("%s.%s DEFAULT String: got %s want %s", tbl.Name, col.Name, col.Default.String, tableDefs[i].Columns[j].Default.String)
 				}
 				continue
 			}
 			if col.IsNullable != tableDefs[i].Columns[j].IsNullable {
-				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", v.Name, col.Name, col.IsNullable, tableDefs[i].Columns[j].IsNullable)
+				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", tbl.Name, col.Name, col.IsNullable, tableDefs[i].Columns[j].IsNullable)
 				continue
 			}
 			if col.DataType != tableDefs[i].Columns[j].DataType {
-				t.Errorf("%s.%s DATA_TYPE: got %q want %q", v.Name, col.Name, col.DataType, tableDefs[i].Columns[j].DataType)
+				t.Errorf("%s.%s DATA_TYPE: got %q want %q", tbl.Name, col.Name, col.DataType, tableDefs[i].Columns[j].DataType)
 				continue
 			}
 			if col.CharMaxLen.Valid != tableDefs[i].Columns[j].CharMaxLen.Valid {
-				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", v.Name, col.Name, col.CharMaxLen.Valid, tableDefs[i].Columns[j].CharMaxLen.Valid)
+				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", tbl.Name, col.Name, col.CharMaxLen.Valid, tableDefs[i].Columns[j].CharMaxLen.Valid)
 				continue
 			}
 			if col.CharMaxLen.Valid {
 				if col.CharMaxLen.Int64 != tableDefs[i].Columns[j].CharMaxLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", v.Name, col.Name, col.CharMaxLen.Int64, tableDefs[i].Columns[j].CharMaxLen.Int64)
+					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", tbl.Name, col.Name, col.CharMaxLen.Int64, tableDefs[i].Columns[j].CharMaxLen.Int64)
 				}
 				continue
 			}
 			if col.CharOctetLen.Valid != tableDefs[i].Columns[j].CharOctetLen.Valid {
-				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", v.Name, col.Name, col.CharOctetLen.Valid, tableDefs[i].Columns[j].CharOctetLen.Valid)
+				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", tbl.Name, col.Name, col.CharOctetLen.Valid, tableDefs[i].Columns[j].CharOctetLen.Valid)
 				continue
 			}
 			if col.CharOctetLen.Valid {
 				if col.CharOctetLen.Int64 != tableDefs[i].Columns[j].CharOctetLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", v.Name, col.Name, col.CharOctetLen.Int64, tableDefs[i].Columns[j].CharOctetLen.Int64)
+					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", tbl.Name, col.Name, col.CharOctetLen.Int64, tableDefs[i].Columns[j].CharOctetLen.Int64)
 				}
 				continue
 			}
 			if col.NumericPrecision.Valid != tableDefs[i].Columns[j].NumericPrecision.Valid {
-				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", v.Name, col.Name, col.NumericPrecision.Valid, tableDefs[i].Columns[j].NumericPrecision.Valid)
+				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", tbl.Name, col.Name, col.NumericPrecision.Valid, tableDefs[i].Columns[j].NumericPrecision.Valid)
 				continue
 			}
 			if col.NumericPrecision.Valid {
 				if col.NumericPrecision.Int64 != tableDefs[i].Columns[j].NumericPrecision.Int64 {
-					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", v.Name, col.Name, col.NumericPrecision.Int64, tableDefs[i].Columns[j].NumericPrecision.Int64)
+					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", tbl.Name, col.Name, col.NumericPrecision.Int64, tableDefs[i].Columns[j].NumericPrecision.Int64)
 				}
 				continue
 			}
 			if col.NumericScale.Valid != tableDefs[i].Columns[j].NumericScale.Valid {
-				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", v.Name, col.Name, col.NumericScale.Valid, tableDefs[i].Columns[j].NumericScale.Valid)
+				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", tbl.Name, col.Name, col.NumericScale.Valid, tableDefs[i].Columns[j].NumericScale.Valid)
 				continue
 			}
 			if col.NumericScale.Valid {
 				if col.NumericScale.Int64 == tableDefs[i].Columns[j].NumericScale.Int64 {
-					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", v.Name, col.NumericScale.Int64, tableDefs[i].Columns[j].NumericScale.Int64)
+					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", tbl.Name, col.NumericScale.Int64, tableDefs[i].Columns[j].NumericScale.Int64)
 				}
 				continue
 			}
 			if col.CharacterSet.Valid != tableDefs[i].Columns[j].CharacterSet.Valid {
-				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", v.Name, col.Name, col.CharacterSet.Valid, tableDefs[i].Columns[j].CharacterSet.Valid)
+				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", tbl.Name, col.Name, col.CharacterSet.Valid, tableDefs[i].Columns[j].CharacterSet.Valid)
 				continue
 			}
 			if col.CharacterSet.Valid {
 				if col.CharacterSet.String != tableDefs[i].Columns[j].CharacterSet.String {
-					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", v.Name, col.Name, col.CharacterSet.String, tableDefs[i].Columns[j].CharacterSet.String)
+					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", tbl.Name, col.Name, col.CharacterSet.String, tableDefs[i].Columns[j].CharacterSet.String)
 				}
 				continue
 			}
 			if col.Collation.Valid != tableDefs[i].Columns[j].Collation.Valid {
-				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", v.Name, col.Name, col.Collation.Valid, tableDefs[i].Columns[j].Collation.Valid)
+				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", tbl.Name, col.Name, col.Collation.Valid, tableDefs[i].Columns[j].Collation.Valid)
 				continue
 			}
 			if col.Collation.Valid {
 				if col.Collation.String == tableDefs[i].Columns[j].Collation.String {
-					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", v.Name, col.Name, col.Collation.String, tableDefs[i].Columns[j].Collation.String)
+					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", tbl.Name, col.Name, col.Collation.String, tableDefs[i].Columns[j].Collation.String)
 				}
 				continue
 			}
 			if col.Typ != tableDefs[i].Columns[j].Typ {
-				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", v.Name, col.Name, col.Typ, tableDefs[i].Columns[j].Typ)
+				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", tbl.Name, col.Name, col.Typ, tableDefs[i].Columns[j].Typ)
 				continue
 			}
 			if col.Key != tableDefs[i].Columns[j].Key {
-				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", v.Name, col.Name, col.Key, tableDefs[i].Columns[j].Key)
+				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", tbl.Name, col.Name, col.Key, tableDefs[i].Columns[j].Key)
 				continue
 			}
 			if col.Extra != tableDefs[i].Columns[j].Extra {
-				t.Errorf("%s.%s EXTRA: got %q want %q", v.Name, col.Name, col.Extra, tableDefs[i].Columns[j].Extra)
+				t.Errorf("%s.%s EXTRA: got %q want %q", tbl.Name, col.Name, col.Extra, tableDefs[i].Columns[j].Extra)
 				continue
 			}
 			if col.Privileges != tableDefs[i].Columns[j].Privileges {
-				t.Errorf("%s.%s PRIVILEGES: got %q want %q", v.Name, col.Name, col.Privileges, tableDefs[i].Columns[j].Privileges)
+				t.Errorf("%s.%s PRIVILEGES: got %q want %q", tbl.Name, col.Name, col.Privileges, tableDefs[i].Columns[j].Privileges)
 				continue
 			}
 			if col.Comment != tableDefs[i].Columns[j].Comment {
-				t.Errorf("%s.%s COMMENT: got %q want %q", v.Name, col.Name, col.Comment, tableDefs[i].Columns[j].Comment)
+				t.Errorf("%s.%s COMMENT: got %q want %q", tbl.Name, col.Name, col.Comment, tableDefs[i].Columns[j].Comment)
 				continue
 			}
 		}
@@ -1144,19 +1148,19 @@ func TestGenerateFmtdDefs(t *testing.T) {
 	}
 }
 
-func SetupTestDB(m *MySQLDB) error {
-	_, err := m.DB.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", testDB))
+func SetupTestDB(m *DB) error {
+	_, err := m.Conn.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", testDB))
 	//_, err := m.DB.Exec("CREATE DATABASE IF NOT EXISTS ?", m.dbName)
 	if err != nil {
 		return err
 	}
-	_, err = m.DB.Exec(fmt.Sprintf("USE %s", testDB))
+	_, err = m.Conn.Exec(fmt.Sprintf("USE %s", testDB))
 	if err != nil {
 		return err
 	}
 
 	for _, v := range createTables {
-		_, err := m.DB.Exec(v)
+		_, err := m.Conn.Exec(v)
 		if err != nil {
 			return err
 		}
@@ -1164,8 +1168,8 @@ func SetupTestDB(m *MySQLDB) error {
 	return nil
 }
 
-func TeardownTestDB(m *MySQLDB) {
-	_, err := m.DB.Exec(fmt.Sprintf("DROP DATABASE %s", testDB))
+func TeardownTestDB(m *DB) {
+	_, err := m.Conn.Exec(fmt.Sprintf("DROP DATABASE %s", testDB))
 	if err != nil {
 		panic(err)
 	}

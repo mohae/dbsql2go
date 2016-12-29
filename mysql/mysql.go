@@ -17,50 +17,52 @@ import (
 	"database/sql"
 	"fmt"
 	"go/format"
+	"reflect"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/mohae/dbsql2go"
 	"github.com/mohae/mixedcase"
 )
 
 const schema = "information_schema"
 
-type MySQLDB struct {
-	DB     *sql.DB
+type DB struct {
+	Conn   *sql.DB
 	dbName string
 }
 
-// NewMySQLDB connects to the database's information_schema using the
-// supplied username and password.  The user must have sufficient privileges.
-func NewMySQLDB(server, user, password, database string) (*MySQLDB, error) {
+// New connects to the database's information_schema using the supplied
+// username and password.  The user must have sufficient privileges.
+func New(server, user, password, database string) (dbsql2go.DBer, error) {
 	conn, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", user, password, schema))
 	if err != nil {
 		return nil, err
 	}
-	return &MySQLDB{
-		DB:     conn,
+	return &DB{
+		Conn:   conn,
 		dbName: database,
 	}, nil
 }
 
-func (m *MySQLDB) GetTables() ([]Table, error) {
+func (m *DB) Tables() ([]dbsql2go.Tabler, error) {
 	tableS := `SELECT table_schema, table_name, table_type,
 	 	engine,	table_collation, table_comment
 		FROM tables
 		WHERE table_schema = ?`
 
-	rows, err := m.DB.Query(tableS, m.dbName)
+	rows, err := m.Conn.Query(tableS, m.dbName)
 	if err != nil {
 		return nil, err
 	}
-	var tables []Table
+	var tables []dbsql2go.Tabler
 	for rows.Next() {
 		var t Table
-		err = rows.Scan(&t.Schema, &t.Name, &t.Typ, &t.Engine, &t.Collation, &t.Comment)
+		err = rows.Scan(&t.schema, &t.name, &t.Typ, &t.Engine, &t.collation, &t.Comment)
 		if err != nil {
 			rows.Close()
 			return tables, err
 		}
-		tables = append(tables, t)
+		tables = append(tables, &t)
 	}
 	rows.Close()
 
@@ -76,15 +78,19 @@ func (m *MySQLDB) GetTables() ([]Table, error) {
 			AND table_name = ?
 		ORDER BY ordinal_position`
 
-	stmt, err := m.DB.Prepare(columnS)
+	stmt, err := m.Conn.Prepare(columnS)
 	if err != nil {
 		return tables, err
 	}
 	defer stmt.Close()
-	for i := range tables {
-		rows, err := stmt.Query(tables[i].Schema, tables[i].Name)
+	for i, tbl := range tables {
+		rows, err := stmt.Query(tbl.Schema(), tbl.Name())
 		if err != nil {
 			return tables, err
+		}
+		mTbl, ok := tbl.(*Table)
+		if !ok {
+			return tables, fmt.Errorf("impossible assertion: %v is not a Table", reflect.TypeOf(tbl))
 		}
 		for rows.Next() {
 			var c Column
@@ -98,21 +104,37 @@ func (m *MySQLDB) GetTables() ([]Table, error) {
 				rows.Close()
 				return tables, err
 			}
-			tables[i].Columns = append(tables[i].Columns, c)
+			mTbl.Columns = append(mTbl.Columns, c)
 		}
 		rows.Close()
+		tables[i] = mTbl
 	}
 	return tables, nil
 }
 
 type Table struct {
-	Name      string
-	Schema    string
+	name      string
+	schema    string
 	Columns   []Column
 	Typ       string
 	Engine    string
-	Collation string
+	collation string
 	Comment   string
+}
+
+// Name returns the name of the table.
+func (t *Table) Name() string {
+	return t.name
+}
+
+// Schema returns the table's schema.
+func (t *Table) Schema() string {
+	return t.schema
+}
+
+// Collation returns the table's collation.
+func (t *Table) Collation() string {
+	return t.collation
 }
 
 // Go creates the struct definition an returns the resulting bytes.
@@ -123,7 +145,7 @@ func (t *Table) Go() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	n, err = buf.WriteString(mixedcase.Exported(t.Name))
+	n, err = buf.WriteString(mixedcase.Exported(t.name))
 	if err != nil {
 		return nil, err
 	}

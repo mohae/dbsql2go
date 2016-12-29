@@ -40,13 +40,19 @@ func (u UnsupportedDBErr) Error() string {
 	return u.Value + " is not a supported database system"
 }
 
+type DBer interface {
+	Tables() ([]Tabler, error)
+}
+
 // Table is a generalized table struct. Each supported database will embed
 // this struct
 type Tabler interface {
-	Columns() []Column
+	//Columns() []Column
 	Name() string
-	Tablespace() string
+	Schema() string
 	Collation() string
+	Go() ([]byte, error)
+	GoFmt() ([]byte, error)
 }
 
 // Column represents a column within a table.
