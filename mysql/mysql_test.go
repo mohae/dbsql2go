@@ -1129,6 +1129,21 @@ func TestGenerateDefs(t *testing.T) {
 	}
 }
 
+func TestGenerateFmtdDefs(t *testing.T) {
+	for i, def := range tableDefs {
+		if i == 7 { // geospatial is not yet implemented; so skip
+			break
+		}
+		d, err := def.GoFmt()
+		if err != nil {
+			t.Error("%s: %s", def.Name, err)
+		}
+		if fmtdTableDefsString[i] != string(d) {
+			t.Errorf("%s: got %q; want %q", def.Name, string(d), fmtdTableDefsString[i])
+		}
+	}
+}
+
 func SetupTestDB(m *MySQLDB) error {
 	_, err := m.DB.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", testDB))
 	//_, err := m.DB.Exec("CREATE DATABASE IF NOT EXISTS ?", m.dbName)
