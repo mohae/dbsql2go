@@ -257,3 +257,8 @@ func (c *Column) Go() []byte {
 		return append(n, []byte(c.DataType)...)
 	}
 }
+
+// ImportString returns the import string for importing the mysql db driver.
+func Import() string {
+	return `_ "github.com/go-sql-driver/mysql"`
+}
