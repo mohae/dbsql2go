@@ -97,3 +97,40 @@ WHERE id == ?
 		}
 	}
 }
+
+// while the behavior seems wrong; saves in atom results in in the elision of
+// the blank, 0x20, from the first expected result which causes a test fail.
+// This does not appear to be a gofmt issue as running gofmt does not result
+// in the blank being elided. TODO: figure out what is happening
+func TestTableINSERTTemplate(t *testing.T) {
+	expected := []string{
+		`INSERT INTO  ()
+VALUES ()
+WHERE`,
+		`INSERT INTO foo (bar)
+VALUES (?)
+WHERE id == ?`,
+		`INSERT INTO foo (bar, biz, baz)
+VALUES (?, ?, ?)
+WHERE id == ?`,
+		`INSERT INTO foo (bar, biz, baz)
+VALUES (?, ?, ?)
+WHERE id == ?
+    AND sid == ?`,
+	}
+	var buff bytes.Buffer
+	for i, tbl := range tables {
+		// it's just simpler to reset it here
+		buff.Reset()
+		err := InsertSQL.Execute(&buff, tbl)
+		if err != nil {
+			t.Errorf("%d: %s", i, err)
+			continue
+		}
+		if buff.String() != expected[i] {
+			// use the hex values because it makes it easier to spot difference that
+			// aren't always obvious visually, e.g. trailing blanks
+			t.Errorf("%d: got %x want %x", i, buff.String(), expected[i])
+		}
+	}
+}
