@@ -17,25 +17,35 @@ import "html/template"
 // the basic sql stuff for a single table go in this file.
 
 var (
-	TableSelect *template.Template // Template to SELECT from a single table with only ANDs
+	SelectSQL *template.Template // Template to SELECT from a single table with only ANDs
+	DeleteSQL *template.Template // Template to DELETE from a single table with only ANDs
 )
 
 func init() {
-	TableSelect = template.Must(template.New("select").Parse(tableSelect))
+	SelectSQL = template.Must(template.New("select").Parse(selectSQL))
+	DeleteSQL = template.Must(template.New("delete").Parse(deleteSQL))
 }
 
-// tableSelect is the template for selecting data from a single table. All
+// selectSQL is the template for selecting data from a single table. All
 // columns in the WHERE field are assumed to use AND. Support for other
 // conditions may be added in the future, but it complicates things, and,
 // initially, this is meant to just create the basic selects from a table.
-var tableSelect = `SELECT
+var selectSQL = `SELECT
 {{- range $i, $col := .Columns -}}
 	{{- if eq $i 0 }} {{ $col -}}
 	{{- else -}}
 		, {{$col}}
 	{{- end -}}
-{{- end}}
+{{- end }}
 FROM {{.Table}}
+WHERE {{- range $i, $col := .Where -}}
+	{{- if eq $i 0 }} {{ $col }} == ?
+	{{- else }}
+    AND {{ $col }} == ?
+	{{- end -}}
+{{- end -}}
+`
+var deleteSQL = `DELETE FROM {{.Table}}
 WHERE {{- range $i, $col := .Where -}}
 	{{- if eq $i 0 }} {{ $col }} == ?
 	{{- else }}
