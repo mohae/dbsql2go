@@ -41,7 +41,8 @@ func (u UnsupportedDBErr) Error() string {
 }
 
 type DBer interface {
-	Tables() ([]Tabler, error)
+	GetTables() error
+	Tables() []Tabler
 }
 
 // Table is a generalized table struct. Each supported database will embed

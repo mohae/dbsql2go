@@ -976,11 +976,12 @@ func TestTables(t *testing.T) {
 		t.Errorf("unexpected connection error: %s", err)
 		return
 	}
-	tables, err := m.Tables()
+	err = m.GetTables()
 	if err != nil {
 		t.Errorf("unexpected error getting table information: %s", err)
 		return
 	}
+	tables := m.Tables()
 	for i, v := range tables {
 		tbl, ok := v.(*Table)
 		if !ok {

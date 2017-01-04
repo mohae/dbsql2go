@@ -29,6 +29,7 @@ const schema = "information_schema"
 type DB struct {
 	Conn   *sql.DB
 	dbName string
+	tables []dbsql2go.Tabler
 }
 
 // New connects to the database's information_schema using the supplied
@@ -44,7 +45,7 @@ func New(server, user, password, database string) (dbsql2go.DBer, error) {
 	}, nil
 }
 
-func (m *DB) Tables() ([]dbsql2go.Tabler, error) {
+func (m *DB) GetTables() error {
 	tableS := `SELECT table_schema, table_name, table_type,
 	 	engine,	table_collation, table_comment
 		FROM tables
@@ -52,17 +53,16 @@ func (m *DB) Tables() ([]dbsql2go.Tabler, error) {
 
 	rows, err := m.Conn.Query(tableS, m.dbName)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	var tables []dbsql2go.Tabler
 	for rows.Next() {
 		var t Table
 		err = rows.Scan(&t.schema, &t.name, &t.Typ, &t.Engine, &t.collation, &t.Comment)
 		if err != nil {
 			rows.Close()
-			return tables, err
+			return err
 		}
-		tables = append(tables, &t)
+		m.tables = append(m.tables, &t)
 	}
 	rows.Close()
 
@@ -80,17 +80,17 @@ func (m *DB) Tables() ([]dbsql2go.Tabler, error) {
 
 	stmt, err := m.Conn.Prepare(columnS)
 	if err != nil {
-		return tables, err
+		return err
 	}
 	defer stmt.Close()
-	for i, tbl := range tables {
+	for i, tbl := range m.tables {
 		rows, err := stmt.Query(tbl.Schema(), tbl.Name())
 		if err != nil {
-			return tables, err
+			return err
 		}
 		mTbl, ok := tbl.(*Table)
 		if !ok {
-			return tables, fmt.Errorf("impossible assertion: %v is not a Table", reflect.TypeOf(tbl))
+			return fmt.Errorf("impossible assertion: %v is not a Table", reflect.TypeOf(tbl))
 		}
 		for rows.Next() {
 			var c Column
@@ -102,14 +102,18 @@ func (m *DB) Tables() ([]dbsql2go.Tabler, error) {
 				&c.Comment)
 			if err != nil {
 				rows.Close()
-				return tables, err
+				return err
 			}
 			mTbl.Columns = append(mTbl.Columns, c)
 		}
 		rows.Close()
-		tables[i] = mTbl
+		m.tables[i] = mTbl
 	}
-	return tables, nil
+	return nil
+}
+
+func (m *DB) Tables() []dbsql2go.Tabler {
+	return m.tables
 }
 
 type Table struct {
