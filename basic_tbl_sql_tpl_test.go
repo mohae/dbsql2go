@@ -35,18 +35,18 @@ var tables = []TableSQL{
 func TestTableSelectTemplate(t *testing.T) {
 	expected := []string{
 		`SELECT
-FROM 
+FROM
 WHERE`,
 		`SELECT bar
 FROM foo
-WHERE id == ?`,
+WHERE id = ?`,
 		`SELECT bar, biz, baz
 FROM foo
-WHERE id == ?`,
+WHERE id = ?`,
 		`SELECT bar, biz, baz
 FROM foo
-WHERE id == ?
-    AND sid == ?`,
+WHERE id = ?
+    AND sid = ?`,
 	}
 	var buff bytes.Buffer
 	for i, tbl := range tables {
@@ -71,15 +71,15 @@ WHERE id == ?
 // in the blank being elided. TODO: figure out what is happening
 func TestTableDELETETemplate(t *testing.T) {
 	expected := []string{
-		`DELETE FROM 
+		`DELETE FROM
 WHERE`,
 		`DELETE FROM foo
-WHERE id == ?`,
+WHERE id = ?`,
 		`DELETE FROM foo
-WHERE id == ?`,
+WHERE id = ?`,
 		`DELETE FROM foo
-WHERE id == ?
-    AND sid == ?`,
+WHERE id = ?
+    AND sid = ?`,
 	}
 	var buff bytes.Buffer
 	for i, tbl := range tables {
@@ -109,14 +109,14 @@ VALUES ()
 WHERE`,
 		`INSERT INTO foo (bar)
 VALUES (?)
-WHERE id == ?`,
+WHERE id = ?`,
 		`INSERT INTO foo (bar, biz, baz)
 VALUES (?, ?, ?)
-WHERE id == ?`,
+WHERE id = ?`,
 		`INSERT INTO foo (bar, biz, baz)
 VALUES (?, ?, ?)
-WHERE id == ?
-    AND sid == ?`,
+WHERE id = ?
+    AND sid = ?`,
 	}
 	var buff bytes.Buffer
 	for i, tbl := range tables {

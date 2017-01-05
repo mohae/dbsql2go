@@ -41,9 +41,9 @@ var selectSQL = `SELECT
 {{- end }}
 FROM {{.Table}}
 WHERE {{- range $i, $col := .Where -}}
-	{{- if eq $i 0 }} {{ $col }} == ?
+	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }}
-    AND {{ $col }} == ?
+    AND {{ $col }} = ?
 	{{- end -}}
 {{- end -}}
 `
@@ -54,9 +54,9 @@ WHERE {{- range $i, $col := .Where -}}
 // initially, this is meant to just create the basic DELETEs from a table.
 var deleteSQL = `DELETE FROM {{.Table}}
 WHERE {{- range $i, $col := .Where -}}
-	{{- if eq $i 0 }} {{ $col }} == ?
+	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }}
-    AND {{ $col }} == ?
+    AND {{ $col }} = ?
 	{{- end -}}
 {{- end -}}
 `
@@ -80,9 +80,9 @@ VALUES ({{- range $i, $col := .Columns -}}
 {{- end -}}
 )
 WHERE {{- range $i, $col := .Where -}}
-	{{- if eq $i 0 }} {{ $col }} == ?
+	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }}
-    AND {{ $col }} == ?
+    AND {{ $col }} = ?
 	{{- end -}}
 {{- end -}}
 `
