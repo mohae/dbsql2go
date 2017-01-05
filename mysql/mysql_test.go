@@ -62,37 +62,55 @@ var createTables = []string{
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
 	`CREATE TABLE ghi (
+		id INT,
+		def_id INT,
 		tiny_stuff TINYBLOB,
 		stuff BLOB,
 		med_stuff MEDIUMBLOB,
-		long_stuff LONGBLOB
+		long_stuff LONGBLOB,
+		INDEX (def_id),
+		FOREIGN KEY fk_def(def_id) REFERENCES def(id)
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
 	`CREATE TABLE ghi_nn (
+		id INT NOT NULL,
+		def_id INT NOT NULL,
 		tiny_stuff TINYBLOB NOT NULL,
 		stuff BLOB NOT NULL,
 		med_stuff MEDIUMBLOB NOT NULL,
-		long_stuff LONGBLOB NOT NULL
+		long_stuff LONGBLOB NOT NULL,
+		INDEX (def_id),
+		FOREIGN KEY fk_def(def_id) REFERENCES def(id)
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
 	`CREATE TABLE jkl (
 		id INT AUTO_INCREMENT PRIMARY KEY,
+		fid INT,
 		tiny_txt TINYTEXT,
 		txt TEXT,
 		med_txt MEDIUMTEXT,
 		long_txt LONGTEXT,
 		bin BINARY(3),
-		var_bin VARBINARY(12)
+		var_bin VARBINARY(12),
+		INDEX(fid),
+		FOREIGN KEY(fid) REFERENCES def(id)
+		ON UPDATE CASCADE
+		ON DELETE RESTRICT
 	)
 	CHARACTER SET ascii COLLATE ascii_general_ci`,
 	`CREATE TABLE jkl_nn (
 		id INT AUTO_INCREMENT PRIMARY KEY,
+		fid INT NOT NULL,
 		tiny_txt TINYTEXT NOT NULL,
 		txt TEXT NOT NULL,
 		med_txt MEDIUMTEXT NOT NULL,
 		long_txt LONGTEXT NOT NULL,
 		bin BINARY(3) NOT NULL,
-		var_bin VARBINARY(12) NOT NULL
+		var_bin VARBINARY(12) NOT NULL,
+		INDEX(fid),
+		FOREIGN KEY(fid) REFERENCES def(id)
+		ON UPDATE CASCADE
+		ON DELETE RESTRICT
 	)
 	CHARACTER SET ascii COLLATE ascii_general_ci`,
 	`CREATE TABLE mno (
@@ -430,7 +448,23 @@ var tableDefs = []Table{
 		name: "ghi", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
-				Name: "tiny_stuff", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "YES", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "def_id", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "YES", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "tiny_stuff", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "tinyblob", CharMaxLen: sql.NullInt64{Int64: 255, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "tinyblob",
@@ -438,7 +472,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "stuff", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				Name: "stuff", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "blob", CharMaxLen: sql.NullInt64{Int64: 65535, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "blob",
@@ -446,7 +480,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "med_stuff", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				Name: "med_stuff", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "mediumblob", CharMaxLen: sql.NullInt64{Int64: 16777215, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "mediumblob",
@@ -454,7 +488,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "long_stuff", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				Name: "long_stuff", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "longblob", CharMaxLen: sql.NullInt64{Int64: 4294967295, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "longblob",
@@ -469,7 +503,23 @@ var tableDefs = []Table{
 		name: "ghi_nn", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
-				Name: "tiny_stuff", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "def_id", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "tiny_stuff", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "tinyblob", CharMaxLen: sql.NullInt64{Int64: 255, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "tinyblob",
@@ -477,7 +527,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "stuff", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				Name: "stuff", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "blob", CharMaxLen: sql.NullInt64{Int64: 65535, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "blob",
@@ -485,7 +535,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "med_stuff", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				Name: "med_stuff", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "mediumblob", CharMaxLen: sql.NullInt64{Int64: 16777215, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "mediumblob",
@@ -493,7 +543,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "long_stuff", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				Name: "long_stuff", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "longblob", CharMaxLen: sql.NullInt64{Int64: 4294967295, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "longblob",
@@ -516,7 +566,15 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "tiny_txt", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				Name: "fid", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "YES", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "tiny_txt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "tinytext", CharMaxLen: sql.NullInt64{Int64: 255, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "tinytext",
@@ -524,7 +582,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "txt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				Name: "txt", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "text", CharMaxLen: sql.NullInt64{Int64: 65535, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "text",
@@ -532,7 +590,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "med_txt", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				Name: "med_txt", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "mediumtext", CharMaxLen: sql.NullInt64{Int64: 16777215, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "mediumtext",
@@ -540,7 +598,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "long_txt", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
+				Name: "long_txt", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "longtext", CharMaxLen: sql.NullInt64{Int64: 4294967295, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "longtext",
@@ -548,7 +606,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "bin", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
+				Name: "bin", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "binary", CharMaxLen: sql.NullInt64{Int64: 3, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 3, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "binary(3)",
@@ -556,7 +614,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "var_bin", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
+				Name: "var_bin", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "varbinary", CharMaxLen: sql.NullInt64{Int64: 12, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "varbinary(12)",
@@ -579,7 +637,15 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "tiny_txt", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				Name: "fid", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "tiny_txt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "tinytext", CharMaxLen: sql.NullInt64{Int64: 255, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "tinytext",
@@ -587,7 +653,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "txt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				Name: "txt", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "text", CharMaxLen: sql.NullInt64{Int64: 65535, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "text",
@@ -595,7 +661,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "med_txt", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				Name: "med_txt", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "mediumtext", CharMaxLen: sql.NullInt64{Int64: 16777215, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "mediumtext",
@@ -603,7 +669,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "long_txt", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
+				Name: "long_txt", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "longtext", CharMaxLen: sql.NullInt64{Int64: 4294967295, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "longtext",
@@ -611,7 +677,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "bin", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
+				Name: "bin", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "binary", CharMaxLen: sql.NullInt64{Int64: 3, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 3, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "binary(3)",
@@ -619,7 +685,7 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 			Column{
-				Name: "var_bin", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
+				Name: "var_bin", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "varbinary", CharMaxLen: sql.NullInt64{Int64: 12, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "varbinary(12)",
@@ -838,6 +904,8 @@ var tableDefsString = []string{
 }
 `,
 	`type Ghi struct {
+	ID sql.NullInt64
+	DefID sql.NullInt64
 	TinyStuff []byte
 	Stuff []byte
 	MedStuff []byte
@@ -845,6 +913,8 @@ var tableDefsString = []string{
 }
 `,
 	`type GhiNn struct {
+	ID int32
+	DefID int32
 	TinyStuff []byte
 	Stuff []byte
 	MedStuff []byte
@@ -853,6 +923,7 @@ var tableDefsString = []string{
 `,
 	`type Jkl struct {
 	ID int32
+	Fid sql.NullInt64
 	TinyTxt []byte
 	Txt []byte
 	MedTxt []byte
@@ -863,6 +934,7 @@ var tableDefsString = []string{
 `,
 	`type JklNn struct {
 	ID int32
+	Fid int32
 	TinyTxt []byte
 	Txt []byte
 	MedTxt []byte
@@ -921,6 +993,8 @@ var fmtdTableDefsString = []string{
 }
 `,
 	`type Ghi struct {
+	ID        sql.NullInt64
+	DefID     sql.NullInt64
 	TinyStuff []byte
 	Stuff     []byte
 	MedStuff  []byte
@@ -928,6 +1002,8 @@ var fmtdTableDefsString = []string{
 }
 `,
 	`type GhiNn struct {
+	ID        int32
+	DefID     int32
 	TinyStuff []byte
 	Stuff     []byte
 	MedStuff  []byte
@@ -936,6 +1012,7 @@ var fmtdTableDefsString = []string{
 `,
 	`type Jkl struct {
 	ID      int32
+	Fid     sql.NullInt64
 	TinyTxt []byte
 	Txt     []byte
 	MedTxt  []byte
@@ -946,6 +1023,7 @@ var fmtdTableDefsString = []string{
 `,
 	`type JklNn struct {
 	ID      int32
+	Fid     int32
 	TinyTxt []byte
 	Txt     []byte
 	MedTxt  []byte
@@ -962,7 +1040,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 		return
 	}
-	defer TeardownTestDB(db.(*DB)) // this always tries to run, that way a partial setup is still torndown
+	//defer TeardownTestDB(db.(*DB)) // this always tries to run, that way a partial setup is still torndown
 	err = SetupTestDB(db.(*DB))
 	if err != nil {
 		panic(err)
@@ -1010,109 +1088,109 @@ func TestTables(t *testing.T) {
 		// handle columns
 		for j, col := range tbl.Columns {
 			if col.Name != tableDefs[i].Columns[j].Name {
-				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", tbl.Name, col.Name, col.Name, tableDefs[i].Columns[j].Name)
+				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", tbl.name, col.Name, col.Name, tableDefs[i].Columns[j].Name)
 				continue
 			}
 			if col.OrdinalPosition != tableDefs[i].Columns[j].OrdinalPosition {
-				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", tbl.Name, col.Name, col.OrdinalPosition, tableDefs[i].Columns[j].OrdinalPosition)
+				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", tbl.name, col.Name, col.OrdinalPosition, tableDefs[i].Columns[j].OrdinalPosition)
 				continue
 			}
 			if col.Default.Valid != tableDefs[i].Columns[j].Default.Valid {
-				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", tbl.Name, col.Name, col.Default.Valid, tableDefs[i].Columns[j].Default.Valid)
+				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", tbl.name, col.Name, col.Default.Valid, tableDefs[i].Columns[j].Default.Valid)
 				continue
 			}
 			if col.Default.Valid {
 				if col.Default.String != tableDefs[i].Columns[j].Default.String {
-					t.Errorf("%s.%s DEFAULT String: got %s want %s", tbl.Name, col.Name, col.Default.String, tableDefs[i].Columns[j].Default.String)
+					t.Errorf("%s.%s DEFAULT String: got %s want %s", tbl.name, col.Name, col.Default.String, tableDefs[i].Columns[j].Default.String)
 				}
 				continue
 			}
 			if col.IsNullable != tableDefs[i].Columns[j].IsNullable {
-				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", tbl.Name, col.Name, col.IsNullable, tableDefs[i].Columns[j].IsNullable)
+				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", tbl.name, col.Name, col.IsNullable, tableDefs[i].Columns[j].IsNullable)
 				continue
 			}
 			if col.DataType != tableDefs[i].Columns[j].DataType {
-				t.Errorf("%s.%s DATA_TYPE: got %q want %q", tbl.Name, col.Name, col.DataType, tableDefs[i].Columns[j].DataType)
+				t.Errorf("%s.%s DATA_TYPE: got %q want %q", tbl.name, col.Name, col.DataType, tableDefs[i].Columns[j].DataType)
 				continue
 			}
 			if col.CharMaxLen.Valid != tableDefs[i].Columns[j].CharMaxLen.Valid {
-				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", tbl.Name, col.Name, col.CharMaxLen.Valid, tableDefs[i].Columns[j].CharMaxLen.Valid)
+				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharMaxLen.Valid, tableDefs[i].Columns[j].CharMaxLen.Valid)
 				continue
 			}
 			if col.CharMaxLen.Valid {
 				if col.CharMaxLen.Int64 != tableDefs[i].Columns[j].CharMaxLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", tbl.Name, col.Name, col.CharMaxLen.Int64, tableDefs[i].Columns[j].CharMaxLen.Int64)
+					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharMaxLen.Int64, tableDefs[i].Columns[j].CharMaxLen.Int64)
 				}
 				continue
 			}
 			if col.CharOctetLen.Valid != tableDefs[i].Columns[j].CharOctetLen.Valid {
-				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", tbl.Name, col.Name, col.CharOctetLen.Valid, tableDefs[i].Columns[j].CharOctetLen.Valid)
+				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharOctetLen.Valid, tableDefs[i].Columns[j].CharOctetLen.Valid)
 				continue
 			}
 			if col.CharOctetLen.Valid {
 				if col.CharOctetLen.Int64 != tableDefs[i].Columns[j].CharOctetLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", tbl.Name, col.Name, col.CharOctetLen.Int64, tableDefs[i].Columns[j].CharOctetLen.Int64)
+					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharOctetLen.Int64, tableDefs[i].Columns[j].CharOctetLen.Int64)
 				}
 				continue
 			}
 			if col.NumericPrecision.Valid != tableDefs[i].Columns[j].NumericPrecision.Valid {
-				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", tbl.Name, col.Name, col.NumericPrecision.Valid, tableDefs[i].Columns[j].NumericPrecision.Valid)
+				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", tbl.name, col.Name, col.NumericPrecision.Valid, tableDefs[i].Columns[j].NumericPrecision.Valid)
 				continue
 			}
 			if col.NumericPrecision.Valid {
 				if col.NumericPrecision.Int64 != tableDefs[i].Columns[j].NumericPrecision.Int64 {
-					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", tbl.Name, col.Name, col.NumericPrecision.Int64, tableDefs[i].Columns[j].NumericPrecision.Int64)
+					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", tbl.name, col.Name, col.NumericPrecision.Int64, tableDefs[i].Columns[j].NumericPrecision.Int64)
 				}
 				continue
 			}
 			if col.NumericScale.Valid != tableDefs[i].Columns[j].NumericScale.Valid {
-				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", tbl.Name, col.Name, col.NumericScale.Valid, tableDefs[i].Columns[j].NumericScale.Valid)
+				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", tbl.name, col.Name, col.NumericScale.Valid, tableDefs[i].Columns[j].NumericScale.Valid)
 				continue
 			}
 			if col.NumericScale.Valid {
 				if col.NumericScale.Int64 == tableDefs[i].Columns[j].NumericScale.Int64 {
-					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", tbl.Name, col.NumericScale.Int64, tableDefs[i].Columns[j].NumericScale.Int64)
+					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", tbl.name, col.NumericScale.Int64, tableDefs[i].Columns[j].NumericScale.Int64)
 				}
 				continue
 			}
 			if col.CharacterSet.Valid != tableDefs[i].Columns[j].CharacterSet.Valid {
-				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", tbl.Name, col.Name, col.CharacterSet.Valid, tableDefs[i].Columns[j].CharacterSet.Valid)
+				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", tbl.name, col.Name, col.CharacterSet.Valid, tableDefs[i].Columns[j].CharacterSet.Valid)
 				continue
 			}
 			if col.CharacterSet.Valid {
 				if col.CharacterSet.String != tableDefs[i].Columns[j].CharacterSet.String {
-					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", tbl.Name, col.Name, col.CharacterSet.String, tableDefs[i].Columns[j].CharacterSet.String)
+					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", tbl.name, col.Name, col.CharacterSet.String, tableDefs[i].Columns[j].CharacterSet.String)
 				}
 				continue
 			}
 			if col.Collation.Valid != tableDefs[i].Columns[j].Collation.Valid {
-				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", tbl.Name, col.Name, col.Collation.Valid, tableDefs[i].Columns[j].Collation.Valid)
+				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", tbl.name, col.Name, col.Collation.Valid, tableDefs[i].Columns[j].Collation.Valid)
 				continue
 			}
 			if col.Collation.Valid {
 				if col.Collation.String == tableDefs[i].Columns[j].Collation.String {
-					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", tbl.Name, col.Name, col.Collation.String, tableDefs[i].Columns[j].Collation.String)
+					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", tbl.name, col.Name, col.Collation.String, tableDefs[i].Columns[j].Collation.String)
 				}
 				continue
 			}
 			if col.Typ != tableDefs[i].Columns[j].Typ {
-				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", tbl.Name, col.Name, col.Typ, tableDefs[i].Columns[j].Typ)
+				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", tbl.name, col.Name, col.Typ, tableDefs[i].Columns[j].Typ)
 				continue
 			}
 			if col.Key != tableDefs[i].Columns[j].Key {
-				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", tbl.Name, col.Name, col.Key, tableDefs[i].Columns[j].Key)
+				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", tbl.name, col.Name, col.Key, tableDefs[i].Columns[j].Key)
 				continue
 			}
 			if col.Extra != tableDefs[i].Columns[j].Extra {
-				t.Errorf("%s.%s EXTRA: got %q want %q", tbl.Name, col.Name, col.Extra, tableDefs[i].Columns[j].Extra)
+				t.Errorf("%s.%s EXTRA: got %q want %q", tbl.name, col.Name, col.Extra, tableDefs[i].Columns[j].Extra)
 				continue
 			}
 			if col.Privileges != tableDefs[i].Columns[j].Privileges {
-				t.Errorf("%s.%s PRIVILEGES: got %q want %q", tbl.Name, col.Name, col.Privileges, tableDefs[i].Columns[j].Privileges)
+				t.Errorf("%s.%s PRIVILEGES: got %q want %q", tbl.name, col.Name, col.Privileges, tableDefs[i].Columns[j].Privileges)
 				continue
 			}
 			if col.Comment != tableDefs[i].Columns[j].Comment {
-				t.Errorf("%s.%s COMMENT: got %q want %q", tbl.Name, col.Name, col.Comment, tableDefs[i].Columns[j].Comment)
+				t.Errorf("%s.%s COMMENT: got %q want %q", tbl.name, col.Name, col.Comment, tableDefs[i].Columns[j].Comment)
 				continue
 			}
 		}
@@ -1129,7 +1207,7 @@ func TestGenerateDefs(t *testing.T) {
 			t.Error("%s: %s", def.Name, err)
 		}
 		if tableDefsString[i] != string(d) {
-			t.Errorf("%s: got %q; want %q", def.Name, string(d), tableDefsString[i])
+			t.Errorf("%s: got %q; want %q", def.Name(), string(d), tableDefsString[i])
 		}
 	}
 }
@@ -1144,17 +1222,21 @@ func TestGenerateFmtdDefs(t *testing.T) {
 			t.Error("%s: %s", def.Name, err)
 		}
 		if fmtdTableDefsString[i] != string(d) {
-			t.Errorf("%s: got %q; want %q", def.Name, string(d), fmtdTableDefsString[i])
+			t.Errorf("%s: got %q; want %q", def.Name(), string(d), fmtdTableDefsString[i])
 		}
 	}
 }
 
 func SetupTestDB(m *DB) error {
-	_, err := m.Conn.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", testDB))
-	//_, err := m.DB.Exec("CREATE DATABASE IF NOT EXISTS ?", m.dbName)
+	// Everything is ignored because we don't care if it exists. This is just in
+	// case the it wasn't dropped in a prior test due to a panic or something.
+	m.Conn.Exec(fmt.Sprintf("DROP DATABASE %s", testDB))
+
+	_, err := m.Conn.Exec(fmt.Sprintf("CREATE DATABASE %s", testDB))
 	if err != nil {
 		return err
 	}
+
 	_, err = m.Conn.Exec(fmt.Sprintf("USE %s", testDB))
 	if err != nil {
 		return err
@@ -1170,8 +1252,6 @@ func SetupTestDB(m *DB) error {
 }
 
 func TeardownTestDB(m *DB) {
-	_, err := m.Conn.Exec(fmt.Sprintf("DROP DATABASE %s", testDB))
-	if err != nil {
-		panic(err)
-	}
+	// we don't care if this fails
+	m.Conn.Exec(fmt.Sprintf("DROP DATABASE %s", testDB))
 }
