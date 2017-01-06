@@ -304,7 +304,7 @@ func (c *Column) Go() []byte {
 			"tinytext", "text", "mediumtext", "longtext",
 			"binary", "varbinary":
 			return append(n, []byte("[]byte")...)
-		case "time", "year", "enum", "set":
+		case "char", "varchar", "time", "year", "enum", "set":
 			return append(n, []byte("sql.NullString")...)
 		default:
 			return append(n, []byte(c.DataType)...)
