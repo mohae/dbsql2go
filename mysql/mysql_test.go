@@ -1003,7 +1003,7 @@ var tableDefsString = []string{
 `,
 	`type DefghiV struct {
 	Aid int32
-	Bid int32
+	Bid sql.NullInt64
 	DDatetime mysql.NullTime
 	Size sql.NullString
 	Stuff []byte
@@ -1106,7 +1106,7 @@ var fmtdTableDefsString = []string{
 `,
 	`type DefghiV struct {
 	Aid       int32
-	Bid       int32
+	Bid       sql.NullInt64
 	DDatetime mysql.NullTime
 	Size      sql.NullString
 	Stuff     []byte
