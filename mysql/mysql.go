@@ -267,6 +267,15 @@ func (t *Table) GoFmt() ([]byte, error) {
 	return format.Source(b)
 }
 
+// ColumnNames returns the names of all the columns in the table.
+func (t *Table) ColumnNames() []string {
+	cols := make([]string, 0, len(t.Columns))
+	for _, col := range t.Columns {
+		cols = append(cols, col.Name)
+	}
+	return cols
+}
+
 // Column holds all information about the columns in a database as provided by
 // MySQL's information schema.
 type Column struct {

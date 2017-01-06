@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"sort"
 	"testing"
 )
 
@@ -1605,6 +1606,32 @@ func TestViews(t *testing.T) {
 	}
 }
 
+func TestColumnNames(t *testing.T) {
+	expected := []struct {
+		name string
+		cols []string
+	}{
+		{name: "abc", cols: []string{"id", "code", "description", "tiny", "small", "medium", "ger", "big", "cost", "created"}},
+		{name: "abc_nn", cols: []string{"id", "code", "description", "tiny", "small", "medium", "ger", "big", "cost", "created"}},
+		{name: "abc_v", cols: []string{"id", "code", "description"}},
+		{name: "def", cols: []string{"id", "d_date", "d_datetime", "d_time", "d_year", "size", "a_set"}},
+		{name: "def_nn", cols: []string{"id", "d_date", "d_datetime", "d_time", "d_year", "size", "a_set"}},
+		{name: "defghi_v", cols: []string{"aid", "bid", "d_datetime", "size", "stuff"}},
+		{name: "ghi", cols: []string{"id", "def_id", "tiny_stuff", "stuff", "med_stuff", "long_stuff"}},
+		{name: "ghi_nn", cols: []string{"id", "def_id", "tiny_stuff", "stuff", "med_stuff", "long_stuff"}},
+		{name: "jkl", cols: []string{"id", "fid", "tiny_txt", "txt", "med_txt", "long_txt", "bin", "var_bin"}},
+		{name: "jkl_nn", cols: []string{"id", "fid", "tiny_txt", "txt", "med_txt", "long_txt", "bin", "var_bin"}},
+		//{name: "mno", cols: []string{"id", "geo", "pt", "lstring", "poly", "multi_pt", "multi_lstring", "multi_polygon", "geo_collection"}},
+		//{name: "mno_nn", cols: []string{"id", "geo", "pt", "lstring", "poly", "multi_pt", "multi_lstring", "multi_polygon", "geo_collection"}},
+	}
+	for i, tbl := range tableDefs {
+		cols := tbl.ColumnNames()
+		if !stringsEqual(cols, expected[i].cols) {
+			t.Errorf("%s: got %v want %v", expected[i].name, cols, expected[i].cols)
+		}
+	}
+}
+
 func TestGenerateDefs(t *testing.T) {
 	for i, def := range tableDefs {
 		if i == 7 { // geospatial is not yet implemented; so skip
@@ -1668,4 +1695,18 @@ func SetupTestDB(m *DB) error {
 func TeardownTestDB(m *DB) {
 	// we don't care if this fails
 	m.Conn.Exec(fmt.Sprintf("DROP DATABASE %s", testDB))
+}
+
+func sliceEqual(s1, s2 []string) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	sort.Strings(s1)
+	sort.Strings(s2)
+	for i, v := range s1 {
+		if v != s2[i] {
+			return false
+		}
+	}
+	return true
 }
