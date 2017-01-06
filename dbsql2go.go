@@ -32,6 +32,16 @@ func ParseDBType(s string) (DBType, error) {
 	}
 }
 
+const (
+	PK IndexType = iota + 1
+	FK
+	Unique
+	Other
+)
+
+//go:generate stringer -type=IndexType
+type IndexType int
+
 type UnsupportedDBErr struct {
 	Value string
 }
@@ -65,6 +75,14 @@ type Tabler interface {
 // Indexer
 type Indexer interface {
 	Name() string // Just so that there's semething to fulfill until this gets fleshed out further.
+}
+
+// Index holds information about a given index.
+type Index struct {
+	Type  IndexType // type of Index
+	Name  string    // Name of Index
+	Table string    // Index's table
+	Cols  []string  // Index Columns, in order.
 }
 
 // Viewer
