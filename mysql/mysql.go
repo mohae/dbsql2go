@@ -63,6 +63,7 @@ func (m *DB) GetTables() error {
 			rows.Close()
 			return err
 		}
+		fmt.Println(t.name)
 		m.tables = append(m.tables, &t)
 	}
 	rows.Close()
@@ -159,8 +160,8 @@ type Table struct {
 	schema    string
 	Columns   []Column
 	Typ       string
-	Engine    string
-	collation string
+	Engine    sql.NullString
+	collation sql.NullString
 	Comment   string
 }
 
@@ -176,7 +177,10 @@ func (t *Table) Schema() string {
 
 // Collation returns the table's collation.
 func (t *Table) Collation() string {
-	return t.collation
+	if t.collation.Valid {
+		return t.collation.String
+	}
+	return ""
 }
 
 // Go creates the struct definition an returns the resulting bytes.

@@ -145,6 +145,18 @@ var createTables = []string{
 	//	)`,
 }
 
+var createViews = []string{
+	`CREATE OR REPLACE VIEW abc_v
+	AS SELECT id, code, description
+	FROM abc
+	ORDER by code`,
+	`CREATE OR REPLACE VIEW defghi_v
+	AS SELECT a.id AS aid, b.id as bid, a.d_datetime, a.size, b.stuff
+	FROM def AS a, ghi AS b
+	WHERE a.id = b.def_id
+	ORDER by a.id, a.size, b.def_id`,
+}
+
 var tableDefs = []Table{
 	Table{
 		name: "abc", schema: "dbsql_test",
@@ -230,8 +242,8 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "latin1_swedish_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Comment: "",
 	},
 	Table{
 		name: "abc_nn", schema: "dbsql_test",
@@ -317,8 +329,39 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "latin1_swedish_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Comment: "",
+	},
+	Table{
+		name: "abc_v", schema: "dbsql_test",
+		Columns: []Column{
+			Column{
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "code", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "char", CharMaxLen: sql.NullInt64{Int64: 12, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "char(12)",
+				Key: "UNI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "description", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "varchar", CharMaxLen: sql.NullInt64{Int64: 20, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 20, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "varchar(20)",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+		},
+		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
+		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
 	},
 	Table{
 		name: "def", schema: "dbsql_test",
@@ -380,8 +423,8 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "utf8_general_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 	},
 	Table{
 		name: "def_nn", schema: "dbsql_test",
@@ -443,8 +486,55 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "utf8_general_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
+	},
+	Table{
+		name: "defghi_v", schema: "dbsql_test",
+		Columns: []Column{
+			Column{
+				Name: "aid", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "bid", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
+				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "d_datetime", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "YES", DataType: "datetime", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "datetime",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "size", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "NO", DataType: "enum", CharMaxLen: sql.NullInt64{Int64: 5, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 15, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "enum('small','medium','large')",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+			Column{
+				Name: "stuff", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
+				IsNullable: "YES", DataType: "blob", CharMaxLen: sql.NullInt64{Int64: 65535, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "blob",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "",
+			},
+		},
+		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
+		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
 	},
 	Table{
 		name: "ghi", schema: "dbsql_test",
@@ -498,8 +588,8 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "utf8_general_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 	},
 	Table{
 		name: "ghi_nn", schema: "dbsql_test",
@@ -553,8 +643,8 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "utf8_general_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 	},
 	Table{
 		name: "jkl", schema: "dbsql_test",
@@ -624,8 +714,8 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "ascii_general_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Comment: "",
 	},
 	Table{
 		name: "jkl_nn", schema: "dbsql_test",
@@ -695,8 +785,8 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "ascii_general_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Comment: "",
 	},
 	Table{
 		name: "mno", schema: "dbsql_test",
@@ -774,8 +864,8 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "utf8_general_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 	},
 	Table{
 		name: "mno_nn", schema: "dbsql_test",
@@ -853,8 +943,8 @@ var tableDefs = []Table{
 				Comment: "",
 			},
 		},
-		Typ: "BASE TABLE", Engine: "InnoDB",
-		collation: "utf8_general_ci", Comment: "",
+		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
+		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 	},
 }
 
@@ -885,6 +975,12 @@ var tableDefsString = []string{
 	Created mysql.NullTime
 }
 `,
+	`type AbcV struct {
+	ID int32
+	Code string
+	Description string
+}
+`,
 	`type Def struct {
 	ID int32
 	DDate mysql.NullTime
@@ -903,6 +999,14 @@ var tableDefsString = []string{
 	DYear string
 	Size string
 	ASet string
+}
+`,
+	`type DefghiV struct {
+	Aid int32
+	Bid int32
+	DDatetime mysql.NullTime
+	Size sql.NullString
+	Stuff []byte
 }
 `,
 	`type Ghi struct {
@@ -974,6 +1078,12 @@ var fmtdTableDefsString = []string{
 	Created     mysql.NullTime
 }
 `,
+	`type AbcV struct {
+	ID          int32
+	Code        string
+	Description string
+}
+`,
 	`type Def struct {
 	ID        int32
 	DDate     mysql.NullTime
@@ -992,6 +1102,14 @@ var fmtdTableDefsString = []string{
 	DYear     string
 	Size      string
 	ASet      string
+}
+`,
+	`type DefghiV struct {
+	Aid       int32
+	Bid       int32
+	DDatetime mysql.NullTime
+	Size      sql.NullString
+	Stuff     []byte
 }
 `,
 	`type Ghi struct {
@@ -1183,19 +1301,31 @@ func TestTables(t *testing.T) {
 			continue
 		}
 		if tbl.Typ != tableDefs[i].Typ {
-			t.Errorf("Type: got %q want %q", tbl.Typ, tableDefs[i].Typ)
+			t.Errorf("%s.Type: got %q want %q", tbl.name, tbl.Typ, tableDefs[i].Typ)
 			continue
 		}
-		if tbl.Engine != tableDefs[i].Engine {
-			t.Errorf("Engine: got %q want %q", tbl.Engine, tableDefs[i].Engine)
+		if tbl.Engine.Valid != tableDefs[i].Engine.Valid {
+			t.Errorf("%s.Engine.Valid: got %t want %t", tbl.name, tbl.Engine.Valid, tableDefs[i].Engine.Valid)
 			continue
 		}
-		if tbl.Collation() != tableDefs[i].collation {
-			t.Errorf("Collation: got %q want %q", tbl.Collation, tableDefs[i].Collation)
+		if tbl.Engine.Valid {
+			if tbl.Engine.String != tableDefs[i].Engine.String {
+				t.Errorf("%s.Engine.String: got %q want %q", tbl.name, tbl.Engine.String, tableDefs[i].Engine.String)
+				continue
+			}
+		}
+		if tbl.collation.Valid != tableDefs[i].collation.Valid {
+			t.Errorf("%s.Collation.Valid: got %t, want %t", tbl.name, tbl.collation.Valid, tableDefs[i].collation.Valid)
 			continue
+		}
+		if tbl.collation.Valid {
+			if tbl.collation.String != tableDefs[i].collation.String {
+				t.Errorf("%s.Collation.String: got %q want %q", tbl.name, tbl.collation.String, tableDefs[i].collation.String)
+				continue
+			}
 		}
 		if tbl.Comment != tableDefs[i].Comment {
-			t.Errorf("Comment: got %q want %q", tbl.Comment, tableDefs[i].Comment)
+			t.Errorf("%s.Comment: got %q want %q", tbl.name, tbl.Comment, tableDefs[i].Comment)
 			continue
 		}
 		// handle columns
@@ -1459,6 +1589,12 @@ func SetupTestDB(m *DB) error {
 	}
 
 	for _, v := range createTables {
+		_, err := m.Conn.Exec(v)
+		if err != nil {
+			return err
+		}
+	}
+	for _, v := range createViews {
 		_, err := m.Conn.Exec(v)
 		if err != nil {
 			return err
