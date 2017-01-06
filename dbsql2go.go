@@ -57,6 +57,9 @@ type Tabler interface {
 	Collation() string
 	Go() ([]byte, error)
 	GoFmt() ([]byte, error)
+	SelectSQL() string
+	InsertSQL() string
+	DeleteSQL() string
 }
 
 // Indexer

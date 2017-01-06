@@ -32,19 +32,25 @@ func init() {
 // columns in the WHERE field are assumed to use AND. Support for other
 // conditions may be added in the future, but it complicates things, and,
 // initially, this is meant to just create the basic SELECTs from a table.
-var selectSQL = `SELECT
+var selectSQL = `{{ if gt (len .Columns) 0 -}}
+SELECT
 {{- range $i, $col := .Columns -}}
 	{{- if eq $i 0 }} {{ $col -}}
 	{{- else -}}
 		, {{$col}}
 	{{- end -}}
 {{- end }}
+{{- end }}
+{{- if ne .Table "" }}
 FROM {{.Table}}
+{{- end -}}
+{{- if gt (len .Where) 0 }}
 WHERE {{- range $i, $col := .Where -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }}
     AND {{ $col }} = ?
 	{{- end -}}
+{{- end -}}
 {{- end -}}
 `
 
@@ -52,12 +58,16 @@ WHERE {{- range $i, $col := .Where -}}
 // columns in the WHERE field are assumed to use AND. Support for other
 // conditions may be added in the future, but it complicates things, and,
 // initially, this is meant to just create the basic DELETEs from a table.
-var deleteSQL = `DELETE FROM {{.Table}}
+var deleteSQL = `{{ if ne .Table "" -}}
+DELETE FROM {{.Table}}
+{{- end -}}
+{{ if gt (len .Where) 0 }}
 WHERE {{- range $i, $col := .Where -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }}
     AND {{ $col }} = ?
 	{{- end -}}
+{{- end -}}
 {{- end -}}
 `
 
@@ -65,13 +75,18 @@ WHERE {{- range $i, $col := .Where -}}
 // columns in the WHERE field are assumed to use AND. Support for other
 // conditions may be added in the future, but it complicates things, and,
 // initially, this is meant to just create the basic INSERTs from a table.
-var insertSQL = `INSERT INTO {{.Table}} ({{- range $i, $col := .Columns -}}
+var insertSQL = `{{ if ne .Table "" -}}
+INSERT INTO {{.Table}}
+{{- end -}}
+{{- if gt (len .Columns) 0 }} ({{- range $i, $col := .Columns -}}
 	{{- if eq $i 0 }}{{ $col -}}
 	{{- else -}}
 		, {{$col}}
 	{{- end -}}
 {{- end -}}
 )
+{{- end -}}
+{{- if gt (len .Columns) 0 }}
 VALUES ({{- range $i, $col := .Columns -}}
 {{- if eq $i 0 -}} ?
 {{- else -}}
@@ -79,10 +94,13 @@ VALUES ({{- range $i, $col := .Columns -}}
 {{- end -}}
 {{- end -}}
 )
+{{- end -}}
+{{- if gt (len .Where) 0 }}
 WHERE {{- range $i, $col := .Where -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }}
     AND {{ $col }} = ?
 	{{- end -}}
+{{- end -}}
 {{- end -}}
 `
