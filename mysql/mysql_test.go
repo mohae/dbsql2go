@@ -48,7 +48,8 @@ var createTables = []string{
 		d_time TIME,
 		d_year YEAR,
 		size ENUM('small', 'medium', 'large'),
-		a_set SET('a', 'b', 'c')
+		a_set SET('a', 'b', 'c'),
+		INDEX (id, d_datetime)
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
 	`CREATE TABLE def_nn (
@@ -58,7 +59,8 @@ var createTables = []string{
 		d_time TIME NOT NULL,
 		d_year YEAR NOT NULL,
 		size ENUM('small', 'med', 'large') NOT NULL,
-		a_set SET('1', '2', '3') NOT NULL
+		a_set SET('1', '2', '3') NOT NULL,
+		INDEX (id, d_datetime)
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
 	`CREATE TABLE ghi (
@@ -1034,6 +1036,117 @@ var fmtdTableDefsString = []string{
 `,
 }
 
+var indexes = []Index{
+	{
+		TableName: "abc", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "code",
+		SeqInIndex: 1, ColumnName: "code", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "abc", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "PRIMARY",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "abc_nn", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "code",
+		SeqInIndex: 1, ColumnName: "code", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "abc_nn", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "PRIMARY",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "def", NonUnique: 1, IndexSchema: "dbsql_test", IndexName: "id",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "def", NonUnique: 1, IndexSchema: "dbsql_test", IndexName: "id",
+		SeqInIndex: 2, ColumnName: "d_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "YES", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "def", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "PRIMARY",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "def_nn", NonUnique: 1, IndexSchema: "dbsql_test", IndexName: "id",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "def_nn", NonUnique: 1, IndexSchema: "dbsql_test", IndexName: "id",
+		SeqInIndex: 2, ColumnName: "d_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "def_nn", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "PRIMARY",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "ghi", NonUnique: 1, IndexSchema: "dbsql_test", IndexName: "def_id",
+		SeqInIndex: 1, ColumnName: "def_id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "YES", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "ghi_nn", NonUnique: 1, IndexSchema: "dbsql_test", IndexName: "def_id",
+		SeqInIndex: 1, ColumnName: "def_id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "jkl", NonUnique: 1, IndexSchema: "dbsql_test", IndexName: "fid",
+		SeqInIndex: 1, ColumnName: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "YES", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "jkl", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "PRIMARY",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "jkl_nn", NonUnique: 1, IndexSchema: "dbsql_test", IndexName: "fid",
+		SeqInIndex: 1, ColumnName: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "jkl_nn", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "PRIMARY",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "mno", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "PRIMARY",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+	{
+		TableName: "mno_nn", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "PRIMARY",
+		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", IndexType: "BTREE",
+		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
+	},
+}
+
 func TestMain(m *testing.M) {
 	db, err := New(server, user, password, testDB)
 	if err != nil {
@@ -1193,6 +1306,109 @@ func TestTables(t *testing.T) {
 				t.Errorf("%s.%s COMMENT: got %q want %q", tbl.name, col.Name, col.Comment, tableDefs[i].Columns[j].Comment)
 				continue
 			}
+		}
+	}
+}
+
+func TestIndexes(t *testing.T) {
+	m, err := New(server, user, password, testDB)
+	if err != nil {
+		t.Errorf("unexpected connection error: %s", err)
+		return
+	}
+	err = m.GetIndexes()
+	if err != nil {
+		t.Errorf("unexpected error getting index information: %s", err)
+		return
+	}
+	ndxs := m.Indexes()
+	for i, v := range ndxs {
+		ndx := v.(*Index)
+		if ndx.TableName != indexes[i].TableName {
+			t.Errorf("%s.%s.%d.Tablename: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.TableName, indexes[i].TableName)
+			continue
+		}
+		if ndx.NonUnique != indexes[i].NonUnique {
+			t.Errorf("%s.%s.%d.NonUnique: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.NonUnique, indexes[i].NonUnique)
+			continue
+		}
+		if ndx.IndexSchema != indexes[i].IndexSchema {
+			t.Errorf("%s.%s.%d.IndexSchema: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexSchema, indexes[i].IndexSchema)
+			continue
+		}
+		if ndx.IndexName != indexes[i].IndexName {
+			t.Errorf("%s.%s.%d.IndexName: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexName, indexes[i].IndexName)
+			continue
+		}
+		if ndx.SeqInIndex != indexes[i].SeqInIndex {
+			t.Errorf("%s.%s.%d.SeqInIndex: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.SeqInIndex, indexes[i].SeqInIndex)
+			continue
+		}
+		if ndx.ColumnName != indexes[i].ColumnName {
+			t.Errorf("%s.%s.%d.ColumnName: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.ColumnName, indexes[i].ColumnName)
+			continue
+		}
+		if ndx.Collation.Valid != indexes[i].Collation.Valid {
+			t.Errorf("%s.%s.%d.Collation.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Collation.Valid, indexes[i].Collation.Valid)
+			continue
+		}
+		if ndx.Collation.Valid {
+			if ndx.Collation.String != indexes[i].Collation.String {
+				t.Errorf("%s.%s.%d.Collation.String: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Collation.String, indexes[i].Collation.String)
+				continue
+			}
+		}
+		if ndx.Cardinality.Valid != indexes[i].Cardinality.Valid {
+			t.Errorf("%s.%s.%d.Cardinality.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Cardinality.Valid, indexes[i].Cardinality.Valid)
+			continue
+		}
+		if ndx.Cardinality.Valid {
+			if ndx.Cardinality.Int64 != indexes[i].Cardinality.Int64 {
+				t.Errorf("%s.%s.%d.Cardinality.Int64: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Cardinality.Int64, indexes[i].Cardinality.Int64)
+				continue
+			}
+		}
+		if ndx.SubPart.Valid != indexes[i].SubPart.Valid {
+			t.Errorf("%s.%s.%d.SubPart.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.SubPart.Valid, indexes[i].SubPart.Valid)
+			continue
+		}
+		if ndx.SubPart.Valid {
+			if ndx.SubPart.Int64 != indexes[i].SubPart.Int64 {
+				t.Errorf("%s.%s.%d.SubPart.Int64: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.SubPart.Int64, indexes[i].SubPart.Int64)
+				continue
+			}
+		}
+		if ndx.Packed.Valid != indexes[i].Packed.Valid {
+			t.Errorf("%s.%s.%d.Packed.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Packed.Valid, indexes[i].Packed.Valid)
+			continue
+		}
+		if ndx.Packed.Valid {
+			if ndx.Packed.String != indexes[i].Packed.String {
+				t.Errorf("%s.%s.%d.Packed.String: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Packed.String, indexes[i].Packed.String)
+				continue
+			}
+		}
+		if ndx.Nullable != indexes[i].Nullable {
+			t.Errorf("%s.%s.%d.Nullable: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Nullable, indexes[i].Nullable)
+			continue
+		}
+		if ndx.IndexType != indexes[i].IndexType {
+			t.Errorf("%s.%s.%d.IndexType: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexType, indexes[i].IndexType)
+			continue
+		}
+		if ndx.Comment.Valid != indexes[i].Comment.Valid {
+			t.Errorf("%s.%s.%d.Comment.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Comment.Valid, indexes[i].Comment.Valid)
+			continue
+		}
+		if ndx.Comment.Valid {
+			if ndx.Packed.String != indexes[i].Packed.String {
+				t.Errorf("%s.%s.%d.Comment.String: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Comment.String, indexes[i].Comment.String)
+				continue
+			}
+		}
+		if ndx.IndexComment != indexes[i].IndexComment {
+			t.Errorf("%s.%s.%d.IndexComment: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexComment, indexes[i].IndexComment)
+			continue
 		}
 	}
 }

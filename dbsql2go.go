@@ -43,10 +43,11 @@ func (u UnsupportedDBErr) Error() string {
 type DBer interface {
 	GetTables() error
 	Tables() []Tabler
+	GetIndexes() error
+	Indexes() []Indexer
 }
 
-// Table is a generalized table struct. Each supported database will embed
-// this struct
+// Tabler
 type Tabler interface {
 	//Columns() []Column
 	Name() string
@@ -54,4 +55,9 @@ type Tabler interface {
 	Collation() string
 	Go() ([]byte, error)
 	GoFmt() ([]byte, error)
+}
+
+// Indexer
+type Indexer interface {
+	Name() string // Just so that there's semething to fulfill until this gets fleshed out further.
 }

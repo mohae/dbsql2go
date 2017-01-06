@@ -27,9 +27,10 @@ import (
 const schema = "information_schema"
 
 type DB struct {
-	Conn   *sql.DB
-	dbName string
-	tables []dbsql2go.Tabler
+	Conn    *sql.DB
+	dbName  string
+	tables  []dbsql2go.Tabler
+	indexes []dbsql2go.Indexer
 }
 
 // New connects to the database's information_schema using the supplied
@@ -112,8 +113,45 @@ func (m *DB) GetTables() error {
 	return nil
 }
 
+func (m *DB) GetIndexes() error {
+	ndxS := `select TABLE_NAME, NON_UNIQUE, INDEX_SCHEMA,
+		INDEX_NAME, SEQ_IN_INDEX, COLUMN_NAME,
+		COLLATION, CARDINALITY, SUB_PART,
+		PACKED, NULLABLE, INDEX_TYPE,
+		COMMENT, INDEX_COMMENT
+		from STATISTICS
+		where TABLE_SCHEMA = ?
+		order by TABLE_NAME, INDEX_NAME, SEQ_IN_INDEX`
+
+	rows, err := m.Conn.Query(ndxS, m.dbName)
+	if err != nil {
+		return err
+	}
+	for rows.Next() {
+		var i Index
+		err = rows.Scan(
+			&i.TableName, &i.NonUnique, &i.IndexSchema,
+			&i.IndexName, &i.SeqInIndex, &i.ColumnName,
+			&i.Collation, &i.Cardinality, &i.SubPart,
+			&i.Packed, &i.Nullable, &i.IndexType,
+			&i.Comment, &i.IndexComment,
+		)
+		if err != nil {
+			rows.Close()
+			return err
+		}
+		m.indexes = append(m.indexes, &i)
+	}
+	rows.Close()
+	return nil
+}
+
 func (m *DB) Tables() []dbsql2go.Tabler {
 	return m.tables
+}
+
+func (m *DB) Indexes() []dbsql2go.Indexer {
+	return m.indexes
 }
 
 type Table struct {
@@ -260,6 +298,28 @@ func (c *Column) Go() []byte {
 	default:
 		return append(n, []byte(c.DataType)...)
 	}
+}
+
+type Index struct {
+	TableName    string
+	NonUnique    int64
+	IndexSchema  string
+	IndexName    string
+	SeqInIndex   int64
+	ColumnName   string
+	Collation    sql.NullString
+	Cardinality  sql.NullInt64
+	SubPart      sql.NullInt64
+	Packed       sql.NullString
+	Nullable     string
+	IndexType    string
+	Comment      sql.NullString
+	IndexComment string
+}
+
+// Name returns the index's name.
+func (i *Index) Name() string {
+	return i.IndexName
 }
 
 // ImportString returns the import string for importing the mysql db driver.
