@@ -31,6 +31,7 @@ type DB struct {
 	dbName  string
 	tables  []dbsql2go.Tabler
 	indexes []dbsql2go.Indexer
+	views   []dbsql2go.Viewer
 }
 
 // New connects to the database's information_schema using the supplied
@@ -63,7 +64,6 @@ func (m *DB) GetTables() error {
 			rows.Close()
 			return err
 		}
-		fmt.Println(t.name)
 		m.tables = append(m.tables, &t)
 	}
 	rows.Close()
@@ -106,12 +106,17 @@ func (m *DB) GetTables() error {
 				rows.Close()
 				return err
 			}
+
 			mTbl.Columns = append(mTbl.Columns, c)
 		}
 		rows.Close()
 		m.tables[i] = mTbl
 	}
 	return nil
+}
+
+func (m *DB) Tables() []dbsql2go.Tabler {
+	return m.tables
 }
 
 func (m *DB) GetIndexes() error {
@@ -147,12 +152,41 @@ func (m *DB) GetIndexes() error {
 	return nil
 }
 
-func (m *DB) Tables() []dbsql2go.Tabler {
-	return m.tables
-}
-
 func (m *DB) Indexes() []dbsql2go.Indexer {
 	return m.indexes
+}
+
+func (m *DB) GetViews() error {
+	viewS := `select TABLE_NAME, VIEW_DEFINITION, CHECK_OPTION,
+		IS_UPDATABLE, DEFINER, SECURITY_TYPE,
+		CHARACTER_SET_CLIENT, COLLATION_CONNECTION
+		from VIEWS
+		where TABLE_SCHEMA = ?
+		order by TABLE_NAME`
+
+	rows, err := m.Conn.Query(viewS, m.dbName)
+	if err != nil {
+		return err
+	}
+	for rows.Next() {
+		var v View
+		err = rows.Scan(
+			&v.TableName, &v.ViewDefinition, &v.CheckOption,
+			&v.IsUpdatable, &v.Definer, &v.SecurityType,
+			&v.CharacterSetClient, &v.CollationConnection,
+		)
+		if err != nil {
+			rows.Close()
+			return err
+		}
+		m.views = append(m.views, &v)
+	}
+	rows.Close()
+	return nil
+}
+
+func (m *DB) Views() []dbsql2go.Viewer {
+	return m.views
 }
 
 type Table struct {
@@ -329,4 +363,19 @@ func (i *Index) Name() string {
 // ImportString returns the import string for importing the mysql db driver.
 func Import() string {
 	return `_ "github.com/go-sql-driver/mysql"`
+}
+
+type View struct {
+	TableName           string
+	ViewDefinition      string
+	CheckOption         string
+	IsUpdatable         string
+	Definer             string
+	SecurityType        string
+	CharacterSetClient  string
+	CollationConnection string
+}
+
+func (v *View) Name() string {
+	return v.TableName
 }

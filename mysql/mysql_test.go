@@ -336,7 +336,7 @@ var tableDefs = []Table{
 		name: "abc_v", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
-				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
@@ -493,7 +493,7 @@ var tableDefs = []Table{
 		name: "defghi_v", schema: "dbsql_test",
 		Columns: []Column{
 			Column{
-				Name: "aid", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				Name: "aid", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
@@ -502,7 +502,7 @@ var tableDefs = []Table{
 			},
 			Column{
 				Name: "bid", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
-				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				IsNullable: "YES", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
@@ -518,8 +518,8 @@ var tableDefs = []Table{
 			},
 			Column{
 				Name: "size", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
-				IsNullable: "NO", DataType: "enum", CharMaxLen: sql.NullInt64{Int64: 5, Valid: true},
-				CharOctetLen: sql.NullInt64{Int64: 15, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				IsNullable: "YES", DataType: "enum", CharMaxLen: sql.NullInt64{Int64: 6, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 18, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "enum('small','medium','large')",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
 				Comment: "",
@@ -1265,6 +1265,19 @@ var indexes = []Index{
 	},
 }
 
+var views = []View{
+	{
+		TableName: "abc_v", ViewDefinition: "select `dbsql_test`.`abc`.`id` AS `id`,`dbsql_test`.`abc`.`code` AS `code`,`dbsql_test`.`abc`.`description` AS `description` from `dbsql_test`.`abc` order by `dbsql_test`.`abc`.`code`",
+		CheckOption: "NONE", IsUpdatable: "YES", Definer: "testuser@localhost",
+		SecurityType: "DEFINER", CharacterSetClient: "utf8", CollationConnection: "utf8_general_ci",
+	},
+	{
+		TableName: "defghi_v", ViewDefinition: "select `a`.`id` AS `aid`,`b`.`id` AS `bid`,`a`.`d_datetime` AS `d_datetime`,`a`.`size` AS `size`,`b`.`stuff` AS `stuff` from `dbsql_test`.`def` `a` join `dbsql_test`.`ghi` `b` where (`a`.`id` = `b`.`def_id`) order by `a`.`id`,`a`.`size`,`b`.`def_id`",
+		CheckOption: "NONE", IsUpdatable: "YES", Definer: "testuser@localhost",
+		SecurityType: "DEFINER", CharacterSetClient: "utf8", CollationConnection: "utf8_general_ci",
+	},
+}
+
 func TestMain(m *testing.M) {
 	db, err := New(server, user, password, testDB)
 	if err != nil {
@@ -1297,7 +1310,7 @@ func TestTables(t *testing.T) {
 			t.Errorf("%s: assertion error; was not a Table", tableDefs[i].Name)
 		}
 		if tbl.Name() != tableDefs[i].name {
-			t.Errorf("name: got %q want %q", tbl.Name, tableDefs[i].Name)
+			t.Errorf("name: got %q want %q", tbl.name, tableDefs[i].name)
 			continue
 		}
 		if tbl.Typ != tableDefs[i].Typ {
@@ -1538,6 +1551,55 @@ func TestIndexes(t *testing.T) {
 		}
 		if ndx.IndexComment != indexes[i].IndexComment {
 			t.Errorf("%s.%s.%d.IndexComment: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexComment, indexes[i].IndexComment)
+			continue
+		}
+	}
+}
+
+func TestViews(t *testing.T) {
+	m, err := New(server, user, password, testDB)
+	if err != nil {
+		t.Errorf("unexpected connection error: %s", err)
+		return
+	}
+	err = m.GetViews()
+	if err != nil {
+		t.Errorf("unexpected error getting index information: %s", err)
+		return
+	}
+	vs := m.Views()
+	for i, view := range vs {
+		v := view.(*View)
+		if v.TableName != views[i].TableName {
+			t.Errorf("%s: got %s; want %s", views[i].TableName, v.TableName, views[i].TableName)
+			continue
+		}
+		if v.ViewDefinition != views[i].ViewDefinition {
+			t.Errorf("%s.ViewDefinition: got %s; want %s", views[i].TableName, v.ViewDefinition, views[i].ViewDefinition)
+			continue
+		}
+		if v.CheckOption != views[i].CheckOption {
+			t.Errorf("%s.CheckOption: got %s; want %s", views[i].TableName, v.CheckOption, views[i].CheckOption)
+			continue
+		}
+		if v.IsUpdatable != views[i].IsUpdatable {
+			t.Errorf("%s.IsUpdatable: got %s; want %s", views[i].IsUpdatable, v.TableName, views[i].IsUpdatable)
+			continue
+		}
+		if v.Definer != views[i].Definer {
+			t.Errorf("%s.Definer: got %s; want %s", views[i].TableName, v.Definer, views[i].Definer)
+			continue
+		}
+		if v.SecurityType != views[i].SecurityType {
+			t.Errorf("%s.SecurityType: got %s; want %s", views[i].TableName, v.SecurityType, views[i].SecurityType)
+			continue
+		}
+		if v.CharacterSetClient != views[i].CharacterSetClient {
+			t.Errorf("%s.CharacterSetClient: got %s; want %s", views[i].TableName, v.CharacterSetClient, views[i].CharacterSetClient)
+			continue
+		}
+		if v.CollationConnection != views[i].CollationConnection {
+			t.Errorf("%s.CollationConnection: got %s; want %s", views[i].TableName, v.CollationConnection, views[i].CollationConnection)
 			continue
 		}
 	}

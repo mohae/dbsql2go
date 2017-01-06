@@ -45,6 +45,8 @@ type DBer interface {
 	Tables() []Tabler
 	GetIndexes() error
 	Indexes() []Indexer
+	GetViews() error
+	Views() []Viewer
 }
 
 // Tabler
@@ -59,5 +61,10 @@ type Tabler interface {
 
 // Indexer
 type Indexer interface {
+	Name() string // Just so that there's semething to fulfill until this gets fleshed out further.
+}
+
+// Viewer
+type Viewer interface {
 	Name() string // Just so that there's semething to fulfill until this gets fleshed out further.
 }
