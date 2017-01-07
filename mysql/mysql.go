@@ -27,11 +27,12 @@ import (
 const schema = "information_schema"
 
 type DB struct {
-	Conn    *sql.DB
-	dbName  string
-	tables  []dbsql2go.Tabler
-	indexes []dbsql2go.Indexer
-	views   []dbsql2go.Viewer
+	Conn         *sql.DB
+	dbName       string
+	tables       []dbsql2go.Tabler
+	indexes      []dbsql2go.Indexer
+	IndexDetails []IndexDetail
+	views        []dbsql2go.Viewer
 }
 
 // New connects to the database's information_schema using the supplied
@@ -119,6 +120,9 @@ func (m *DB) Tables() []dbsql2go.Tabler {
 	return m.tables
 }
 
+// GetIndexes gets the information about the databases indexes.
+// TODO: would getting the key_column_usage and table_constraints info be
+// sufficient?
 func (m *DB) GetIndexes() error {
 	ndxS := `select TABLE_NAME, NON_UNIQUE, INDEX_SCHEMA,
 		INDEX_NAME, SEQ_IN_INDEX, COLUMN_NAME,
@@ -134,19 +138,19 @@ func (m *DB) GetIndexes() error {
 		return err
 	}
 	for rows.Next() {
-		var i Index
+		var id IndexDetail
 		err = rows.Scan(
-			&i.TableName, &i.NonUnique, &i.IndexSchema,
-			&i.IndexName, &i.SeqInIndex, &i.ColumnName,
-			&i.Collation, &i.Cardinality, &i.SubPart,
-			&i.Packed, &i.Nullable, &i.IndexType,
-			&i.Comment, &i.IndexComment,
+			&id.TableName, &id.NonUnique, &id.IndexSchema,
+			&id.IndexName, &id.SeqInIndex, &id.ColumnName,
+			&id.Collation, &id.Cardinality, &id.SubPart,
+			&id.Packed, &id.Nullable, &id.IndexType,
+			&id.Comment, &id.IndexComment,
 		)
 		if err != nil {
 			rows.Close()
 			return err
 		}
-		m.indexes = append(m.indexes, &i)
+		m.IndexDetails = append(m.IndexDetails, id)
 	}
 	rows.Close()
 	return nil
@@ -347,7 +351,7 @@ func (c *Column) Go() []byte {
 	}
 }
 
-type Index struct {
+type IndexDetail struct {
 	TableName    string
 	NonUnique    int64
 	IndexSchema  string
@@ -365,7 +369,7 @@ type Index struct {
 }
 
 // Name returns the index's name.
-func (i *Index) Name() string {
+func (i *IndexDetail) Name() string {
 	return i.IndexName
 }
 
