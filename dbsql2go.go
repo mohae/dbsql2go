@@ -33,7 +33,8 @@ func ParseDBType(s string) (DBType, error) {
 }
 
 const (
-	PK ConstraintType = iota + 1
+	UnknownConstraint ConstraintType = iota
+	PK
 	FK
 	Unique
 )
@@ -41,6 +42,28 @@ const (
 //go:generate stringer -type=ConstraintType
 // ConstarintType is the type of the table constraint.
 type ConstraintType int
+
+func ParseConstraintType(s string) (ConstraintType, error) {
+	v := strings.ToLower(s)
+	switch v {
+	case "primary key", "primary":
+		return PK, nil
+	case "foreign key":
+		return FK, nil
+	case "unique":
+		return Unique, nil
+	default:
+		return UnknownConstraint, UnknownConstraintErr{s}
+	}
+}
+
+type UnknownConstraintErr struct {
+	Value string
+}
+
+func (u UnknownConstraintErr) Error() string {
+	return u.Value + " is not a known DB constraint type"
+}
 
 type UnsupportedDBErr struct {
 	Value string
@@ -57,6 +80,7 @@ type DBer interface {
 	GetViews() error
 	Tables() []Tabler
 	UpdateTableIndexes()
+	UpdateTableConstraints()
 	Views() []Viewer
 }
 
@@ -69,6 +93,7 @@ type Tabler interface {
 	Go() ([]byte, error)
 	GoFmt() ([]byte, error)
 	Indexes() []Index
+	Constraints() []Constraint
 	//	SelectSQL() string
 	//	InsertSQL() string
 	//	DeleteSQL() string
@@ -88,8 +113,8 @@ type Index struct {
 	Cols    []string // Index Columns, in order.
 }
 
-// Key holds information about a table's key and constraints.
-type Key struct {
+// Constraint holds information about a table's constraints, e.g. Primary Key.
+type Constraint struct {
 	Type     ConstraintType // The key or constraint type
 	Name     string         // Name of key
 	Table    string         // the table to which this key belongs.

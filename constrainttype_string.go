@@ -4,14 +4,13 @@ package dbsql2go
 
 import "fmt"
 
-const _ConstraintType_name = "PKFKUnique"
+const _ConstraintType_name = "UnknownConstraintPKFKUnique"
 
-var _ConstraintType_index = [...]uint8{0, 2, 4, 10}
+var _ConstraintType_index = [...]uint8{0, 17, 19, 21, 27}
 
 func (i ConstraintType) String() string {
-	i -= 1
 	if i < 0 || i >= ConstraintType(len(_ConstraintType_index)-1) {
-		return fmt.Sprintf("ConstraintType(%d)", i+1)
+		return fmt.Sprintf("ConstraintType(%d)", i)
 	}
 	return _ConstraintType_name[_ConstraintType_index[i]:_ConstraintType_index[i+1]]
 }

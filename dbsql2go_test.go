@@ -46,11 +46,39 @@ func TestParseDBType(t *testing.T) {
 	for _, test := range tests {
 		typ, err := ParseDBType(test.value)
 		if err != test.err {
-			t.Errorf("%s: got %v want %v", err, test.err)
+			t.Errorf("%s: got %v want %v", test.value, err, test.err)
 			continue
 		}
 		if typ != test.typ {
-			t.Errorf("%s: got %v want %v", typ, test.typ)
+			t.Errorf("%s: got %v want %v", test.value, typ, test.typ)
+		}
+	}
+}
+
+func TestParseConstraintType(t *testing.T) {
+	tests := []struct {
+		value    string
+		expected ConstraintType
+		err      error
+	}{
+		{"PRIMARY KEY", PK, nil},
+		{"PRIMARY", PK, nil},
+		{"FOREIGN KEY", FK, nil},
+		{"UNIQUE", Unique, nil},
+		{"", UnknownConstraint, UnknownConstraintErr{""}},
+		{"u", UnknownConstraint, UnknownConstraintErr{"u"}},
+		{"alt", UnknownConstraint, UnknownConstraintErr{"alt"}},
+		{"U", UnknownConstraint, UnknownConstraintErr{"U"}},
+	}
+
+	for _, test := range tests {
+		typ, err := ParseConstraintType(test.value)
+		if err != test.err {
+			t.Errorf("%s: got %v want %v", test.value, err, test.err)
+			continue
+		}
+		if typ != test.expected {
+			t.Errorf("%s: got %v want %v", test.value, typ, test.expected)
 		}
 	}
 }
