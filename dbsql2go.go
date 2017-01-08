@@ -87,12 +87,21 @@ type Indexer interface {
 
 // Index holds information about a given index.
 type Index struct {
-	Type     IndexType // type of Index
-	Name     string    // Name of Index
-	Table    string    // Index's table
-	Cols     []string  // Index Columns, in order.
-	RefTable string    // Referred to table for Foreign Keys
-	RefCols  []string  // Referred to columns, in order, for Foreign Keys
+	Type    IndexType // type of Index
+	Primary bool      // if the Index is a primary key
+	Name    string    // Name of Index
+	Table   string    // Index's table
+	Cols    []string  // Index Columns, in order.
+}
+
+// Key holds information about a table's key and constraints.
+type Key struct {
+	Type     ConstraintType // The key or constraint type
+	Name     string         // Name of key
+	Table    string         // the table to which this key belongs.
+	Cols     []string       // the columns that this key/constraint are on, in order.
+	RefTable string         // Referred to table for Foreign Keys
+	RefCols  []string       // Referred to columns, in order, for Foreign Keys
 }
 
 // Viewer

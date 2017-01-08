@@ -234,6 +234,7 @@ type Table struct {
 	collation sql.NullString
 	Comment   string
 	Indexes   []dbsql2go.Index
+	Keys      []dbsql2go.Keys
 }
 
 // Name returns the name of the table.
