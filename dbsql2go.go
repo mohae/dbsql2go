@@ -79,10 +79,12 @@ type Indexer interface {
 
 // Index holds information about a given index.
 type Index struct {
-	Type  IndexType // type of Index
-	Name  string    // Name of Index
-	Table string    // Index's table
-	Cols  []string  // Index Columns, in order.
+	Type     IndexType // type of Index
+	Name     string    // Name of Index
+	Table    string    // Index's table
+	Cols     []string  // Index Columns, in order.
+	RefTable string    // Referred to table for Foreign Keys
+	RefCols  []string  // Referred to columns, in order, for Foreign Keys
 }
 
 // Viewer
