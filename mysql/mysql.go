@@ -30,8 +30,8 @@ type DB struct {
 	Conn    *sql.DB
 	dbName  string
 	tables  []dbsql2go.Tabler
-	Indexes []Index
-	Keys    []Key
+	indexes []Index
+	keys    []Key
 	views   []dbsql2go.Viewer
 }
 
@@ -152,7 +152,7 @@ func (m *DB) GetIndexes() error {
 			rows.Close()
 			return err
 		}
-		m.Indexes = append(m.Indexes, ndx)
+		m.indexes = append(m.indexes, ndx)
 	}
 	rows.Close()
 	return nil
@@ -186,7 +186,7 @@ GROUP BY k.table_name,
 			rows.Close()
 			return err
 		}
-		m.Keys = append(m.Keys, k)
+		m.keys = append(m.keys, k)
 	}
 	rows.Close()
 	return nil

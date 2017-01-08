@@ -1568,7 +1568,7 @@ func TestIndexes(t *testing.T) {
 		t.Errorf("unexpected error getting index information: %s", err)
 		return
 	}
-	for i, ndx := range m.(*DB).Indexes {
+	for i, ndx := range m.(*DB).indexes {
 		if ndx.TableName != indexes[i].TableName {
 			t.Errorf("%s.%s.%d.Tablename: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.TableName, indexes[i].TableName)
 			continue
@@ -1670,7 +1670,7 @@ func TestGetKeys(t *testing.T) {
 		return
 	}
 	// Check key info
-	for i, k := range m.(*DB).Keys {
+	for i, k := range m.(*DB).keys {
 		if k.Name != keys[i].Name {
 			t.Errorf("%s.%d.Name: got %s want %s", keys[i].Name, keys[i].Seq, k.Name, keys[i].Name)
 			continue
