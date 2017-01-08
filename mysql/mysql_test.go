@@ -1348,6 +1348,27 @@ var indexDetails = []IndexDetail{
 	},
 }
 
+var keys = []Key{
+	{"code", "UNIQUE", "abc", "code", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"PRIMARY", "PRIMARY KEY", "abc", "id", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"code", "UNIQUE", "abc_nn", "code", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"PRIMARY", "PRIMARY KEY", "abc_nn", "id", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"PRIMARY", "PRIMARY KEY", "def", "id", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"PRIMARY", "PRIMARY KEY", "def_nn", "id", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"ghi_ibfk_1", "FOREIGN KEY", "ghi", "def_id", 1, sql.NullInt64{Int64: 1, Valid: true}, sql.NullString{String: "def", Valid: true}, sql.NullString{String: "id", Valid: true}},
+	{"ghi_ibfk_1", "FOREIGN KEY", "ghi", "def_datetime", 2, sql.NullInt64{Int64: 2, Valid: true}, sql.NullString{String: "def", Valid: true}, sql.NullString{String: "d_datetime", Valid: true}},
+	{"ghi_nn_ibfk_1", "FOREIGN KEY", "ghi_nn", "def_id", 1, sql.NullInt64{Int64: 1, Valid: true}, sql.NullString{String: "def_nn", Valid: true}, sql.NullString{String: "id", Valid: true}},
+	{"ghi_nn_ibfk_1", "FOREIGN KEY", "ghi_nn", "def_datetime", 2, sql.NullInt64{Int64: 2, Valid: true}, sql.NullString{String: "def_nn", Valid: true}, sql.NullString{String: "d_datetime", Valid: true}},
+	{"jkl_ibfk_1", "FOREIGN KEY", "jkl", "fid", 1, sql.NullInt64{Int64: 1, Valid: true}, sql.NullString{String: "def", Valid: true}, sql.NullString{String: "id", Valid: true}},
+	{"PRIMARY", "PRIMARY KEY", "jkl", "id", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"PRIMARY", "PRIMARY KEY", "jkl", "fid", 2, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"jkl_nn_ibfk_1", "FOREIGN KEY", "jkl_nn", "fid", 1, sql.NullInt64{Int64: 1, Valid: true}, sql.NullString{String: "def", Valid: true}, sql.NullString{String: "id", Valid: true}},
+	{"PRIMARY", "PRIMARY KEY", "jkl_nn", "id", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"PRIMARY", "PRIMARY KEY", "jkl_nn", "fid", 2, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"PRIMARY", "PRIMARY KEY", "mno", "id", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+	{"PRIMARY", "PRIMARY KEY", "mno_nn", "id", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
+}
+
 var views = []View{
 	{
 		TableName: "abc_v", ViewDefinition: "select `dbsql_test`.`abc`.`id` AS `id`,`dbsql_test`.`abc`.`code` AS `code`,`dbsql_test`.`abc`.`description` AS `description` from `dbsql_test`.`abc` order by `dbsql_test`.`abc`.`code`",
@@ -1634,6 +1655,60 @@ func TestIndexes(t *testing.T) {
 			t.Errorf("%s.%s.%d.IndexComment: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexComment, indexDetails[i].IndexComment)
 			continue
 		}
+	}
+	// Check key info
+	for i, k := range m.(*DB).Keys {
+		if k.Name != keys[i].Name {
+			t.Errorf("%s.%d.Name: got %s want %s", keys[i].Name, keys[i].Seq, k.Name, keys[i].Name)
+			continue
+		}
+		if k.Type != keys[i].Type {
+			t.Errorf("%s.%d.Type: got %s want %s", keys[i].Name, keys[i].Seq, k.Type, keys[i].Type)
+			continue
+		}
+		if k.Table != keys[i].Table {
+			t.Errorf("%s.%d.Table: got %s want %s", keys[i].Name, keys[i].Seq, k.Table, keys[i].Table)
+			continue
+		}
+		if k.Column != keys[i].Column {
+			t.Errorf("%s.%d.Column: got %s want %s", keys[i].Name, keys[i].Seq, k.Column, keys[i].Column)
+			continue
+		}
+		if k.Seq != keys[i].Seq {
+			t.Errorf("%s.%d.Seq: got %d want %d", keys[i].Name, keys[i].Seq, k.Seq, keys[i].Seq)
+			continue
+		}
+		if k.USeq.Valid != keys[i].USeq.Valid {
+			t.Errorf("%s.%d.USeq.Valid: got %t want %t", keys[i].Name, keys[i].Seq, k.USeq.Valid, keys[i].USeq.Valid)
+			continue
+		}
+		if k.USeq.Valid {
+			if k.USeq.Int64 != keys[i].USeq.Int64 {
+				t.Errorf("%s.%d.USeq.Int64: got %s want %s", keys[i].Name, keys[i].Seq, k.USeq.Int64, keys[i].USeq.Int64)
+				continue
+			}
+		}
+		if k.RefTable.Valid != keys[i].RefTable.Valid {
+			t.Errorf("%s.%d.RefTable.Valid: got %t want %t", keys[i].Name, keys[i].Seq, k.RefTable.Valid, keys[i].RefTable.Valid)
+			continue
+		}
+		if k.RefTable.Valid {
+			if k.RefTable.String != keys[i].RefTable.String {
+				t.Errorf("%s.%d.RefTable.String: got %s want %s", keys[i].Name, keys[i].Seq, k.RefTable.String, keys[i].RefTable.String)
+				continue
+			}
+		}
+		if k.RefCol.Valid != keys[i].RefCol.Valid {
+			t.Errorf("%s.%d.RefCol.Valid: got %t want %t", keys[i].Name, keys[i].Seq, k.RefCol.Valid, keys[i].RefCol.Valid)
+			continue
+		}
+		if k.RefCol.Valid {
+			if k.RefCol.String != keys[i].RefCol.String {
+				t.Errorf("%s.%d.RefCol.String: got %s want %s", keys[i].Name, keys[i].Seq, k.RefCol.String, keys[i].RefCol.String)
+				continue
+			}
+		}
+
 	}
 }
 

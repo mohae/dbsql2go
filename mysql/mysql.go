@@ -30,8 +30,8 @@ type DB struct {
 	Conn         *sql.DB
 	dbName       string
 	tables       []dbsql2go.Tabler
-	indexes      []dbsql2go.Indexer
 	IndexDetails []IndexDetail
+	Keys         []Key
 	views        []dbsql2go.Viewer
 }
 
@@ -120,11 +120,13 @@ func (m *DB) Tables() []dbsql2go.Tabler {
 	return m.tables
 }
 
-// GetIndexes gets the information about the databases indexes.
-// TODO: would getting the key_column_usage and table_constraints info be
-// sufficient?
+// GetIndexes gets the information about the databases indexes. This includes
+// key column and constraint info so that indexes with constraints, i.e.
+// primary keys, foreign keys, and unique can be properly identified.
+//
+// Any index not in the key_column_constraint is a non-unique, non-key index.
 func (m *DB) GetIndexes() error {
-	ndxS := `select TABLE_NAME, NON_UNIQUE, INDEX_SCHEMA,
+	sel := `select TABLE_NAME, NON_UNIQUE, INDEX_SCHEMA,
 		INDEX_NAME, SEQ_IN_INDEX, COLUMN_NAME,
 		COLLATION, CARDINALITY, SUB_PART,
 		PACKED, NULLABLE, INDEX_TYPE,
@@ -133,7 +135,7 @@ func (m *DB) GetIndexes() error {
 		where TABLE_SCHEMA = ?
 		order by TABLE_NAME, INDEX_NAME, SEQ_IN_INDEX`
 
-	rows, err := m.Conn.Query(ndxS, m.dbName)
+	rows, err := m.Conn.Query(sel, m.dbName)
 	if err != nil {
 		return err
 	}
@@ -153,11 +155,39 @@ func (m *DB) GetIndexes() error {
 		m.IndexDetails = append(m.IndexDetails, id)
 	}
 	rows.Close()
-	return nil
-}
 
-func (m *DB) Indexes() []dbsql2go.Indexer {
-	return m.indexes
+	// Get the key and constraint stuff.
+	sel = `SELECT k.constraint_name, t.constraint_type, k.table_name,
+	k.column_name, k.ordinal_position, k.position_in_unique_constraint,
+	k.referenced_table_name, k.referenced_column_name
+FROM key_column_usage AS k,
+	 table_constraints AS t
+WHERE k.table_schema = ?
+	AND k.constraint_name = t.constraint_name
+	AND k.table_name = t.table_name
+GROUP BY k.table_name,
+	k.constraint_name,
+	k.ordinal_position`
+	rows, err = m.Conn.Query(sel, m.dbName)
+	if err != nil {
+		return err
+	}
+	for rows.Next() {
+		var k Key
+		err = rows.Scan(
+			&k.Name, &k.Type, &k.Table,
+			&k.Column, &k.Seq, &k.USeq,
+			&k.RefTable, &k.RefCol,
+		)
+		if err != nil {
+			rows.Close()
+			return err
+		}
+		m.Keys = append(m.Keys, k)
+	}
+	rows.Close()
+
+	return nil
 }
 
 func (m *DB) GetViews() error {
@@ -201,6 +231,7 @@ type Table struct {
 	Engine    sql.NullString
 	collation sql.NullString
 	Comment   string
+	Indexes   []dbsql2go.Index
 }
 
 // Name returns the name of the table.
@@ -371,6 +402,18 @@ type IndexDetail struct {
 // Name returns the index's name.
 func (i *IndexDetail) Name() string {
 	return i.IndexName
+}
+
+// Key is data from key_column_usage and table_constraints
+type Key struct {
+	Name     string         // Name of the constraint
+	Type     string         // Constraint type
+	Table    string         // Table of the constraint
+	Column   string         // Column tyhe constraint is on
+	Seq      int            // Sequence number for composite constraints
+	USeq     sql.NullInt64  // Position in Unique Constraint.
+	RefTable sql.NullString // Table the constraint refers to for Foreign Keys
+	RefCol   sql.NullString // Column on the refered to table of the constraint for Foreign Keys.
 }
 
 // ImportString returns the import string for importing the mysql db driver.
