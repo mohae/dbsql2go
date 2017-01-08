@@ -34,11 +34,11 @@ func ParseDBType(s string) (DBType, error) {
 
 // TODO: figure out index/key stuff
 const (
-	PrimaryKey IndexType = iota + 1 // Primary Key
-	Standard                        // An index that isn't one of the above.
+	BTREE IndexType = iota + 1 // BTREE
 )
 
 //go:generate stringer -type=IndexType
+// IndexType is the type of the index.
 type IndexType int
 
 const (
@@ -48,6 +48,7 @@ const (
 )
 
 //go:generate stringer -type=ConstraintType
+// ConstarintType is the type of the table constraint.
 type ConstraintType int
 
 type UnsupportedDBErr struct {
