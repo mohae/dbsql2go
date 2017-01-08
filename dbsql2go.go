@@ -76,11 +76,11 @@ func (u UnsupportedDBErr) Error() string {
 type DBer interface {
 	GetTables() error
 	GetIndexes() error
-	GetKeys() error
+	GetConstraints() error
 	GetViews() error
 	Tables() []Tabler
 	UpdateTableIndexes()
-	UpdateTableConstraints()
+	UpdateTableConstraints() error
 	Views() []Viewer
 }
 

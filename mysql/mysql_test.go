@@ -257,6 +257,10 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: false, Name: "code", Table: "abc", Cols: []string{"code"}},
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc", Cols: []string{"id"}},
 		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.Unique, Name: "code", Table: "abc", Cols: []string{"code"}, RefTable: "", RefCols: nil},
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc", Cols: []string{"id"}, RefTable: "", RefCols: nil},
+		},
 	},
 	Table{
 		name: "abc_nn", schema: "dbsql_test",
@@ -347,6 +351,10 @@ var tableDefs = []Table{
 		indexes: []dbsql2go.Index{
 			{Type: "BTREE", Primary: false, Name: "code", Table: "abc_nn", Cols: []string{"code"}},
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc_nn", Cols: []string{"id"}},
+		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.Unique, Name: "code", Table: "abc_nn", Cols: []string{"code"}, RefTable: "", RefCols: nil},
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc_nn", Cols: []string{"id"}, RefTable: "", RefCols: nil},
 		},
 	},
 	Table{
@@ -446,6 +454,9 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: false, Name: "id", Table: "def", Cols: []string{"id, d_datetime"}},
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def", Cols: []string{"id"}},
 		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "def", Cols: []string{"id"}, RefTable: "", RefCols: nil},
+		},
 	},
 	Table{
 		name: "def_nn", schema: "dbsql_test",
@@ -512,6 +523,9 @@ var tableDefs = []Table{
 		indexes: []dbsql2go.Index{
 			{Type: "BTREE", Primary: false, Name: "id", Table: "def_nn", Cols: []string{"id, d_datetime"}},
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def_nn", Cols: []string{"id"}},
+		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "def_nn", Cols: []string{"id"}, RefTable: "", RefCols: nil},
 		},
 	},
 	Table{
@@ -635,6 +649,9 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi", Cols: []string{"def_id, def_datetime"}},
 			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi", Cols: []string{"def_id, val"}},
 		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.FK, Name: "ghi_ibfk_1", Table: "ghi", Cols: []string{"def_id, def_datetime"}, RefTable: "def", RefCols: []string{"id", "d_datetime"}},
+		},
 	},
 	Table{
 		name: "ghi_nn", schema: "dbsql_test",
@@ -709,6 +726,9 @@ var tableDefs = []Table{
 		indexes: []dbsql2go.Index{
 			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi_nn", Cols: []string{"def_id, def_datetime"}},
 			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi_nn", Cols: []string{"def_id, val"}},
+		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.FK, Name: "ghi_nn_ibfk_1", Table: "ghi_nn", Cols: []string{"def_id, def_datetime"}, RefTable: "def_nn", RefCols: []string{"id", "d_datetime"}},
 		},
 	},
 	Table{
@@ -785,6 +805,10 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl", Cols: []string{"fid"}},
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl", Cols: []string{"id, fid"}},
 		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.FK, Name: "jkl_ibfk_1", Table: "jkl", Cols: []string{"fid"}, RefTable: "def", RefCols: []string{"id"}},
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl", Cols: []string{"id, fid"}, RefTable: "", RefCols: nil},
+		},
 	},
 	Table{
 		name: "jkl_nn", schema: "dbsql_test",
@@ -859,6 +883,10 @@ var tableDefs = []Table{
 		indexes: []dbsql2go.Index{
 			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl_nn", Cols: []string{"fid"}},
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id, fid"}},
+		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.FK, Name: "jkl_nn_ibfk_1", Table: "jkl_nn", Cols: []string{"fid"}, RefTable: "def", RefCols: []string{"id"}},
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id, fid"}, RefTable: "", RefCols: nil},
 		},
 	},
 	Table{
@@ -942,6 +970,9 @@ var tableDefs = []Table{
 		indexes: []dbsql2go.Index{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno", Cols: []string{"id"}},
 		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "mno", Cols: []string{"id"}, RefTable: "", RefCols: nil},
+		},
 	},
 	Table{
 		name: "mno_nn", schema: "dbsql_test",
@@ -1023,6 +1054,9 @@ var tableDefs = []Table{
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno_nn", Cols: []string{"id"}},
+		},
+		constraints: []dbsql2go.Constraint{
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "mno_nn", Cols: []string{"id"}, RefTable: "", RefCols: nil},
 		},
 	},
 }
@@ -1388,7 +1422,7 @@ var indexes = []Index{
 	},
 }
 
-var keys = []Key{
+var constraints = []Constraint{
 	{"code", "UNIQUE", "abc", "code", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
 	{"PRIMARY", "PRIMARY KEY", "abc", "id", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
 	{"code", "UNIQUE", "abc_nn", "code", 1, sql.NullInt64{Int64: 0, Valid: false}, sql.NullString{String: "", Valid: false}, sql.NullString{String: "", Valid: false}},
@@ -1426,7 +1460,6 @@ func TestMain(m *testing.M) {
 	db, err := New(server, user, password, testDB)
 	if err != nil {
 		panic(err)
-		return
 	}
 	//defer TeardownTestDB(db.(*DB)) // this always tries to run, that way a partial setup is still torndown
 	err = SetupTestDB(db.(*DB))
@@ -1622,7 +1655,7 @@ func TestIndexes(t *testing.T) {
 			continue
 		}
 		if ndx.name != indexes[i].name {
-			t.Errorf("%s.%s.%d.Name: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Name, indexes[i].Name)
+			t.Errorf("%s.%s.%d.Name: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.name, indexes[i].name)
 			continue
 		}
 		if ndx.SeqInIndex != indexes[i].SeqInIndex {
@@ -1698,66 +1731,66 @@ func TestIndexes(t *testing.T) {
 	}
 }
 
-func TestGetKeys(t *testing.T) {
+func TestGetConstraints(t *testing.T) {
 	m, err := New(server, user, password, testDB)
 	if err != nil {
 		t.Errorf("unexpected connection error: %s", err)
 		return
 	}
-	err = m.GetKeys()
+	err = m.GetConstraints()
 	if err != nil {
 		t.Errorf("unexpected error getting key information: %s", err)
 		return
 	}
 	// Check key info
-	for i, k := range m.(*DB).keys {
-		if k.Name != keys[i].Name {
-			t.Errorf("%s.%d.Name: got %s want %s", keys[i].Name, keys[i].Seq, k.Name, keys[i].Name)
+	for i, k := range m.(*DB).constraints {
+		if k.Name != constraints[i].Name {
+			t.Errorf("%s.%d.Name: got %s want %s", constraints[i].Name, constraints[i].Seq, k.Name, constraints[i].Name)
 			continue
 		}
-		if k.Type != keys[i].Type {
-			t.Errorf("%s.%d.Type: got %s want %s", keys[i].Name, keys[i].Seq, k.Type, keys[i].Type)
+		if k.Type != constraints[i].Type {
+			t.Errorf("%s.%d.Type: got %s want %s", constraints[i].Name, constraints[i].Seq, k.Type, constraints[i].Type)
 			continue
 		}
-		if k.Table != keys[i].Table {
-			t.Errorf("%s.%d.Table: got %s want %s", keys[i].Name, keys[i].Seq, k.Table, keys[i].Table)
+		if k.Table != constraints[i].Table {
+			t.Errorf("%s.%d.Table: got %s want %s", constraints[i].Name, constraints[i].Seq, k.Table, constraints[i].Table)
 			continue
 		}
-		if k.Column != keys[i].Column {
-			t.Errorf("%s.%d.Column: got %s want %s", keys[i].Name, keys[i].Seq, k.Column, keys[i].Column)
+		if k.Column != constraints[i].Column {
+			t.Errorf("%s.%d.Column: got %s want %s", constraints[i].Name, constraints[i].Seq, k.Column, constraints[i].Column)
 			continue
 		}
-		if k.Seq != keys[i].Seq {
-			t.Errorf("%s.%d.Seq: got %d want %d", keys[i].Name, keys[i].Seq, k.Seq, keys[i].Seq)
+		if k.Seq != constraints[i].Seq {
+			t.Errorf("%s.%d.Seq: got %d want %d", constraints[i].Name, constraints[i].Seq, k.Seq, constraints[i].Seq)
 			continue
 		}
-		if k.USeq.Valid != keys[i].USeq.Valid {
-			t.Errorf("%s.%d.USeq.Valid: got %t want %t", keys[i].Name, keys[i].Seq, k.USeq.Valid, keys[i].USeq.Valid)
+		if k.USeq.Valid != constraints[i].USeq.Valid {
+			t.Errorf("%s.%d.USeq.Valid: got %t want %t", constraints[i].Name, constraints[i].Seq, k.USeq.Valid, constraints[i].USeq.Valid)
 			continue
 		}
 		if k.USeq.Valid {
-			if k.USeq.Int64 != keys[i].USeq.Int64 {
-				t.Errorf("%s.%d.USeq.Int64: got %s want %s", keys[i].Name, keys[i].Seq, k.USeq.Int64, keys[i].USeq.Int64)
+			if k.USeq.Int64 != constraints[i].USeq.Int64 {
+				t.Errorf("%s.%d.USeq.Int64: got %s want %s", constraints[i].Name, constraints[i].Seq, k.USeq.Int64, constraints[i].USeq.Int64)
 				continue
 			}
 		}
-		if k.RefTable.Valid != keys[i].RefTable.Valid {
-			t.Errorf("%s.%d.RefTable.Valid: got %t want %t", keys[i].Name, keys[i].Seq, k.RefTable.Valid, keys[i].RefTable.Valid)
+		if k.RefTable.Valid != constraints[i].RefTable.Valid {
+			t.Errorf("%s.%d.RefTable.Valid: got %t want %t", constraints[i].Name, constraints[i].Seq, k.RefTable.Valid, constraints[i].RefTable.Valid)
 			continue
 		}
 		if k.RefTable.Valid {
-			if k.RefTable.String != keys[i].RefTable.String {
-				t.Errorf("%s.%d.RefTable.String: got %s want %s", keys[i].Name, keys[i].Seq, k.RefTable.String, keys[i].RefTable.String)
+			if k.RefTable.String != constraints[i].RefTable.String {
+				t.Errorf("%s.%d.RefTable.String: got %s want %s", constraints[i].Name, constraints[i].Seq, k.RefTable.String, constraints[i].RefTable.String)
 				continue
 			}
 		}
-		if k.RefCol.Valid != keys[i].RefCol.Valid {
-			t.Errorf("%s.%d.RefCol.Valid: got %t want %t", keys[i].Name, keys[i].Seq, k.RefCol.Valid, keys[i].RefCol.Valid)
+		if k.RefCol.Valid != constraints[i].RefCol.Valid {
+			t.Errorf("%s.%d.RefCol.Valid: got %t want %t", constraints[i].Name, constraints[i].Seq, k.RefCol.Valid, constraints[i].RefCol.Valid)
 			continue
 		}
 		if k.RefCol.Valid {
-			if k.RefCol.String != keys[i].RefCol.String {
-				t.Errorf("%s.%d.RefCol.String: got %s want %s", keys[i].Name, keys[i].Seq, k.RefCol.String, keys[i].RefCol.String)
+			if k.RefCol.String != constraints[i].RefCol.String {
+				t.Errorf("%s.%d.RefCol.String: got %s want %s", constraints[i].Name, constraints[i].Seq, k.RefCol.String, constraints[i].RefCol.String)
 				continue
 			}
 		}
@@ -1861,35 +1894,77 @@ func TestUpdateTables(t *testing.T) {
 		t.Errorf("unexpected error getting index information: %s", err)
 		return
 	}
-	err = m.GetKeys()
+	err = m.GetConstraints()
 	if err != nil {
-		t.Errorf("unexpected error getting Keys information: %s", err)
+		t.Errorf("unexpected error getting constraint information: %s", err)
 		return
 	}
 	m.UpdateTableIndexes()
+	err = m.UpdateTableConstraints()
+	if err != nil {
+		t.Errorf("unexpected error update Tables with their constraint info: %s", err)
+		return
+	}
 	for i, tbl := range m.(*DB).tables {
 		ndxs := tbl.Indexes()
 		for j, ndx := range ndxs {
 			if tableDefs[i].indexes[j].Type != ndx.Type {
 				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), ndx.Name, ndx.Type, tableDefs[i].indexes[j].Type)
+				continue
 			}
 			if tableDefs[i].indexes[j].Primary != ndx.Primary {
 				t.Errorf("%s:%s.Primary: got %v; want %v", tbl.Name(), ndx.Name, ndx.Primary, tableDefs[i].indexes[j].Primary)
+				continue
 			}
 			if tableDefs[i].indexes[j].Name != ndx.Name {
 				t.Errorf("%s:%s.Name: got %v; want %v", tbl.Name(), ndx.Name, ndx.Name, tableDefs[i].indexes[j].Name)
+				continue
 			}
 			if tableDefs[i].indexes[j].Table != ndx.Table {
 				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), ndx.Name, ndx.Table, tableDefs[i].indexes[j].Table)
+				continue
 			}
 			for k, col := range ndx.Cols {
 				if tableDefs[i].indexes[j].Cols[k] != col {
 					t.Errorf("%s:%s.Cols.%d: got %s; want %s", tbl.Name(), ndx.Name, k, col, tableDefs[i].indexes[j].Cols[k])
+					continue
+				}
+			}
+		}
+		cons := tbl.Constraints()
+		for j, c := range cons {
+			if tableDefs[i].constraints[j].Type != c.Type {
+				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), c.Name, c.Type, tableDefs[i].constraints[j].Type)
+				continue
+			}
+			if tableDefs[i].constraints[j].Name != c.Name {
+				t.Errorf("%s:%s.Name: got %v; want %v", tbl.Name(), c.Name, c.Name, tableDefs[i].constraints[j].Name)
+				continue
+			}
+			if tableDefs[i].constraints[j].Table != c.Table {
+				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), c.Name, c.Table, tableDefs[i].constraints[j].Table)
+				continue
+			}
+			for k, col := range c.Cols {
+				if tableDefs[i].constraints[j].Cols[k] != col {
+					t.Errorf("%s:%s.Cols.%d: got %s; want %s", tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].Cols[k])
+					continue
+				}
+			}
+			if c.RefTable != tableDefs[i].constraints[j].RefTable {
+				t.Errorf("%s:%s.RefTable: got %v; want %v", tbl.Name(), c.Name, c.RefTable, tableDefs[i].constraints[j].RefTable)
+				continue
+			}
+			for k, col := range c.RefCols {
+				if tableDefs[i].constraints[j].RefCols[k] != col {
+					t.Errorf("%s:%s.RefCols.%d: got %s; want %s", tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].RefCols[k])
+					continue
 				}
 			}
 		}
 	}
 }
+
 func TestGenerateDefs(t *testing.T) {
 	for i, def := range tableDefs {
 		if i == 7 { // geospatial is not yet implemented; so skip
@@ -1897,7 +1972,7 @@ func TestGenerateDefs(t *testing.T) {
 		}
 		d, err := def.Go()
 		if err != nil {
-			t.Error("%s: %s", def.Name(), err)
+			t.Errorf("%s: %s", def.Name(), err)
 		}
 		if tableDefsString[i] != string(d) {
 			t.Errorf("%s: got %q; want %q", def.Name(), string(d), tableDefsString[i])

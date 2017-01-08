@@ -27,12 +27,12 @@ import (
 const schema = "information_schema"
 
 type DB struct {
-	Conn    *sql.DB
-	dbName  string
-	tables  []dbsql2go.Tabler
-	indexes []Index
-	keys    []Key
-	views   []dbsql2go.Viewer
+	Conn        *sql.DB
+	dbName      string
+	tables      []dbsql2go.Tabler
+	indexes     []Index
+	constraints []Constraint
+	views       []dbsql2go.Viewer
 }
 
 // New connects to the database's information_schema using the supplied
@@ -116,6 +116,8 @@ func (m *DB) GetTables() error {
 	return nil
 }
 
+// Tables returns information about all of the tables in a databasse; this
+// includes views but not view specific information like its definition.
 func (m *DB) Tables() []dbsql2go.Tabler {
 	return m.tables
 }
@@ -158,7 +160,7 @@ func (m *DB) GetIndexes() error {
 	return nil
 }
 
-func (m *DB) GetKeys() error {
+func (m *DB) GetConstraints() error {
 	// Get the key and constraint stuff.
 	sel := `SELECT k.constraint_name, t.constraint_type, k.table_name,
 	k.column_name, k.ordinal_position, k.position_in_unique_constraint,
@@ -176,17 +178,17 @@ GROUP BY k.table_name,
 		return err
 	}
 	for rows.Next() {
-		var k Key
+		var c Constraint
 		err = rows.Scan(
-			&k.Name, &k.Type, &k.Table,
-			&k.Column, &k.Seq, &k.USeq,
-			&k.RefTable, &k.RefCol,
+			&c.Name, &c.Type, &c.Table,
+			&c.Column, &c.Seq, &c.USeq,
+			&c.RefTable, &c.RefCol,
 		)
 		if err != nil {
 			rows.Close()
 			return err
 		}
-		m.keys = append(m.keys, k)
+		m.constraints = append(m.constraints, c)
 	}
 	rows.Close()
 	return nil
@@ -225,7 +227,62 @@ func (m *DB) Views() []dbsql2go.Viewer {
 	return m.views
 }
 
-// AddTableIndexes updates the Tables with their respective Index information.
+// UpdateTableConstraints updates the Tables with their respective Constraint
+// information. The Constraints must be retrieved first or nothing will be
+// done.
+func (m *DB) UpdateTableConstraints() error {
+	// Map the retrieved constraints back to their respective tables. There may
+	// be multiple constraints per table and multiple rows per constraint.
+	var prior Constraint
+	var c dbsql2go.Constraint
+	for i, v := range m.constraints {
+		if v.Name == prior.Name { // if this is just another row for the same constraint, add the info
+			c.Cols = append(c.Cols, v.Column)
+			if v.RefCol.Valid {
+				c.RefCols = append(c.RefCols, v.RefCol.String)
+			}
+			continue
+		}
+		// if this is the first entry; don't add the index
+		if i == 0 {
+			goto process
+		}
+		// find the table and add this index to it
+		for i := 0; i < len(m.tables); i++ {
+			if m.tables[i].Name() != prior.Table {
+				continue
+			}
+			m.tables[i].(*Table).constraints = append(m.tables[i].(*Table).constraints, c)
+			break
+		}
+	process:
+		typ, err := dbsql2go.ParseConstraintType(v.Type)
+		if err != nil {
+			return err
+		}
+		c = dbsql2go.Constraint{Type: typ, Name: v.Name, Table: v.Table, Cols: []string{v.Column}}
+		if v.RefTable.Valid {
+			c.RefTable = v.RefTable.String
+		}
+		if v.RefCol.Valid {
+			c.RefCols = append(c.RefCols, v.RefCol.String)
+		}
+	}
+	// handle the final element
+	if prior.Name != "" {
+		// find the table and add this index to it
+		for i := 0; i < len(m.tables); i++ {
+			if m.tables[i].Name() != prior.Table {
+				continue
+			}
+			m.tables[i].(*Table).constraints = append(m.tables[i].(*Table).constraints, c)
+			break
+		}
+	}
+	return nil
+}
+
+// UpdateTableIndexes updates the Tables with their respective Index information.
 // The Indexes must be retrieved first or nothing will be done.
 func (m *DB) UpdateTableIndexes() {
 	// Map the retrieved indexes back to their respective tables. There may be
@@ -237,7 +294,7 @@ func (m *DB) UpdateTableIndexes() {
 			ndx.Cols = append(ndx.Cols, v.ColumnName)
 			continue
 		}
-		// if this is the first enty; don't add the index
+		// if this is the first entry; don't add the index
 		if i == 0 {
 			goto process
 		}
@@ -269,15 +326,15 @@ func (m *DB) UpdateTableIndexes() {
 }
 
 type Table struct {
-	name      string
-	schema    string
-	Columns   []Column
-	Typ       string
-	Engine    sql.NullString
-	collation sql.NullString
-	Comment   string
-	indexes   []dbsql2go.Index
-	keys      []dbsql2go.Key
+	name        string
+	schema      string
+	Columns     []Column
+	Typ         string
+	Engine      sql.NullString
+	collation   sql.NullString
+	Comment     string
+	indexes     []dbsql2go.Index
+	constraints []dbsql2go.Constraint
 }
 
 // Name returns the name of the table.
@@ -360,6 +417,11 @@ func (t *Table) ColumnNames() []string {
 // Indexes returns information on all of the tables indexes.
 func (t *Table) Indexes() []dbsql2go.Index {
 	return t.indexes
+}
+
+// Constraints returns information on all of the tables keys/constraints.
+func (t *Table) Constraints() []dbsql2go.Constraint {
+	return t.constraints
 }
 
 // Column holds all information about the columns in a database as provided by
@@ -455,8 +517,8 @@ func (i *Index) Name() string {
 	return i.name
 }
 
-// Key is data from key_column_usage and table_constraints
-type Key struct {
+// Constraint is data from key_column_usage and table_constraints
+type Constraint struct {
 	Name     string         // Name of the constraint
 	Type     string         // Constraint type
 	Table    string         // Table of the constraint
