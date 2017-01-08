@@ -142,10 +142,10 @@ func (m *DB) GetIndexes() error {
 	for rows.Next() {
 		var ndx Index
 		err = rows.Scan(
-			&ndx.TableName, &ndx.NonUnique, &ndx.IndexSchema,
-			&ndx.IndexName, &ndx.SeqInIndex, &ndx.ColumnName,
+			&ndx.TableName, &ndx.NonUnique, &ndx.Schema,
+			&ndx.name, &ndx.SeqInIndex, &ndx.ColumnName,
 			&ndx.Collation, &ndx.Cardinality, &ndx.SubPart,
-			&ndx.Packed, &ndx.Nullable, &ndx.IndexType,
+			&ndx.Packed, &ndx.Nullable, &ndx.Type,
 			&ndx.Comment, &ndx.IndexComment,
 		)
 		if err != nil {
@@ -385,25 +385,25 @@ func (c *Column) Go() []byte {
 }
 
 type Index struct {
-	TableName    string
+	name         string
+	Type         string
+	Schema       string
 	NonUnique    int64
-	IndexSchema  string
-	IndexName    string
 	SeqInIndex   int64
+	TableName    string
 	ColumnName   string
 	Collation    sql.NullString
 	Cardinality  sql.NullInt64
 	SubPart      sql.NullInt64
 	Packed       sql.NullString
 	Nullable     string
-	IndexType    string
 	Comment      sql.NullString
 	IndexComment string
 }
 
 // Name returns the index's name.
 func (i *Index) Name() string {
-	return i.IndexName
+	return i.name
 }
 
 // Key is data from key_column_usage and table_constraints
