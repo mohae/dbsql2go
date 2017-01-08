@@ -32,15 +32,6 @@ func ParseDBType(s string) (DBType, error) {
 	}
 }
 
-// TODO: figure out index/key stuff
-const (
-	BTREE IndexType = iota + 1 // BTREE
-)
-
-//go:generate stringer -type=IndexType
-// IndexType is the type of the index.
-type IndexType int
-
 const (
 	PK ConstraintType = iota + 1
 	FK
