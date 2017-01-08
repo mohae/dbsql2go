@@ -62,6 +62,7 @@ type DBer interface {
 	GetTables() error
 	Tables() []Tabler
 	GetIndexes() error
+	GetKeys() error
 	GetViews() error
 	Views() []Viewer
 }

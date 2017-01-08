@@ -27,12 +27,12 @@ import (
 const schema = "information_schema"
 
 type DB struct {
-	Conn         *sql.DB
-	dbName       string
-	tables       []dbsql2go.Tabler
-	IndexDetails []IndexDetail
-	Keys         []Key
-	views        []dbsql2go.Viewer
+	Conn    *sql.DB
+	dbName  string
+	tables  []dbsql2go.Tabler
+	Indexes []Index
+	Keys    []Key
+	views   []dbsql2go.Viewer
 }
 
 // New connects to the database's information_schema using the supplied
@@ -140,24 +140,27 @@ func (m *DB) GetIndexes() error {
 		return err
 	}
 	for rows.Next() {
-		var id IndexDetail
+		var ndx Index
 		err = rows.Scan(
-			&id.TableName, &id.NonUnique, &id.IndexSchema,
-			&id.IndexName, &id.SeqInIndex, &id.ColumnName,
-			&id.Collation, &id.Cardinality, &id.SubPart,
-			&id.Packed, &id.Nullable, &id.IndexType,
-			&id.Comment, &id.IndexComment,
+			&ndx.TableName, &ndx.NonUnique, &ndx.IndexSchema,
+			&ndx.IndexName, &ndx.SeqInIndex, &ndx.ColumnName,
+			&ndx.Collation, &ndx.Cardinality, &ndx.SubPart,
+			&ndx.Packed, &ndx.Nullable, &ndx.IndexType,
+			&ndx.Comment, &ndx.IndexComment,
 		)
 		if err != nil {
 			rows.Close()
 			return err
 		}
-		m.IndexDetails = append(m.IndexDetails, id)
+		m.Indexes = append(m.Indexes, ndx)
 	}
 	rows.Close()
+	return nil
+}
 
+func (m *DB) GetKeys() error {
 	// Get the key and constraint stuff.
-	sel = `SELECT k.constraint_name, t.constraint_type, k.table_name,
+	sel := `SELECT k.constraint_name, t.constraint_type, k.table_name,
 	k.column_name, k.ordinal_position, k.position_in_unique_constraint,
 	k.referenced_table_name, k.referenced_column_name
 FROM key_column_usage AS k,
@@ -168,7 +171,7 @@ WHERE k.table_schema = ?
 GROUP BY k.table_name,
 	k.constraint_name,
 	k.ordinal_position`
-	rows, err = m.Conn.Query(sel, m.dbName)
+	rows, err := m.Conn.Query(sel, m.dbName)
 	if err != nil {
 		return err
 	}
@@ -186,7 +189,6 @@ GROUP BY k.table_name,
 		m.Keys = append(m.Keys, k)
 	}
 	rows.Close()
-
 	return nil
 }
 
@@ -382,7 +384,7 @@ func (c *Column) Go() []byte {
 	}
 }
 
-type IndexDetail struct {
+type Index struct {
 	TableName    string
 	NonUnique    int64
 	IndexSchema  string
@@ -400,7 +402,7 @@ type IndexDetail struct {
 }
 
 // Name returns the index's name.
-func (i *IndexDetail) Name() string {
+func (i *Index) Name() string {
 	return i.IndexName
 }
 

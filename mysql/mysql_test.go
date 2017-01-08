@@ -1201,7 +1201,7 @@ var fmtdTableDefsString = []string{
 `,
 }
 
-var indexDetails = []IndexDetail{
+var indexes = []Index{
 	{
 		TableName: "abc", NonUnique: 0, IndexSchema: "dbsql_test", IndexName: "code",
 		SeqInIndex: 1, ColumnName: "code", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
@@ -1568,93 +1568,106 @@ func TestIndexes(t *testing.T) {
 		t.Errorf("unexpected error getting index information: %s", err)
 		return
 	}
-	for i, ndx := range m.(*DB).IndexDetails {
-		if ndx.TableName != indexDetails[i].TableName {
-			t.Errorf("%s.%s.%d.Tablename: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.TableName, indexDetails[i].TableName)
+	for i, ndx := range m.(*DB).Indexes {
+		if ndx.TableName != indexes[i].TableName {
+			t.Errorf("%s.%s.%d.Tablename: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.TableName, indexes[i].TableName)
 			continue
 		}
-		if ndx.NonUnique != indexDetails[i].NonUnique {
-			t.Errorf("%s.%s.%d.NonUnique: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.NonUnique, indexDetails[i].NonUnique)
+		if ndx.NonUnique != indexes[i].NonUnique {
+			t.Errorf("%s.%s.%d.NonUnique: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.NonUnique, indexes[i].NonUnique)
 			continue
 		}
-		if ndx.IndexSchema != indexDetails[i].IndexSchema {
-			t.Errorf("%s.%s.%d.IndexSchema: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexSchema, indexDetails[i].IndexSchema)
+		if ndx.IndexSchema != indexes[i].IndexSchema {
+			t.Errorf("%s.%s.%d.IndexSchema: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexSchema, indexes[i].IndexSchema)
 			continue
 		}
-		if ndx.IndexName != indexDetails[i].IndexName {
-			t.Errorf("%s.%s.%d.IndexName: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexName, indexDetails[i].IndexName)
+		if ndx.IndexName != indexes[i].IndexName {
+			t.Errorf("%s.%s.%d.IndexName: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexName, indexes[i].IndexName)
 			continue
 		}
-		if ndx.SeqInIndex != indexDetails[i].SeqInIndex {
-			t.Errorf("%s.%s.%d.SeqInIndex: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.SeqInIndex, indexDetails[i].SeqInIndex)
+		if ndx.SeqInIndex != indexes[i].SeqInIndex {
+			t.Errorf("%s.%s.%d.SeqInIndex: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.SeqInIndex, indexes[i].SeqInIndex)
 			continue
 		}
-		if ndx.ColumnName != indexDetails[i].ColumnName {
-			t.Errorf("%s.%s.%d.ColumnName: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.ColumnName, indexDetails[i].ColumnName)
+		if ndx.ColumnName != indexes[i].ColumnName {
+			t.Errorf("%s.%s.%d.ColumnName: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.ColumnName, indexes[i].ColumnName)
 			continue
 		}
-		if ndx.Collation.Valid != indexDetails[i].Collation.Valid {
-			t.Errorf("%s.%s.%d.Collation.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Collation.Valid, indexDetails[i].Collation.Valid)
+		if ndx.Collation.Valid != indexes[i].Collation.Valid {
+			t.Errorf("%s.%s.%d.Collation.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Collation.Valid, indexes[i].Collation.Valid)
 			continue
 		}
 		if ndx.Collation.Valid {
-			if ndx.Collation.String != indexDetails[i].Collation.String {
-				t.Errorf("%s.%s.%d.Collation.String: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Collation.String, indexDetails[i].Collation.String)
+			if ndx.Collation.String != indexes[i].Collation.String {
+				t.Errorf("%s.%s.%d.Collation.String: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Collation.String, indexes[i].Collation.String)
 				continue
 			}
 		}
-		if ndx.Cardinality.Valid != indexDetails[i].Cardinality.Valid {
-			t.Errorf("%s.%s.%d.Cardinality.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Cardinality.Valid, indexDetails[i].Cardinality.Valid)
+		if ndx.Cardinality.Valid != indexes[i].Cardinality.Valid {
+			t.Errorf("%s.%s.%d.Cardinality.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Cardinality.Valid, indexes[i].Cardinality.Valid)
 			continue
 		}
 		if ndx.Cardinality.Valid {
-			if ndx.Cardinality.Int64 != indexDetails[i].Cardinality.Int64 {
-				t.Errorf("%s.%s.%d.Cardinality.Int64: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Cardinality.Int64, indexDetails[i].Cardinality.Int64)
+			if ndx.Cardinality.Int64 != indexes[i].Cardinality.Int64 {
+				t.Errorf("%s.%s.%d.Cardinality.Int64: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Cardinality.Int64, indexes[i].Cardinality.Int64)
 				continue
 			}
 		}
-		if ndx.SubPart.Valid != indexDetails[i].SubPart.Valid {
-			t.Errorf("%s.%s.%d.SubPart.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.SubPart.Valid, indexDetails[i].SubPart.Valid)
+		if ndx.SubPart.Valid != indexes[i].SubPart.Valid {
+			t.Errorf("%s.%s.%d.SubPart.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.SubPart.Valid, indexes[i].SubPart.Valid)
 			continue
 		}
 		if ndx.SubPart.Valid {
-			if ndx.SubPart.Int64 != indexDetails[i].SubPart.Int64 {
-				t.Errorf("%s.%s.%d.SubPart.Int64: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.SubPart.Int64, indexDetails[i].SubPart.Int64)
+			if ndx.SubPart.Int64 != indexes[i].SubPart.Int64 {
+				t.Errorf("%s.%s.%d.SubPart.Int64: got %d want %d", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.SubPart.Int64, indexes[i].SubPart.Int64)
 				continue
 			}
 		}
-		if ndx.Packed.Valid != indexDetails[i].Packed.Valid {
-			t.Errorf("%s.%s.%d.Packed.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Packed.Valid, indexDetails[i].Packed.Valid)
+		if ndx.Packed.Valid != indexes[i].Packed.Valid {
+			t.Errorf("%s.%s.%d.Packed.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Packed.Valid, indexes[i].Packed.Valid)
 			continue
 		}
 		if ndx.Packed.Valid {
-			if ndx.Packed.String != indexDetails[i].Packed.String {
-				t.Errorf("%s.%s.%d.Packed.String: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Packed.String, indexDetails[i].Packed.String)
+			if ndx.Packed.String != indexes[i].Packed.String {
+				t.Errorf("%s.%s.%d.Packed.String: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Packed.String, indexes[i].Packed.String)
 				continue
 			}
 		}
-		if ndx.Nullable != indexDetails[i].Nullable {
-			t.Errorf("%s.%s.%d.Nullable: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Nullable, indexDetails[i].Nullable)
+		if ndx.Nullable != indexes[i].Nullable {
+			t.Errorf("%s.%s.%d.Nullable: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Nullable, indexes[i].Nullable)
 			continue
 		}
-		if ndx.IndexType != indexDetails[i].IndexType {
-			t.Errorf("%s.%s.%d.IndexType: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexType, indexDetails[i].IndexType)
+		if ndx.IndexType != indexes[i].IndexType {
+			t.Errorf("%s.%s.%d.IndexType: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexType, indexes[i].IndexType)
 			continue
 		}
-		if ndx.Comment.Valid != indexDetails[i].Comment.Valid {
-			t.Errorf("%s.%s.%d.Comment.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Comment.Valid, indexDetails[i].Comment.Valid)
+		if ndx.Comment.Valid != indexes[i].Comment.Valid {
+			t.Errorf("%s.%s.%d.Comment.Valid: got %t want %t", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Comment.Valid, indexes[i].Comment.Valid)
 			continue
 		}
 		if ndx.Comment.Valid {
-			if ndx.Packed.String != indexDetails[i].Packed.String {
-				t.Errorf("%s.%s.%d.Comment.String: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Comment.String, indexDetails[i].Comment.String)
+			if ndx.Packed.String != indexes[i].Packed.String {
+				t.Errorf("%s.%s.%d.Comment.String: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.Comment.String, indexes[i].Comment.String)
 				continue
 			}
 		}
-		if ndx.IndexComment != indexDetails[i].IndexComment {
-			t.Errorf("%s.%s.%d.IndexComment: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexComment, indexDetails[i].IndexComment)
+		if ndx.IndexComment != indexes[i].IndexComment {
+			t.Errorf("%s.%s.%d.IndexComment: got %s want %s", ndx.TableName, ndx.IndexName, ndx.SeqInIndex, ndx.IndexComment, indexes[i].IndexComment)
 			continue
 		}
+	}
+}
+
+func TestGetKeys(t *testing.T) {
+	m, err := New(server, user, password, testDB)
+	if err != nil {
+		t.Errorf("unexpected connection error: %s", err)
+		return
+	}
+	err = m.GetKeys()
+	if err != nil {
+		t.Errorf("unexpected error getting key information: %s", err)
+		return
 	}
 	// Check key info
 	for i, k := range m.(*DB).Keys {
