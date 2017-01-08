@@ -52,10 +52,11 @@ func (u UnsupportedDBErr) Error() string {
 
 type DBer interface {
 	GetTables() error
-	Tables() []Tabler
 	GetIndexes() error
 	GetKeys() error
 	GetViews() error
+	Tables() []Tabler
+	UpdateTableIndexes()
 	Views() []Viewer
 }
 
@@ -67,6 +68,7 @@ type Tabler interface {
 	Collation() string
 	Go() ([]byte, error)
 	GoFmt() ([]byte, error)
+	Indexes() []Index
 	//	SelectSQL() string
 	//	InsertSQL() string
 	//	DeleteSQL() string
@@ -79,11 +81,11 @@ type Indexer interface {
 
 // Index holds information about a given index.
 type Index struct {
-	Type    IndexType // type of Index
-	Primary bool      // if the Index is a primary key
-	Name    string    // Name of Index
-	Table   string    // Index's table
-	Cols    []string  // Index Columns, in order.
+	Type    string   // type of Index
+	Primary bool     // if the Index is a primary key
+	Name    string   // Name of Index
+	Table   string   // Index's table
+	Cols    []string // Index Columns, in order.
 }
 
 // Key holds information about a table's key and constraints.

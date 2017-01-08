@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"sort"
 	"testing"
+
+	"github.com/mohae/dbsql2go"
 )
 
 var (
@@ -251,6 +253,10 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: false, Name: "code", Table: "abc", Cols: []string{"code"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc", Cols: []string{"id"}},
+		},
 	},
 	Table{
 		name: "abc_nn", schema: "dbsql_test",
@@ -338,6 +344,10 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: false, Name: "code", Table: "abc_nn", Cols: []string{"code"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc_nn", Cols: []string{"id"}},
+		},
 	},
 	Table{
 		name: "abc_v", schema: "dbsql_test",
@@ -432,6 +442,10 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: false, Name: "id", Table: "def", Cols: []string{"id, d_datetime"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def", Cols: []string{"id"}},
+		},
 	},
 	Table{
 		name: "def_nn", schema: "dbsql_test",
@@ -495,6 +509,10 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: false, Name: "id", Table: "def_nn", Cols: []string{"id, d_datetime"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def_nn", Cols: []string{"id"}},
+		},
 	},
 	Table{
 		name: "defghi_v", schema: "dbsql_test",
@@ -613,6 +631,10 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi", Cols: []string{"def_id, def_datetime"}},
+			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi", Cols: []string{"def_id, val"}},
+		},
 	},
 	Table{
 		name: "ghi_nn", schema: "dbsql_test",
@@ -684,6 +706,10 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi_nn", Cols: []string{"def_id, def_datetime"}},
+			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi_nn", Cols: []string{"def_id, val"}},
+		},
 	},
 	Table{
 		name: "jkl", schema: "dbsql_test",
@@ -755,6 +781,10 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl", Cols: []string{"fid"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl", Cols: []string{"id, fid"}},
+		},
 	},
 	Table{
 		name: "jkl_nn", schema: "dbsql_test",
@@ -826,6 +856,10 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl_nn", Cols: []string{"fid"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id, fid"}},
+		},
 	},
 	Table{
 		name: "mno", schema: "dbsql_test",
@@ -905,6 +939,9 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno", Cols: []string{"id"}},
+		},
 	},
 	Table{
 		name: "mno_nn", schema: "dbsql_test",
@@ -984,6 +1021,9 @@ var tableDefs = []Table{
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
+		indexes: []dbsql2go.Index{
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno_nn", Cols: []string{"id"}},
+		},
 	},
 }
 
@@ -1800,6 +1840,56 @@ func TestColumnNames(t *testing.T) {
 	}
 }
 
+func TestUpdateTables(t *testing.T) {
+	m, err := New(server, user, password, testDB)
+	if err != nil {
+		t.Errorf("unexpected connection error: %s", err)
+		return
+	}
+	err = m.GetTables()
+	if err != nil {
+		t.Errorf("unexpected error getting table information: %s", err)
+		return
+	}
+	err = m.GetViews()
+	if err != nil {
+		t.Errorf("unexpected error getting view information: %s", err)
+		return
+	}
+	err = m.GetIndexes()
+	if err != nil {
+		t.Errorf("unexpected error getting index information: %s", err)
+		return
+	}
+	err = m.GetKeys()
+	if err != nil {
+		t.Errorf("unexpected error getting Keys information: %s", err)
+		return
+	}
+	m.UpdateTableIndexes()
+	for i, tbl := range m.(*DB).tables {
+		ndxs := tbl.Indexes()
+		for j, ndx := range ndxs {
+			if tableDefs[i].indexes[j].Type != ndx.Type {
+				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), ndx.Name, ndx.Type, tableDefs[i].indexes[j].Type)
+			}
+			if tableDefs[i].indexes[j].Primary != ndx.Primary {
+				t.Errorf("%s:%s.Primary: got %v; want %v", tbl.Name(), ndx.Name, ndx.Primary, tableDefs[i].indexes[j].Primary)
+			}
+			if tableDefs[i].indexes[j].Name != ndx.Name {
+				t.Errorf("%s:%s.Name: got %v; want %v", tbl.Name(), ndx.Name, ndx.Name, tableDefs[i].indexes[j].Name)
+			}
+			if tableDefs[i].indexes[j].Table != ndx.Table {
+				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), ndx.Name, ndx.Table, tableDefs[i].indexes[j].Table)
+			}
+			for k, col := range ndx.Cols {
+				if tableDefs[i].indexes[j].Cols[k] != col {
+					t.Errorf("%s:%s.Cols.%d: got %s; want %s", tbl.Name(), ndx.Name, k, col, tableDefs[i].indexes[j].Cols[k])
+				}
+			}
+		}
+	}
+}
 func TestGenerateDefs(t *testing.T) {
 	for i, def := range tableDefs {
 		if i == 7 { // geospatial is not yet implemented; so skip
@@ -1807,7 +1897,7 @@ func TestGenerateDefs(t *testing.T) {
 		}
 		d, err := def.Go()
 		if err != nil {
-			t.Error("%s: %s", def.Name, err)
+			t.Error("%s: %s", def.Name(), err)
 		}
 		if tableDefsString[i] != string(d) {
 			t.Errorf("%s: got %q; want %q", def.Name(), string(d), tableDefsString[i])
@@ -1822,7 +1912,7 @@ func TestGenerateFmtdDefs(t *testing.T) {
 		}
 		d, err := def.GoFmt()
 		if err != nil {
-			t.Error("%s: %s", def.Name, err)
+			t.Error("%s: %s", def.Name(), err)
 		}
 		if fmtdTableDefsString[i] != string(d) {
 			t.Errorf("%s: got %q; want %q", def.Name(), string(d), fmtdTableDefsString[i])

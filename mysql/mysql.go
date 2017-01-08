@@ -225,6 +225,49 @@ func (m *DB) Views() []dbsql2go.Viewer {
 	return m.views
 }
 
+// AddTableIndexes updates the Tables with their respective Index information.
+// The Indexes must be retrieved first or nothing will be done.
+func (m *DB) UpdateTableIndexes() {
+	// Map the retrieved indexes back to their respective tables. There may be
+	// multiple indexes per table and multiple rows per index.
+	var prior Index
+	var ndx dbsql2go.Index
+	for i, v := range m.indexes {
+		if v.name == prior.name { // if this is just another row for the same index, add the info
+			ndx.Cols = append(ndx.Cols, v.ColumnName)
+			continue
+		}
+		// if this is the first enty; don't add the index
+		if i == 0 {
+			goto process
+		}
+		// find the table and add this index to it
+		for i := 0; i < len(m.tables); i++ {
+			if m.tables[i].Name() != prior.TableName {
+				continue
+			}
+			m.tables[i].(*Table).indexes = append(m.tables[i].(*Table).indexes, ndx)
+			break
+		}
+	process:
+		ndx = dbsql2go.Index{Type: v.Type, Name: v.name, Table: v.TableName, Cols: []string{v.ColumnName}}
+		if v.name == "PRIMARY" {
+			ndx.Primary = true
+		}
+	}
+	// handle the final element
+	if prior.name != "" {
+		// find the table and add this index to it
+		for i := 0; i < len(m.tables); i++ {
+			if m.tables[i].Name() != prior.TableName {
+				continue
+			}
+			m.tables[i].(*Table).indexes = append(m.tables[i].(*Table).indexes, ndx)
+			break
+		}
+	}
+}
+
 type Table struct {
 	name      string
 	schema    string
@@ -233,8 +276,8 @@ type Table struct {
 	Engine    sql.NullString
 	collation sql.NullString
 	Comment   string
-	Indexes   []dbsql2go.Index
-	Keys      []dbsql2go.Keys
+	indexes   []dbsql2go.Index
+	keys      []dbsql2go.Key
 }
 
 // Name returns the name of the table.
@@ -312,6 +355,11 @@ func (t *Table) ColumnNames() []string {
 		cols = append(cols, col.Name)
 	}
 	return cols
+}
+
+// Indexes returns information on all of the tables indexes.
+func (t *Table) Indexes() []dbsql2go.Index {
+	return t.indexes
 }
 
 // Column holds all information about the columns in a database as provided by
