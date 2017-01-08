@@ -33,10 +33,10 @@ func ParseDBType(s string) (DBType, error) {
 }
 
 const (
-	PK IndexType = iota + 1
-	FK
-	Unique
-	Other
+	PK       IndexType = iota + 1 // Primary Key
+	FK                            // Foreign Key
+	Unique                        // Unique
+	Standard                      // An index that isn't one of the above.
 )
 
 //go:generate stringer -type=IndexType
