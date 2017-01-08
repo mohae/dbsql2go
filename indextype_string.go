@@ -4,9 +4,9 @@ package dbsql2go
 
 import "fmt"
 
-const _IndexType_name = "PKFKUniqueStandard"
+const _IndexType_name = "PrimaryKeyStandard"
 
-var _IndexType_index = [...]uint8{0, 2, 4, 10, 18}
+var _IndexType_index = [...]uint8{0, 10, 18}
 
 func (i IndexType) String() string {
 	i -= 1

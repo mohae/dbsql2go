@@ -32,15 +32,23 @@ func ParseDBType(s string) (DBType, error) {
 	}
 }
 
+// TODO: figure out index/key stuff
 const (
-	PK       IndexType = iota + 1 // Primary Key
-	FK                            // Foreign Key
-	Unique                        // Unique
-	Standard                      // An index that isn't one of the above.
+	PrimaryKey IndexType = iota + 1 // Primary Key
+	Standard                        // An index that isn't one of the above.
 )
 
 //go:generate stringer -type=IndexType
 type IndexType int
+
+const (
+	PK ConstraintType = iota + 1
+	FK
+	Unique
+)
+
+//go:generate stringer -type=ConstraintType
+type ConstraintType int
 
 type UnsupportedDBErr struct {
 	Value string
