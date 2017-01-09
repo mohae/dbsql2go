@@ -274,6 +274,7 @@ func (m *DB) UpdateTableConstraints() error {
 			if v.RefCol.Valid {
 				c.RefCols = append(c.RefCols, v.RefCol.String)
 			}
+			prior = v
 			continue
 		}
 		// if this is the first entry; don't add the index
@@ -300,6 +301,7 @@ func (m *DB) UpdateTableConstraints() error {
 		if v.RefCol.Valid {
 			c.RefCols = append(c.RefCols, v.RefCol.String)
 		}
+		prior = v
 	}
 	// handle the final element
 	if prior.Name != "" {
@@ -368,6 +370,7 @@ type Table struct {
 	Comment     string
 	indexes     []dbsql2go.Index
 	constraints []dbsql2go.Constraint
+	buf         bytes.Buffer // buffer for holding generated stuff; this is not thread-safe
 }
 
 // Name returns the name of the table.
@@ -391,41 +394,44 @@ func (t *Table) Collation() string {
 // Go creates the struct definition an returns the resulting bytes.
 // TODO: should this accept a writer instead?
 func (t *Table) Go() ([]byte, error) {
-	var buf bytes.Buffer
-	n, err := buf.WriteString("type ")
+	t.buf.Reset()
+	n, err := t.buf.WriteString("type ")
 	if err != nil {
 		return nil, err
 	}
-	n, err = buf.WriteString(mixedcase.Exported(t.name))
+	n, err = t.buf.WriteString(mixedcase.Exported(t.name))
 	if err != nil {
 		return nil, err
 	}
-	n, err = buf.WriteString(" struct {\n")
+	n, err = t.buf.WriteString(" struct {\n")
 	if err != nil {
 		return nil, err
 	}
 
 	// write the column defs
 	for _, col := range t.Columns {
-		err = buf.WriteByte('\t')
+		err = t.buf.WriteByte('\t')
 		if err != nil {
 			return nil, err
 		}
-		buf.Write(col.Go())
+		t.buf.Write(col.Go())
 		if err != nil {
 			return nil, err
 		}
-		err = buf.WriteByte('\n')
+		err = t.buf.WriteByte('\n')
 		if err != nil {
 			return nil, err
 		}
 	}
-	n, err = buf.WriteString("}\n")
+	n, err = t.buf.WriteString("}\n")
 	if err != nil {
 		return nil, err
 	}
 	_ = n // add short write handling
-	return buf.Bytes(), nil
+	// copy the bytes before returning
+	r := make([]byte, t.buf.Len())
+	copy(r, t.buf.Bytes()) // note: this ignores the returned int
+	return r, nil
 }
 
 // GoFmt creates a formatted struct definition an returns the resulting bytes.
