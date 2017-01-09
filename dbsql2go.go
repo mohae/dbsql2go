@@ -74,6 +74,7 @@ func (u UnsupportedDBErr) Error() string {
 }
 
 type DBer interface {
+	Get() error
 	GetTables() error
 	GetIndexes() error
 	GetConstraints() error

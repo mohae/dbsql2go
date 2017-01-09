@@ -1770,7 +1770,7 @@ func TestGetConstraints(t *testing.T) {
 		}
 		if k.USeq.Valid {
 			if k.USeq.Int64 != constraints[i].USeq.Int64 {
-				t.Errorf("%s.%d.USeq.Int64: got %s want %s", constraints[i].Name, constraints[i].Seq, k.USeq.Int64, constraints[i].USeq.Int64)
+				t.Errorf("%s.%d.USeq.Int64: got %v want %v", constraints[i].Name, constraints[i].Seq, k.USeq.Int64, constraints[i].USeq.Int64)
 				continue
 			}
 		}
@@ -1879,32 +1879,12 @@ func TestUpdateTables(t *testing.T) {
 		t.Errorf("unexpected connection error: %s", err)
 		return
 	}
-	err = m.GetTables()
+	err = m.Get()
 	if err != nil {
-		t.Errorf("unexpected error getting table information: %s", err)
+		t.Errorf("unexpected error getting database information: %s", err)
 		return
 	}
-	err = m.GetViews()
-	if err != nil {
-		t.Errorf("unexpected error getting view information: %s", err)
-		return
-	}
-	err = m.GetIndexes()
-	if err != nil {
-		t.Errorf("unexpected error getting index information: %s", err)
-		return
-	}
-	err = m.GetConstraints()
-	if err != nil {
-		t.Errorf("unexpected error getting constraint information: %s", err)
-		return
-	}
-	m.UpdateTableIndexes()
-	err = m.UpdateTableConstraints()
-	if err != nil {
-		t.Errorf("unexpected error update Tables with their constraint info: %s", err)
-		return
-	}
+
 	for i, tbl := range m.(*DB).tables {
 		ndxs := tbl.Indexes()
 		for j, ndx := range ndxs {

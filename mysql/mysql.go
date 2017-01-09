@@ -48,6 +48,39 @@ func New(server, user, password, database string) (dbsql2go.DBer, error) {
 	}, nil
 }
 
+// Get retrieves all of the table, view, index, and constraint info for a
+// database. The tables will have information about their constraints and
+// indexes. None of the other Get or Update methods need to be called when
+// using this method.
+func (m *DB) Get() error {
+	err := m.GetTables()
+	if err != nil {
+		return err
+	}
+
+	err = m.GetViews()
+	if err != nil {
+		return err
+	}
+
+	err = m.GetIndexes()
+	if err != nil {
+		return err
+	}
+
+	err = m.GetConstraints()
+	if err != nil {
+		return err
+	}
+
+	m.UpdateTableIndexes()
+	err = m.UpdateTableConstraints()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *DB) GetTables() error {
 	tableS := `SELECT table_schema, table_name, table_type,
 	 	engine,	table_collation, table_comment
