@@ -169,7 +169,7 @@ var createViews = []string{
 
 var tableDefs = []Table{
 	Table{ // 0
-		name: "abc", schema: "dbsql_test",
+		name: "abc", r: 'a', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -264,7 +264,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 1
-		name: "abc_nn", schema: "dbsql_test",
+		name: "abc_nn", r: 'a', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -359,7 +359,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 2
-		name: "abc_v", schema: "dbsql_test",
+		name: "abc_v", r: 'a', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
@@ -390,7 +390,7 @@ var tableDefs = []Table{
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
 	},
 	Table{ // 3
-		name: "def", schema: "dbsql_test",
+		name: "def", r: 'd', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -460,7 +460,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 4
-		name: "def_nn", schema: "dbsql_test",
+		name: "def_nn", r: 'd', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -530,7 +530,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 6
-		name: "defghi_v", schema: "dbsql_test",
+		name: "defghi_v", r: 'd', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "aid", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
@@ -577,7 +577,7 @@ var tableDefs = []Table{
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
 	},
 	Table{ // 7
-		name: "ghi", schema: "dbsql_test",
+		name: "ghi", r: 'g', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -655,7 +655,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 8
-		name: "ghi_nn", schema: "dbsql_test",
+		name: "ghi_nn", r: 'g', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -733,7 +733,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 9
-		name: "jkl", schema: "dbsql_test",
+		name: "jkl", r: 'j', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -812,7 +812,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 10
-		name: "jkl_nn", schema: "dbsql_test",
+		name: "jkl_nn", r: 'j', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -891,7 +891,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 11
-		name: "mno", schema: "dbsql_test",
+		name: "mno", r: 'm', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -976,7 +976,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 12
-		name: "mno_nn", schema: "dbsql_test",
+		name: "mno_nn", r: 'm', schema: "dbsql_test",
 		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -1942,6 +1942,25 @@ func TestUpdateTables(t *testing.T) {
 					continue
 				}
 			}
+		}
+	}
+}
+
+func TestSetReceiverName(t *testing.T) {
+	m, err := New(server, user, password, testDB)
+	if err != nil {
+		t.Errorf("unexpected connection error: %s", err)
+		return
+	}
+	err = m.Get()
+	if err != nil {
+		t.Errorf("unexpected error getting database information: %s", err)
+		return
+	}
+	tbls := m.Tables()
+	for i, v := range tbls {
+		if v.(*Table).r != tableDefs[i].r {
+			t.Errorf("%s: got %c want %c", tableDefs[i].name, v.(*Table).r, tableDefs[i].r)
 		}
 	}
 }

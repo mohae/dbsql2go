@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"go/format"
 	"reflect"
+	"unicode"
+	"unicode/utf8"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mohae/dbsql2go"
@@ -81,6 +83,7 @@ func (m *DB) Get() error {
 	if err != nil {
 		return err
 	}
+	m.SetReceiverNames()
 	return nil
 }
 
@@ -365,8 +368,23 @@ func (m *DB) UpdateTableIndexes() {
 	}
 }
 
+// SetReceiverNames sets the receiver name for each table or view in the DB.
+func (m *DB) SetReceiverNames() {
+	/*	for i := range m.tables {
+			r, _ := utf8.DecodeRuneInString(m.tables[i].Name())
+			m.tables[i].(Table).r = unicode.ToLower(r)
+		}
+	*/
+	for i, tbl := range m.tables {
+		r, _ := utf8.DecodeRuneInString(tbl.Name())
+		tbl.(*Table).r = unicode.ToLower(r)
+		m.tables[i] = tbl
+	}
+}
+
 type Table struct {
 	name        string
+	r           rune // the first letter of the name, in lower-case. Used as the receiver name.
 	schema      string
 	ColumnNames []Column
 	Typ         string

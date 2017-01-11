@@ -95,8 +95,8 @@ type Tabler interface {
 	GoFmt() ([]byte, error)
 	Indexes() []Index
 	Constraints() []Constraint
-	SelectSQLPK() ([]byte, error)
 	IsView() bool // If this is actually a view
+	// SelectSQL
 	//InsertSQL() string
 	//	DeleteSQL() string
 }
