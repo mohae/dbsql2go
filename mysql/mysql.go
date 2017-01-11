@@ -496,6 +496,26 @@ func (t *Table) SelectSQLPK() ([]byte, error) {
 	return t.buf.Bytes(), nil
 }
 
+// DeleteSQLPK returns a DELETE statement for the table that deletes a row
+// using the tables PK. If the table does not have a PK, a nil will be
+// returned and the error will also be nil as this is not an error state.
+func (t *Table) DeleteSQLPK() ([]byte, error) {
+	pk := t.GetPK()
+	if pk == nil { // the table doesn't have a primary key; this is not an error.
+		return nil, nil
+	}
+	if t.sqlInf.Table == "" { // ensure the table is set
+		t.sqlInf.Table = t.name
+	}
+	t.sqlInf.Where = pk.Cols
+	t.buf.Reset()
+	err := dbsql2go.DeleteSQL.Execute(&t.buf, t.sqlInf)
+	if err != nil {
+		return nil, err
+	}
+	return t.buf.Bytes(), nil
+}
+
 // GetPK returns a tables primary key information, if it has a primary key, or
 // nil if it doesn't have a primary key
 func (t *Table) GetPK() *dbsql2go.Constraint {

@@ -1976,7 +1976,7 @@ func TestGenerateFmtdDefs(t *testing.T) {
 	}
 }
 
-func TestSelectSQL(t *testing.T) {
+func TestSelectSQLPK(t *testing.T) {
 	expected := [][]byte{
 		[]byte(`SELECT id, code, description, tiny, small, medium, ger, big, cost, created
 FROM abc
@@ -2012,6 +2012,44 @@ WHERE id = ?`),
 
 	for i, tbl := range tableDefs {
 		sql, err := tbl.SelectSQLPK()
+		if err != nil {
+			t.Errorf("%d: unexpected error: got %q", i, err)
+			continue
+		}
+		if bytes.Compare(sql, expected[i]) != 0 {
+			t.Errorf("%d: got %q; want %q", i, sql, expected[i])
+		}
+	}
+}
+
+func TestDeleteSQLPK(t *testing.T) {
+	expected := [][]byte{
+		[]byte(`DELETE FROM abc
+WHERE id = ?`),
+		[]byte(`DELETE FROM abc_nn
+WHERE id = ?`),
+		nil, // TODO: figure out view part
+		[]byte(`DELETE FROM def
+WHERE id = ?`),
+		[]byte(`DELETE FROM def_nn
+WHERE id = ?`),
+		nil, // TODO: figure out view part
+		nil, // NO PK, no sql generated
+		nil, // NO PK, no sql generated
+		[]byte(`DELETE FROM jkl
+WHERE id = ?
+    AND fid = ?`),
+		[]byte(`DELETE FROM jkl_nn
+WHERE id = ?
+    AND fid = ?`),
+		[]byte(`DELETE FROM mno
+WHERE id = ?`),
+		[]byte(`DELETE FROM mno_nn
+WHERE id = ?`),
+	}
+
+	for i, tbl := range tableDefs {
+		sql, err := tbl.DeleteSQLPK()
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
 			continue
