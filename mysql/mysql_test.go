@@ -167,9 +167,9 @@ var createViews = []string{
 }
 
 var tableDefs = []Table{
-	Table{
+	Table{ // 0
 		name: "abc", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -262,9 +262,9 @@ var tableDefs = []Table{
 			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc", Cols: []string{"id"}, RefTable: "", RefCols: nil},
 		},
 	},
-	Table{
+	Table{ // 1
 		name: "abc_nn", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -357,9 +357,9 @@ var tableDefs = []Table{
 			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc_nn", Cols: []string{"id"}, RefTable: "", RefCols: nil},
 		},
 	},
-	Table{
+	Table{ // 2
 		name: "abc_v", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -388,9 +388,9 @@ var tableDefs = []Table{
 		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
 	},
-	Table{
+	Table{ // 3
 		name: "def", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -451,16 +451,16 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "id", Table: "def", Cols: []string{"id, d_datetime"}},
+			{Type: "BTREE", Primary: false, Name: "id", Table: "def", Cols: []string{"id", "d_datetime"}},
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def", Cols: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "def", Cols: []string{"id"}, RefTable: "", RefCols: nil},
 		},
 	},
-	Table{
+	Table{ // 4
 		name: "def_nn", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -517,20 +517,20 @@ var tableDefs = []Table{
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
 				Comment: "",
 			},
-		},
+		}, // 5
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "id", Table: "def_nn", Cols: []string{"id, d_datetime"}},
+			{Type: "BTREE", Primary: false, Name: "id", Table: "def_nn", Cols: []string{"id", "d_datetime"}},
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def_nn", Cols: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "def_nn", Cols: []string{"id"}, RefTable: "", RefCols: nil},
 		},
 	},
-	Table{
+	Table{ // 6
 		name: "defghi_v", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "aid", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -575,9 +575,9 @@ var tableDefs = []Table{
 		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
 	},
-	Table{
+	Table{ // 7
 		name: "ghi", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -646,16 +646,16 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi", Cols: []string{"def_id, def_datetime"}},
-			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi", Cols: []string{"def_id, val"}},
+			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi", Cols: []string{"def_id", "def_datetime"}},
+			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi", Cols: []string{"val"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.FK, Name: "ghi_ibfk_1", Table: "ghi", Cols: []string{"def_id, def_datetime"}, RefTable: "def", RefCols: []string{"id", "d_datetime"}},
+			{Type: dbsql2go.FK, Name: "ghi_ibfk_1", Table: "ghi", Cols: []string{"def_id", "def_datetime"}, RefTable: "def", RefCols: []string{"id", "d_datetime"}},
 		},
 	},
-	Table{
+	Table{ // 8
 		name: "ghi_nn", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -724,16 +724,16 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi_nn", Cols: []string{"def_id, def_datetime"}},
-			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi_nn", Cols: []string{"def_id, val"}},
+			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi_nn", Cols: []string{"def_id", "def_datetime"}},
+			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi_nn", Cols: []string{"val"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.FK, Name: "ghi_nn_ibfk_1", Table: "ghi_nn", Cols: []string{"def_id, def_datetime"}, RefTable: "def_nn", RefCols: []string{"id", "d_datetime"}},
+			{Type: dbsql2go.FK, Name: "ghi_nn_ibfk_1", Table: "ghi_nn", Cols: []string{"def_id", "def_datetime"}, RefTable: "def_nn", RefCols: []string{"id", "d_datetime"}},
 		},
 	},
-	Table{
+	Table{ // 9
 		name: "jkl", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -803,16 +803,16 @@ var tableDefs = []Table{
 		collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
 			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl", Cols: []string{"fid"}},
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl", Cols: []string{"id, fid"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl", Cols: []string{"id", "fid"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{Type: dbsql2go.FK, Name: "jkl_ibfk_1", Table: "jkl", Cols: []string{"fid"}, RefTable: "def", RefCols: []string{"id"}},
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl", Cols: []string{"id, fid"}, RefTable: "", RefCols: nil},
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl", Cols: []string{"id", "fid"}, RefTable: "", RefCols: nil},
 		},
 	},
-	Table{
+	Table{ // 10
 		name: "jkl_nn", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -882,16 +882,16 @@ var tableDefs = []Table{
 		collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
 			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl_nn", Cols: []string{"fid"}},
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id, fid"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id", "fid"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{Type: dbsql2go.FK, Name: "jkl_nn_ibfk_1", Table: "jkl_nn", Cols: []string{"fid"}, RefTable: "def", RefCols: []string{"id"}},
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id, fid"}, RefTable: "", RefCols: nil},
+			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id", "fid"}, RefTable: "", RefCols: nil},
 		},
 	},
-	Table{
+	Table{ // 11
 		name: "mno", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -974,9 +974,9 @@ var tableDefs = []Table{
 			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "mno", Cols: []string{"id"}, RefTable: "", RefCols: nil},
 		},
 	},
-	Table{
+	Table{ // 12
 		name: "mno_nn", schema: "dbsql_test",
-		Columns: []Column{
+		ColumnNames: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -1277,146 +1277,146 @@ var fmtdTableDefsString = []string{
 
 var indexes = []Index{
 	{
-		TableName: "abc", NonUnique: 0, Schema: "dbsql_test", name: "code",
-		SeqInIndex: 1, ColumnName: "code", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "abc", NonUnique: 0, Schema: "dbsql_test", name: "code",
+		SeqInIndex: 1, Column: "code", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "abc", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "abc", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "abc_nn", NonUnique: 0, Schema: "dbsql_test", name: "code",
-		SeqInIndex: 1, ColumnName: "code", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "abc_nn", NonUnique: 0, Schema: "dbsql_test", name: "code",
+		SeqInIndex: 1, Column: "code", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "abc_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "abc_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "def", NonUnique: 1, Schema: "dbsql_test", name: "id",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "def", NonUnique: 1, Schema: "dbsql_test", name: "id",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "def", NonUnique: 1, Schema: "dbsql_test", name: "id",
-		SeqInIndex: 2, ColumnName: "d_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "def", NonUnique: 1, Schema: "dbsql_test", name: "id",
+		SeqInIndex: 2, Column: "d_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "YES", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "def", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "def", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "def_nn", NonUnique: 1, Schema: "dbsql_test", name: "id",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "def_nn", NonUnique: 1, Schema: "dbsql_test", name: "id",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "def_nn", NonUnique: 1, Schema: "dbsql_test", name: "id",
-		SeqInIndex: 2, ColumnName: "d_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "def_nn", NonUnique: 1, Schema: "dbsql_test", name: "id",
+		SeqInIndex: 2, Column: "d_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "def_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "def_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "ghi", NonUnique: 1, Schema: "dbsql_test", name: "fk_def",
-		SeqInIndex: 1, ColumnName: "def_id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "ghi", NonUnique: 1, Schema: "dbsql_test", name: "fk_def",
+		SeqInIndex: 1, Column: "def_id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "YES", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "ghi", NonUnique: 1, Schema: "dbsql_test", name: "fk_def",
-		SeqInIndex: 2, ColumnName: "def_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "ghi", NonUnique: 1, Schema: "dbsql_test", name: "fk_def",
+		SeqInIndex: 2, Column: "def_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "YES", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "ghi", NonUnique: 1, Schema: "dbsql_test", name: "val",
-		SeqInIndex: 1, ColumnName: "val", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "ghi", NonUnique: 1, Schema: "dbsql_test", name: "val",
+		SeqInIndex: 1, Column: "val", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "YES", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "ghi_nn", NonUnique: 1, Schema: "dbsql_test", name: "fk_def",
-		SeqInIndex: 1, ColumnName: "def_id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "ghi_nn", NonUnique: 1, Schema: "dbsql_test", name: "fk_def",
+		SeqInIndex: 1, Column: "def_id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "ghi_nn", NonUnique: 1, Schema: "dbsql_test", name: "fk_def",
-		SeqInIndex: 2, ColumnName: "def_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "ghi_nn", NonUnique: 1, Schema: "dbsql_test", name: "fk_def",
+		SeqInIndex: 2, Column: "def_datetime", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "ghi_nn", NonUnique: 1, Schema: "dbsql_test", name: "val",
-		SeqInIndex: 1, ColumnName: "val", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "ghi_nn", NonUnique: 1, Schema: "dbsql_test", name: "val",
+		SeqInIndex: 1, Column: "val", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "jkl", NonUnique: 1, Schema: "dbsql_test", name: "fid",
-		SeqInIndex: 1, ColumnName: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "jkl", NonUnique: 1, Schema: "dbsql_test", name: "fid",
+		SeqInIndex: 1, Column: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "jkl", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "jkl", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "jkl", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 2, ColumnName: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "jkl", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 2, Column: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "jkl_nn", NonUnique: 1, Schema: "dbsql_test", name: "fid",
-		SeqInIndex: 1, ColumnName: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "jkl_nn", NonUnique: 1, Schema: "dbsql_test", name: "fid",
+		SeqInIndex: 1, Column: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "jkl_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "jkl_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "jkl_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 2, ColumnName: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "jkl_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 2, Column: "fid", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "mno", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "mno", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
 	{
-		TableName: "mno_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
-		SeqInIndex: 1, ColumnName: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
+		Table: "mno_nn", NonUnique: 0, Schema: "dbsql_test", name: "PRIMARY",
+		SeqInIndex: 1, Column: "id", Collation: sql.NullString{String: "A", Valid: true}, Cardinality: sql.NullInt64{Int64: 0, Valid: true},
 		SubPart: sql.NullInt64{Int64: 0, Valid: false}, Packed: sql.NullString{String: "", Valid: false}, Nullable: "", Type: "BTREE",
 		Comment: sql.NullString{String: "", Valid: true}, IndexComment: "",
 	},
@@ -1445,12 +1445,12 @@ var constraints = []Constraint{
 
 var views = []View{
 	{
-		TableName: "abc_v", ViewDefinition: "select `dbsql_test`.`abc`.`id` AS `id`,`dbsql_test`.`abc`.`code` AS `code`,`dbsql_test`.`abc`.`description` AS `description` from `dbsql_test`.`abc` order by `dbsql_test`.`abc`.`code`",
+		Table: "abc_v", ViewDefinition: "select `dbsql_test`.`abc`.`id` AS `id`,`dbsql_test`.`abc`.`code` AS `code`,`dbsql_test`.`abc`.`description` AS `description` from `dbsql_test`.`abc` order by `dbsql_test`.`abc`.`code`",
 		CheckOption: "NONE", IsUpdatable: "YES", Definer: "testuser@localhost",
 		SecurityType: "DEFINER", CharacterSetClient: "utf8", CollationConnection: "utf8_general_ci",
 	},
 	{
-		TableName: "defghi_v", ViewDefinition: "select `a`.`id` AS `aid`,`b`.`id` AS `bid`,`a`.`d_datetime` AS `d_datetime`,`a`.`size` AS `size`,`b`.`stuff` AS `stuff` from `dbsql_test`.`def` `a` join `dbsql_test`.`ghi` `b` where (`a`.`id` = `b`.`def_id`) order by `a`.`id`,`a`.`size`,`b`.`def_id`",
+		Table: "defghi_v", ViewDefinition: "select `a`.`id` AS `aid`,`b`.`id` AS `bid`,`a`.`d_datetime` AS `d_datetime`,`a`.`size` AS `size`,`b`.`stuff` AS `stuff` from `dbsql_test`.`def` `a` join `dbsql_test`.`ghi` `b` where (`a`.`id` = `b`.`def_id`) order by `a`.`id`,`a`.`size`,`b`.`def_id`",
 		CheckOption: "NONE", IsUpdatable: "YES", Definer: "testuser@localhost",
 		SecurityType: "DEFINER", CharacterSetClient: "utf8", CollationConnection: "utf8_general_ci",
 	},
@@ -1519,111 +1519,111 @@ func TestTables(t *testing.T) {
 			continue
 		}
 		// handle columns
-		for j, col := range tbl.Columns {
-			if col.Name != tableDefs[i].Columns[j].Name {
-				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", tbl.name, col.Name, col.Name, tableDefs[i].Columns[j].Name)
+		for j, col := range tbl.ColumnNames {
+			if col.Name != tableDefs[i].ColumnNames[j].Name {
+				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", tbl.name, col.Name, col.Name, tableDefs[i].ColumnNames[j].Name)
 				continue
 			}
-			if col.OrdinalPosition != tableDefs[i].Columns[j].OrdinalPosition {
-				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", tbl.name, col.Name, col.OrdinalPosition, tableDefs[i].Columns[j].OrdinalPosition)
+			if col.OrdinalPosition != tableDefs[i].ColumnNames[j].OrdinalPosition {
+				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", tbl.name, col.Name, col.OrdinalPosition, tableDefs[i].ColumnNames[j].OrdinalPosition)
 				continue
 			}
-			if col.Default.Valid != tableDefs[i].Columns[j].Default.Valid {
-				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", tbl.name, col.Name, col.Default.Valid, tableDefs[i].Columns[j].Default.Valid)
+			if col.Default.Valid != tableDefs[i].ColumnNames[j].Default.Valid {
+				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", tbl.name, col.Name, col.Default.Valid, tableDefs[i].ColumnNames[j].Default.Valid)
 				continue
 			}
 			if col.Default.Valid {
-				if col.Default.String != tableDefs[i].Columns[j].Default.String {
-					t.Errorf("%s.%s DEFAULT String: got %s want %s", tbl.name, col.Name, col.Default.String, tableDefs[i].Columns[j].Default.String)
+				if col.Default.String != tableDefs[i].ColumnNames[j].Default.String {
+					t.Errorf("%s.%s DEFAULT String: got %s want %s", tbl.name, col.Name, col.Default.String, tableDefs[i].ColumnNames[j].Default.String)
 				}
 				continue
 			}
-			if col.IsNullable != tableDefs[i].Columns[j].IsNullable {
-				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", tbl.name, col.Name, col.IsNullable, tableDefs[i].Columns[j].IsNullable)
+			if col.IsNullable != tableDefs[i].ColumnNames[j].IsNullable {
+				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", tbl.name, col.Name, col.IsNullable, tableDefs[i].ColumnNames[j].IsNullable)
 				continue
 			}
-			if col.DataType != tableDefs[i].Columns[j].DataType {
-				t.Errorf("%s.%s DATA_TYPE: got %q want %q", tbl.name, col.Name, col.DataType, tableDefs[i].Columns[j].DataType)
+			if col.DataType != tableDefs[i].ColumnNames[j].DataType {
+				t.Errorf("%s.%s DATA_TYPE: got %q want %q", tbl.name, col.Name, col.DataType, tableDefs[i].ColumnNames[j].DataType)
 				continue
 			}
-			if col.CharMaxLen.Valid != tableDefs[i].Columns[j].CharMaxLen.Valid {
-				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharMaxLen.Valid, tableDefs[i].Columns[j].CharMaxLen.Valid)
+			if col.CharMaxLen.Valid != tableDefs[i].ColumnNames[j].CharMaxLen.Valid {
+				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharMaxLen.Valid, tableDefs[i].ColumnNames[j].CharMaxLen.Valid)
 				continue
 			}
 			if col.CharMaxLen.Valid {
-				if col.CharMaxLen.Int64 != tableDefs[i].Columns[j].CharMaxLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharMaxLen.Int64, tableDefs[i].Columns[j].CharMaxLen.Int64)
+				if col.CharMaxLen.Int64 != tableDefs[i].ColumnNames[j].CharMaxLen.Int64 {
+					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharMaxLen.Int64, tableDefs[i].ColumnNames[j].CharMaxLen.Int64)
 				}
 				continue
 			}
-			if col.CharOctetLen.Valid != tableDefs[i].Columns[j].CharOctetLen.Valid {
-				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharOctetLen.Valid, tableDefs[i].Columns[j].CharOctetLen.Valid)
+			if col.CharOctetLen.Valid != tableDefs[i].ColumnNames[j].CharOctetLen.Valid {
+				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharOctetLen.Valid, tableDefs[i].ColumnNames[j].CharOctetLen.Valid)
 				continue
 			}
 			if col.CharOctetLen.Valid {
-				if col.CharOctetLen.Int64 != tableDefs[i].Columns[j].CharOctetLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharOctetLen.Int64, tableDefs[i].Columns[j].CharOctetLen.Int64)
+				if col.CharOctetLen.Int64 != tableDefs[i].ColumnNames[j].CharOctetLen.Int64 {
+					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharOctetLen.Int64, tableDefs[i].ColumnNames[j].CharOctetLen.Int64)
 				}
 				continue
 			}
-			if col.NumericPrecision.Valid != tableDefs[i].Columns[j].NumericPrecision.Valid {
-				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", tbl.name, col.Name, col.NumericPrecision.Valid, tableDefs[i].Columns[j].NumericPrecision.Valid)
+			if col.NumericPrecision.Valid != tableDefs[i].ColumnNames[j].NumericPrecision.Valid {
+				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", tbl.name, col.Name, col.NumericPrecision.Valid, tableDefs[i].ColumnNames[j].NumericPrecision.Valid)
 				continue
 			}
 			if col.NumericPrecision.Valid {
-				if col.NumericPrecision.Int64 != tableDefs[i].Columns[j].NumericPrecision.Int64 {
-					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", tbl.name, col.Name, col.NumericPrecision.Int64, tableDefs[i].Columns[j].NumericPrecision.Int64)
+				if col.NumericPrecision.Int64 != tableDefs[i].ColumnNames[j].NumericPrecision.Int64 {
+					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", tbl.name, col.Name, col.NumericPrecision.Int64, tableDefs[i].ColumnNames[j].NumericPrecision.Int64)
 				}
 				continue
 			}
-			if col.NumericScale.Valid != tableDefs[i].Columns[j].NumericScale.Valid {
-				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", tbl.name, col.Name, col.NumericScale.Valid, tableDefs[i].Columns[j].NumericScale.Valid)
+			if col.NumericScale.Valid != tableDefs[i].ColumnNames[j].NumericScale.Valid {
+				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", tbl.name, col.Name, col.NumericScale.Valid, tableDefs[i].ColumnNames[j].NumericScale.Valid)
 				continue
 			}
 			if col.NumericScale.Valid {
-				if col.NumericScale.Int64 == tableDefs[i].Columns[j].NumericScale.Int64 {
-					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", tbl.name, col.Name, col.NumericScale.Int64, tableDefs[i].Columns[j].NumericScale.Int64)
+				if col.NumericScale.Int64 == tableDefs[i].ColumnNames[j].NumericScale.Int64 {
+					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", tbl.name, col.Name, col.NumericScale.Int64, tableDefs[i].ColumnNames[j].NumericScale.Int64)
 				}
 				continue
 			}
-			if col.CharacterSet.Valid != tableDefs[i].Columns[j].CharacterSet.Valid {
-				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", tbl.name, col.Name, col.CharacterSet.Valid, tableDefs[i].Columns[j].CharacterSet.Valid)
+			if col.CharacterSet.Valid != tableDefs[i].ColumnNames[j].CharacterSet.Valid {
+				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", tbl.name, col.Name, col.CharacterSet.Valid, tableDefs[i].ColumnNames[j].CharacterSet.Valid)
 				continue
 			}
 			if col.CharacterSet.Valid {
-				if col.CharacterSet.String != tableDefs[i].Columns[j].CharacterSet.String {
-					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", tbl.name, col.Name, col.CharacterSet.String, tableDefs[i].Columns[j].CharacterSet.String)
+				if col.CharacterSet.String != tableDefs[i].ColumnNames[j].CharacterSet.String {
+					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", tbl.name, col.Name, col.CharacterSet.String, tableDefs[i].ColumnNames[j].CharacterSet.String)
 				}
 				continue
 			}
-			if col.Collation.Valid != tableDefs[i].Columns[j].Collation.Valid {
-				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", tbl.name, col.Name, col.Collation.Valid, tableDefs[i].Columns[j].Collation.Valid)
+			if col.Collation.Valid != tableDefs[i].ColumnNames[j].Collation.Valid {
+				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", tbl.name, col.Name, col.Collation.Valid, tableDefs[i].ColumnNames[j].Collation.Valid)
 				continue
 			}
 			if col.Collation.Valid {
-				if col.Collation.String == tableDefs[i].Columns[j].Collation.String {
-					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", tbl.name, col.Name, col.Collation.String, tableDefs[i].Columns[j].Collation.String)
+				if col.Collation.String == tableDefs[i].ColumnNames[j].Collation.String {
+					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", tbl.name, col.Name, col.Collation.String, tableDefs[i].ColumnNames[j].Collation.String)
 				}
 				continue
 			}
-			if col.Typ != tableDefs[i].Columns[j].Typ {
-				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", tbl.name, col.Name, col.Typ, tableDefs[i].Columns[j].Typ)
+			if col.Typ != tableDefs[i].ColumnNames[j].Typ {
+				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", tbl.name, col.Name, col.Typ, tableDefs[i].ColumnNames[j].Typ)
 				continue
 			}
-			if col.Key != tableDefs[i].Columns[j].Key {
-				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", tbl.name, col.Name, col.Key, tableDefs[i].Columns[j].Key)
+			if col.Key != tableDefs[i].ColumnNames[j].Key {
+				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", tbl.name, col.Name, col.Key, tableDefs[i].ColumnNames[j].Key)
 				continue
 			}
-			if col.Extra != tableDefs[i].Columns[j].Extra {
-				t.Errorf("%s.%s EXTRA: got %q want %q", tbl.name, col.Name, col.Extra, tableDefs[i].Columns[j].Extra)
+			if col.Extra != tableDefs[i].ColumnNames[j].Extra {
+				t.Errorf("%s.%s EXTRA: got %q want %q", tbl.name, col.Name, col.Extra, tableDefs[i].ColumnNames[j].Extra)
 				continue
 			}
-			if col.Privileges != tableDefs[i].Columns[j].Privileges {
-				t.Errorf("%s.%s PRIVILEGES: got %q want %q", tbl.name, col.Name, col.Privileges, tableDefs[i].Columns[j].Privileges)
+			if col.Privileges != tableDefs[i].ColumnNames[j].Privileges {
+				t.Errorf("%s.%s PRIVILEGES: got %q want %q", tbl.name, col.Name, col.Privileges, tableDefs[i].ColumnNames[j].Privileges)
 				continue
 			}
-			if col.Comment != tableDefs[i].Columns[j].Comment {
-				t.Errorf("%s.%s COMMENT: got %q want %q", tbl.name, col.Name, col.Comment, tableDefs[i].Columns[j].Comment)
+			if col.Comment != tableDefs[i].ColumnNames[j].Comment {
+				t.Errorf("%s.%s COMMENT: got %q want %q", tbl.name, col.Name, col.Comment, tableDefs[i].ColumnNames[j].Comment)
 				continue
 			}
 		}
@@ -1642,90 +1642,90 @@ func TestIndexes(t *testing.T) {
 		return
 	}
 	for i, ndx := range m.(*DB).indexes {
-		if ndx.TableName != indexes[i].TableName {
-			t.Errorf("%s.%s.%d.Tablename: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.TableName, indexes[i].TableName)
+		if ndx.Table != indexes[i].Table {
+			t.Errorf("%s.%s.%d.Table: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Table, indexes[i].Table)
 			continue
 		}
 		if ndx.NonUnique != indexes[i].NonUnique {
-			t.Errorf("%s.%s.%d.NonUnique: got %d want %d", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.NonUnique, indexes[i].NonUnique)
+			t.Errorf("%s.%s.%d.NonUnique: got %d want %d", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.NonUnique, indexes[i].NonUnique)
 			continue
 		}
 		if ndx.Schema != indexes[i].Schema {
-			t.Errorf("%s.%s.%d.Schema: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Schema, indexes[i].Schema)
+			t.Errorf("%s.%s.%d.Schema: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Schema, indexes[i].Schema)
 			continue
 		}
 		if ndx.name != indexes[i].name {
-			t.Errorf("%s.%s.%d.Name: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.name, indexes[i].name)
+			t.Errorf("%s.%s.%d.Name: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.name, indexes[i].name)
 			continue
 		}
 		if ndx.SeqInIndex != indexes[i].SeqInIndex {
-			t.Errorf("%s.%s.%d.SeqInIndex: got %d want %d", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.SeqInIndex, indexes[i].SeqInIndex)
+			t.Errorf("%s.%s.%d.SeqInIndex: got %d want %d", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.SeqInIndex, indexes[i].SeqInIndex)
 			continue
 		}
-		if ndx.ColumnName != indexes[i].ColumnName {
-			t.Errorf("%s.%s.%d.ColumnName: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.ColumnName, indexes[i].ColumnName)
+		if ndx.Column != indexes[i].Column {
+			t.Errorf("%s.%s.%d.Column: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Column, indexes[i].Column)
 			continue
 		}
 		if ndx.Collation.Valid != indexes[i].Collation.Valid {
-			t.Errorf("%s.%s.%d.Collation.Valid: got %t want %t", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Collation.Valid, indexes[i].Collation.Valid)
+			t.Errorf("%s.%s.%d.Collation.Valid: got %t want %t", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Collation.Valid, indexes[i].Collation.Valid)
 			continue
 		}
 		if ndx.Collation.Valid {
 			if ndx.Collation.String != indexes[i].Collation.String {
-				t.Errorf("%s.%s.%d.Collation.String: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Collation.String, indexes[i].Collation.String)
+				t.Errorf("%s.%s.%d.Collation.String: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Collation.String, indexes[i].Collation.String)
 				continue
 			}
 		}
 		if ndx.Cardinality.Valid != indexes[i].Cardinality.Valid {
-			t.Errorf("%s.%s.%d.Cardinality.Valid: got %t want %t", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Cardinality.Valid, indexes[i].Cardinality.Valid)
+			t.Errorf("%s.%s.%d.Cardinality.Valid: got %t want %t", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Cardinality.Valid, indexes[i].Cardinality.Valid)
 			continue
 		}
 		if ndx.Cardinality.Valid {
 			if ndx.Cardinality.Int64 != indexes[i].Cardinality.Int64 {
-				t.Errorf("%s.%s.%d.Cardinality.Int64: got %d want %d", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Cardinality.Int64, indexes[i].Cardinality.Int64)
+				t.Errorf("%s.%s.%d.Cardinality.Int64: got %d want %d", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Cardinality.Int64, indexes[i].Cardinality.Int64)
 				continue
 			}
 		}
 		if ndx.SubPart.Valid != indexes[i].SubPart.Valid {
-			t.Errorf("%s.%s.%d.SubPart.Valid: got %t want %t", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.SubPart.Valid, indexes[i].SubPart.Valid)
+			t.Errorf("%s.%s.%d.SubPart.Valid: got %t want %t", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.SubPart.Valid, indexes[i].SubPart.Valid)
 			continue
 		}
 		if ndx.SubPart.Valid {
 			if ndx.SubPart.Int64 != indexes[i].SubPart.Int64 {
-				t.Errorf("%s.%s.%d.SubPart.Int64: got %d want %d", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.SubPart.Int64, indexes[i].SubPart.Int64)
+				t.Errorf("%s.%s.%d.SubPart.Int64: got %d want %d", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.SubPart.Int64, indexes[i].SubPart.Int64)
 				continue
 			}
 		}
 		if ndx.Packed.Valid != indexes[i].Packed.Valid {
-			t.Errorf("%s.%s.%d.Packed.Valid: got %t want %t", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Packed.Valid, indexes[i].Packed.Valid)
+			t.Errorf("%s.%s.%d.Packed.Valid: got %t want %t", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Packed.Valid, indexes[i].Packed.Valid)
 			continue
 		}
 		if ndx.Packed.Valid {
 			if ndx.Packed.String != indexes[i].Packed.String {
-				t.Errorf("%s.%s.%d.Packed.String: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Packed.String, indexes[i].Packed.String)
+				t.Errorf("%s.%s.%d.Packed.String: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Packed.String, indexes[i].Packed.String)
 				continue
 			}
 		}
 		if ndx.Nullable != indexes[i].Nullable {
-			t.Errorf("%s.%s.%d.Nullable: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Nullable, indexes[i].Nullable)
+			t.Errorf("%s.%s.%d.Nullable: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Nullable, indexes[i].Nullable)
 			continue
 		}
 		if ndx.Type != indexes[i].Type {
-			t.Errorf("%s.%s.%d.Type: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Type, indexes[i].Type)
+			t.Errorf("%s.%s.%d.Type: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Type, indexes[i].Type)
 			continue
 		}
 		if ndx.Comment.Valid != indexes[i].Comment.Valid {
-			t.Errorf("%s.%s.%d.Comment.Valid: got %t want %t", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Comment.Valid, indexes[i].Comment.Valid)
+			t.Errorf("%s.%s.%d.Comment.Valid: got %t want %t", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Comment.Valid, indexes[i].Comment.Valid)
 			continue
 		}
 		if ndx.Comment.Valid {
 			if ndx.Packed.String != indexes[i].Packed.String {
-				t.Errorf("%s.%s.%d.Comment.String: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.Comment.String, indexes[i].Comment.String)
+				t.Errorf("%s.%s.%d.Comment.String: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.Comment.String, indexes[i].Comment.String)
 				continue
 			}
 		}
 		if ndx.IndexComment != indexes[i].IndexComment {
-			t.Errorf("%s.%s.%d.IndexComment: got %s want %s", ndx.TableName, ndx.name, ndx.SeqInIndex, ndx.IndexComment, indexes[i].IndexComment)
+			t.Errorf("%s.%s.%d.IndexComment: got %s want %s", ndx.Table, ndx.name, ndx.SeqInIndex, ndx.IndexComment, indexes[i].IndexComment)
 			continue
 		}
 	}
@@ -1812,42 +1812,42 @@ func TestViews(t *testing.T) {
 	vs := m.Views()
 	for i, view := range vs {
 		v := view.(*View)
-		if v.TableName != views[i].TableName {
-			t.Errorf("%s: got %s; want %s", views[i].TableName, v.TableName, views[i].TableName)
+		if v.Table != views[i].Table {
+			t.Errorf("%s: got %s; want %s", views[i].Table, v.Table, views[i].Table)
 			continue
 		}
 		if v.ViewDefinition != views[i].ViewDefinition {
-			t.Errorf("%s.ViewDefinition: got %s; want %s", views[i].TableName, v.ViewDefinition, views[i].ViewDefinition)
+			t.Errorf("%s.ViewDefinition: got %s; want %s", views[i].Table, v.ViewDefinition, views[i].ViewDefinition)
 			continue
 		}
 		if v.CheckOption != views[i].CheckOption {
-			t.Errorf("%s.CheckOption: got %s; want %s", views[i].TableName, v.CheckOption, views[i].CheckOption)
+			t.Errorf("%s.CheckOption: got %s; want %s", views[i].Table, v.CheckOption, views[i].CheckOption)
 			continue
 		}
 		if v.IsUpdatable != views[i].IsUpdatable {
-			t.Errorf("%s.IsUpdatable: got %s; want %s", views[i].IsUpdatable, v.TableName, views[i].IsUpdatable)
+			t.Errorf("%s.IsUpdatable: got %s; want %s", views[i].IsUpdatable, v.Table, views[i].IsUpdatable)
 			continue
 		}
 		if v.Definer != views[i].Definer {
-			t.Errorf("%s.Definer: got %s; want %s", views[i].TableName, v.Definer, views[i].Definer)
+			t.Errorf("%s.Definer: got %s; want %s", views[i].Table, v.Definer, views[i].Definer)
 			continue
 		}
 		if v.SecurityType != views[i].SecurityType {
-			t.Errorf("%s.SecurityType: got %s; want %s", views[i].TableName, v.SecurityType, views[i].SecurityType)
+			t.Errorf("%s.SecurityType: got %s; want %s", views[i].Table, v.SecurityType, views[i].SecurityType)
 			continue
 		}
 		if v.CharacterSetClient != views[i].CharacterSetClient {
-			t.Errorf("%s.CharacterSetClient: got %s; want %s", views[i].TableName, v.CharacterSetClient, views[i].CharacterSetClient)
+			t.Errorf("%s.CharacterSetClient: got %s; want %s", views[i].Table, v.CharacterSetClient, views[i].CharacterSetClient)
 			continue
 		}
 		if v.CollationConnection != views[i].CollationConnection {
-			t.Errorf("%s.CollationConnection: got %s; want %s", views[i].TableName, v.CollationConnection, views[i].CollationConnection)
+			t.Errorf("%s.CollationConnection: got %s; want %s", views[i].Table, v.CollationConnection, views[i].CollationConnection)
 			continue
 		}
 	}
 }
 
-func TestColumnNames(t *testing.T) {
+func TestColumns(t *testing.T) {
 	expected := []struct {
 		name string
 		cols []string
@@ -1866,7 +1866,7 @@ func TestColumnNames(t *testing.T) {
 		{name: "mno_nn", cols: []string{"id", "geo", "pt", "lstring", "poly", "multi_pt", "multi_lstring", "multi_polygon", "geo_collection"}},
 	}
 	for i, tbl := range tableDefs {
-		cols := tbl.ColumnNames()
+		cols := tbl.Columns()
 		if !sliceEqual(cols, expected[i].cols) {
 			t.Errorf("%s: got %v want %v", expected[i].name, cols, expected[i].cols)
 		}
@@ -1889,24 +1889,24 @@ func TestUpdateTables(t *testing.T) {
 		ndxs := tbl.Indexes()
 		for j, ndx := range ndxs {
 			if tableDefs[i].indexes[j].Type != ndx.Type {
-				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), ndx.Name, ndx.Type, tableDefs[i].indexes[j].Type)
+				t.Errorf("Index: %d:%d: %s:%s.Type: got %v; want %v", i, j, tbl.Name(), ndx.Name, ndx.Type, tableDefs[i].indexes[j].Type)
 				continue
 			}
 			if tableDefs[i].indexes[j].Primary != ndx.Primary {
-				t.Errorf("%s:%s.Primary: got %v; want %v", tbl.Name(), ndx.Name, ndx.Primary, tableDefs[i].indexes[j].Primary)
+				t.Errorf("Index: %d:%d: %s:%s.Primary: got %v; want %v", i, j, tbl.Name(), ndx.Name, ndx.Primary, tableDefs[i].indexes[j].Primary)
 				continue
 			}
 			if tableDefs[i].indexes[j].Name != ndx.Name {
-				t.Errorf("%s:%s.Name: got %v; want %v", tbl.Name(), ndx.Name, ndx.Name, tableDefs[i].indexes[j].Name)
+				t.Errorf("Index: %d:%d: %s:%s.Name: got %v; want %v", i, j, tbl.Name(), ndx.Name, ndx.Name, tableDefs[i].indexes[j].Name)
 				continue
 			}
 			if tableDefs[i].indexes[j].Table != ndx.Table {
-				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), ndx.Name, ndx.Table, tableDefs[i].indexes[j].Table)
+				t.Errorf("Index: %d:%d: %s:%s.Type: got %v; want %v", i, j, tbl.Name(), ndx.Name, ndx.Table, tableDefs[i].indexes[j].Table)
 				continue
 			}
 			for k, col := range ndx.Cols {
 				if tableDefs[i].indexes[j].Cols[k] != col {
-					t.Errorf("%s:%s.Cols.%d: got %s; want %s", tbl.Name(), ndx.Name, k, col, tableDefs[i].indexes[j].Cols[k])
+					t.Errorf("Index: %d:%d:%d: %s:%s.Cols.%d: got %s; want %s", i, j, k, tbl.Name(), ndx.Name, k, col, tableDefs[i].indexes[j].Cols[k])
 					continue
 				}
 			}
@@ -1914,30 +1914,30 @@ func TestUpdateTables(t *testing.T) {
 		cons := tbl.Constraints()
 		for j, c := range cons {
 			if tableDefs[i].constraints[j].Type != c.Type {
-				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), c.Name, c.Type, tableDefs[i].constraints[j].Type)
+				t.Errorf("Constraint: %d:%d: %s:%s.Type: got %v; want %v", i, j, tbl.Name(), c.Name, c.Type, tableDefs[i].constraints[j].Type)
 				continue
 			}
 			if tableDefs[i].constraints[j].Name != c.Name {
-				t.Errorf("%s:%s.Name: got %v; want %v", tbl.Name(), c.Name, c.Name, tableDefs[i].constraints[j].Name)
+				t.Errorf("Constraint: %d:%d: %s:%s.Name: got %v; want %v", i, j, tbl.Name(), c.Name, c.Name, tableDefs[i].constraints[j].Name)
 				continue
 			}
 			if tableDefs[i].constraints[j].Table != c.Table {
-				t.Errorf("%s:%s.Type: got %v; want %v", tbl.Name(), c.Name, c.Table, tableDefs[i].constraints[j].Table)
+				t.Errorf("Constraint: %d:%d: %s:%s.Table: got %v; want %v", i, j, tbl.Name(), c.Name, c.Table, tableDefs[i].constraints[j].Table)
 				continue
 			}
 			for k, col := range c.Cols {
 				if tableDefs[i].constraints[j].Cols[k] != col {
-					t.Errorf("%s:%s.Cols.%d: got %s; want %s", tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].Cols[k])
+					t.Errorf("Constraint: %d:%d:%d: %s:%s.Cols.%d: got %s; want %s", i, j, k, tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].Cols[k])
 					continue
 				}
 			}
 			if c.RefTable != tableDefs[i].constraints[j].RefTable {
-				t.Errorf("%s:%s.RefTable: got %v; want %v", tbl.Name(), c.Name, c.RefTable, tableDefs[i].constraints[j].RefTable)
+				t.Errorf("Constraint: %d:%d: %s:%s.RefTable: got %v; want %v", i, j, tbl.Name(), c.Name, c.RefTable, tableDefs[i].constraints[j].RefTable)
 				continue
 			}
 			for k, col := range c.RefCols {
 				if tableDefs[i].constraints[j].RefCols[k] != col {
-					t.Errorf("%s:%s.RefCols.%d: got %s; want %s", tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].RefCols[k])
+					t.Errorf("Constraint: %d:%d:%d: %s:%s.RefCols.%d: got %s; want %s", i, j, k, tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].RefCols[k])
 					continue
 				}
 			}
@@ -1967,7 +1967,7 @@ func TestGenerateFmtdDefs(t *testing.T) {
 		}
 		d, err := def.GoFmt()
 		if err != nil {
-			t.Error("%s: %s", def.Name(), err)
+			t.Errorf("%s: %s", def.Name(), err)
 		}
 		if fmtdTableDefsString[i] != string(d) {
 			t.Errorf("%s: got %q; want %q", def.Name(), string(d), fmtdTableDefsString[i])

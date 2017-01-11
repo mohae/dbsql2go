@@ -141,7 +141,7 @@ func (m *DB) GetTables() error {
 				return err
 			}
 
-			mTbl.Columns = append(mTbl.Columns, c)
+			mTbl.ColumnNames = append(mTbl.ColumnNames, c)
 		}
 		rows.Close()
 		m.tables[i] = mTbl
@@ -177,8 +177,8 @@ func (m *DB) GetIndexes() error {
 	for rows.Next() {
 		var ndx Index
 		err = rows.Scan(
-			&ndx.TableName, &ndx.NonUnique, &ndx.Schema,
-			&ndx.name, &ndx.SeqInIndex, &ndx.ColumnName,
+			&ndx.Table, &ndx.NonUnique, &ndx.Schema,
+			&ndx.name, &ndx.SeqInIndex, &ndx.Column,
 			&ndx.Collation, &ndx.Cardinality, &ndx.SubPart,
 			&ndx.Packed, &ndx.Nullable, &ndx.Type,
 			&ndx.Comment, &ndx.IndexComment,
@@ -242,7 +242,7 @@ func (m *DB) GetViews() error {
 	for rows.Next() {
 		var v View
 		err = rows.Scan(
-			&v.TableName, &v.ViewDefinition, &v.CheckOption,
+			&v.Table, &v.ViewDefinition, &v.CheckOption,
 			&v.IsUpdatable, &v.Definer, &v.SecurityType,
 			&v.CharacterSetClient, &v.CollationConnection,
 		)
@@ -269,7 +269,7 @@ func (m *DB) UpdateTableConstraints() error {
 	var prior Constraint
 	var c dbsql2go.Constraint
 	for i, v := range m.constraints {
-		if v.Name == prior.Name { // if this is just another row for the same constraint, add the info
+		if v.Table == prior.Table && v.Name == prior.Name { // if this is just another row for the same constraint, add the info
 			c.Cols = append(c.Cols, v.Column)
 			if v.RefCol.Valid {
 				c.RefCols = append(c.RefCols, v.RefCol.String)
@@ -282,11 +282,11 @@ func (m *DB) UpdateTableConstraints() error {
 			goto process
 		}
 		// find the table and add this index to it
-		for i := 0; i < len(m.tables); i++ {
-			if m.tables[i].Name() != prior.Table {
+		for j := 0; j < len(m.tables); j++ {
+			if m.tables[j].Name() != c.Name {
 				continue
 			}
-			m.tables[i].(*Table).constraints = append(m.tables[i].(*Table).constraints, c)
+			m.tables[j].(*Table).constraints = append(m.tables[j].(*Table).constraints, c)
 			break
 		}
 	process:
@@ -325,8 +325,9 @@ func (m *DB) UpdateTableIndexes() {
 	var prior Index
 	var ndx dbsql2go.Index
 	for i, v := range m.indexes {
-		if v.name == prior.name { // if this is just another row for the same index, add the info
-			ndx.Cols = append(ndx.Cols, v.ColumnName)
+		if v.Table == prior.Table && v.name == prior.name { // if this is just another row for the same index, add the info
+			ndx.Cols = append(ndx.Cols, v.Column)
+			prior = v
 			continue
 		}
 		// if this is the first entry; don't add the index
@@ -334,24 +335,25 @@ func (m *DB) UpdateTableIndexes() {
 			goto process
 		}
 		// find the table and add this index to it
-		for i := 0; i < len(m.tables); i++ {
-			if m.tables[i].Name() != prior.TableName {
+		for j := 0; j < len(m.tables); j++ {
+			if m.tables[j].Name() != prior.Table {
 				continue
 			}
-			m.tables[i].(*Table).indexes = append(m.tables[i].(*Table).indexes, ndx)
+			m.tables[j].(*Table).indexes = append(m.tables[j].(*Table).indexes, ndx)
 			break
 		}
 	process:
-		ndx = dbsql2go.Index{Type: v.Type, Name: v.name, Table: v.TableName, Cols: []string{v.ColumnName}}
+		ndx = dbsql2go.Index{Type: v.Type, Name: v.name, Table: v.Table, Cols: []string{v.Column}}
 		if v.name == "PRIMARY" {
 			ndx.Primary = true
 		}
+		prior = v
 	}
 	// handle the final element
 	if prior.name != "" {
 		// find the table and add this index to it
 		for i := 0; i < len(m.tables); i++ {
-			if m.tables[i].Name() != prior.TableName {
+			if m.tables[i].Name() != prior.Table {
 				continue
 			}
 			m.tables[i].(*Table).indexes = append(m.tables[i].(*Table).indexes, ndx)
@@ -363,7 +365,7 @@ func (m *DB) UpdateTableIndexes() {
 type Table struct {
 	name        string
 	schema      string
-	Columns     []Column
+	ColumnNames []Column
 	Typ         string
 	Engine      sql.NullString
 	collation   sql.NullString
@@ -409,7 +411,7 @@ func (t *Table) Go() ([]byte, error) {
 	}
 
 	// write the column defs
-	for _, col := range t.Columns {
+	for _, col := range t.ColumnNames {
 		err = t.buf.WriteByte('\t')
 		if err != nil {
 			return nil, err
@@ -444,10 +446,10 @@ func (t *Table) GoFmt() ([]byte, error) {
 	return format.Source(b)
 }
 
-// ColumnNames returns the names of all the columns in the table.
-func (t *Table) ColumnNames() []string {
-	cols := make([]string, 0, len(t.Columns))
-	for _, col := range t.Columns {
+// Columns returns the names of all the columns in the table.
+func (t *Table) Columns() []string {
+	cols := make([]string, 0, len(t.ColumnNames))
+	for _, col := range t.ColumnNames {
 		cols = append(cols, col.Name)
 	}
 	return cols
@@ -461,6 +463,14 @@ func (t *Table) Indexes() []dbsql2go.Index {
 // Constraints returns information on all of the tables keys/constraints.
 func (t *Table) Constraints() []dbsql2go.Constraint {
 	return t.constraints
+}
+
+func (t *Table) SelectSQLPK() (stmt []byte, err error) {
+	// this is to shut up the compiler for now because it claims that
+	// Table isn't a dbsql2go.Tabler because of this method being missing,
+	// even though that method has been commented out of the interface. WTF
+	// is up with that?
+	return nil, nil
 }
 
 // Column holds all information about the columns in a database as provided by
@@ -540,8 +550,8 @@ type Index struct {
 	Schema       string
 	NonUnique    int64
 	SeqInIndex   int64
-	TableName    string
-	ColumnName   string
+	Table        string
+	Column       string
 	Collation    sql.NullString
 	Cardinality  sql.NullInt64
 	SubPart      sql.NullInt64
@@ -574,7 +584,7 @@ func Import() string {
 }
 
 type View struct {
-	TableName           string
+	Table               string
 	ViewDefinition      string
 	CheckOption         string
 	IsUpdatable         string
@@ -585,5 +595,5 @@ type View struct {
 }
 
 func (v *View) Name() string {
-	return v.TableName
+	return v.Table
 }
