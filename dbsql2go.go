@@ -95,7 +95,7 @@ type Tabler interface {
 	GoFmt() ([]byte, error)
 	Indexes() []Index
 	Constraints() []Constraint
-	//SelectSQLPK() ([]byte, error)
+	SelectSQLPK() ([]byte, error)
 	//InsertSQL() string
 	//	DeleteSQL() string
 }

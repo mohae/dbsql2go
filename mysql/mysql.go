@@ -372,7 +372,8 @@ type Table struct {
 	Comment     string
 	indexes     []dbsql2go.Index
 	constraints []dbsql2go.Constraint
-	buf         bytes.Buffer // buffer for holding generated stuff; this is not thread-safe
+	sqlInf      dbsql2go.TableSQL // caches all columns for the table for SQL generation
+	buf         bytes.Buffer      // buffer for holding generated stuff; this is not thread-safe
 }
 
 // Name returns the name of the table.
@@ -465,12 +466,45 @@ func (t *Table) Constraints() []dbsql2go.Constraint {
 	return t.constraints
 }
 
-func (t *Table) SelectSQLPK() (stmt []byte, err error) {
-	// this is to shut up the compiler for now because it claims that
-	// Table isn't a dbsql2go.Tabler because of this method being missing,
-	// even though that method has been commented out of the interface. WTF
-	// is up with that?
-	return nil, nil
+// SQLPrepare prepares the default dbsql2go.TableSQL with all of the tables'
+// columns and the table name so that that information doesn't need to be
+// set for every sql generation. Each SQL generation method will need to
+// set the Where field as it may change depending on the method called.
+func (t *Table) SQLPrepare() {
+	t.sqlInf.Table = t.name
+	t.sqlInf.Columns = t.Columns()
+}
+
+// SelectSQLPK returns a SELECT statement for the table that selects all the
+// table columns using the tables PK. If the table does not have a PK, a nil
+// will be returned and the error will also be nil as this is not an error
+// state.
+func (t *Table) SelectSQLPK() ([]byte, error) {
+	pk := t.GetPK()
+	if pk == nil { // the table doesn't have a primary key; this is not an error.
+		return nil, nil
+	}
+	if len(t.sqlInf.Columns) == 0 { // ensure everything is set
+		t.SQLPrepare()
+	}
+	t.sqlInf.Where = pk.Cols
+	t.buf.Reset()
+	err := dbsql2go.SelectSQL.Execute(&t.buf, t.sqlInf)
+	if err != nil {
+		return nil, err
+	}
+	return t.buf.Bytes(), nil
+}
+
+// GetPK returns a tables primary key information, if it has a primary key, or
+// nil if it doesn't have a primary key
+func (t *Table) GetPK() *dbsql2go.Constraint {
+	for _, v := range t.constraints {
+		if v.Type == dbsql2go.PK {
+			return &v
+		}
+	}
+	return nil
 }
 
 // Column holds all information about the columns in a database as provided by

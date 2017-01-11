@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
 	"sort"
@@ -1971,6 +1972,52 @@ func TestGenerateFmtdDefs(t *testing.T) {
 		}
 		if fmtdTableDefsString[i] != string(d) {
 			t.Errorf("%s: got %q; want %q", def.Name(), string(d), fmtdTableDefsString[i])
+		}
+	}
+}
+
+func TestSelectSQL(t *testing.T) {
+	expected := [][]byte{
+		[]byte(`SELECT id, code, description, tiny, small, medium, ger, big, cost, created
+FROM abc
+WHERE id = ?`),
+		[]byte(`SELECT id, code, description, tiny, small, medium, ger, big, cost, created
+FROM abc_nn
+WHERE id = ?`),
+		nil, // TODO: figure out view part
+		[]byte(`SELECT id, d_date, d_datetime, d_time, d_year, size, a_set
+FROM def
+WHERE id = ?`),
+		[]byte(`SELECT id, d_date, d_datetime, d_time, d_year, size, a_set
+FROM def_nn
+WHERE id = ?`),
+		nil, // TODO: figure out view part
+		nil, // NO PK, no sql generated
+		nil, // NO PK, no sql generated
+		[]byte(`SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin
+FROM jkl
+WHERE id = ?
+    AND fid = ?`),
+		[]byte(`SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin
+FROM jkl_nn
+WHERE id = ?
+    AND fid = ?`),
+		[]byte(`SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection
+FROM mno
+WHERE id = ?`),
+		[]byte(`SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection
+FROM mno_nn
+WHERE id = ?`),
+	}
+
+	for i, tbl := range tableDefs {
+		sql, err := tbl.SelectSQLPK()
+		if err != nil {
+			t.Errorf("%d: unexpected error: got %q", i, err)
+			continue
+		}
+		if bytes.Compare(sql, expected[i]) != 0 {
+			t.Errorf("%d: got %q; want %q", i, sql, expected[i])
 		}
 	}
 }
