@@ -138,23 +138,16 @@ func TestTableINSERTTemplate(t *testing.T) {
 		` (bar)
 VALUES (?)`,
 		"INSERT INTO foo",
-		`
-WHERE id = ?`,
+		``,
 		` (bar)
-VALUES (?)
-WHERE id = ?`,
-		`INSERT INTO foo
-WHERE id = ?`,
+VALUES (?)`,
+		`INSERT INTO foo`,
 		`INSERT INTO foo (bar)
-VALUES (?)
-WHERE id = ?`,
+VALUES (?)`,
 		`INSERT INTO foo (bar, biz, baz)
-VALUES (?, ?, ?)
-WHERE id = ?`,
+VALUES (?, ?, ?)`,
 		`INSERT INTO foo (bar, biz, baz)
-VALUES (?, ?, ?)
-WHERE id = ?
-    AND sid = ?`,
+VALUES (?, ?, ?)`,
 	}
 	var buff bytes.Buffer
 	for i, tbl := range tables {

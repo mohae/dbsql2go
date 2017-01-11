@@ -91,16 +91,8 @@ VALUES ({{- range $i, $col := .Columns -}}
 {{- if eq $i 0 -}} ?
 {{- else -}}
 	, ?
-{{- end -}}
+{{- end }}
 {{- end -}}
 )
-{{- end -}}
-{{- if gt (len .Where) 0 }}
-WHERE {{- range $i, $col := .Where -}}
-	{{- if eq $i 0 }} {{ $col }} = ?
-	{{- else }}
-    AND {{ $col }} = ?
-	{{- end -}}
-{{- end -}}
 {{- end -}}
 `
