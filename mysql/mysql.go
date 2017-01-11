@@ -24,7 +24,10 @@ import (
 	"github.com/mohae/mixedcase"
 )
 
-const schema = "information_schema"
+const (
+	schema   = "information_schema"
+	viewType = "VIEW"
+)
 
 type DB struct {
 	Conn        *sql.DB
@@ -466,6 +469,14 @@ func (t *Table) Constraints() []dbsql2go.Constraint {
 	return t.constraints
 }
 
+// IsView returns whether or not this table is actually a view.
+func (t *Table) IsView() bool {
+	if t.Typ == viewType {
+		return true
+	}
+	return false
+}
+
 // SQLPrepare prepares the default dbsql2go.TableSQL with all of the tables'
 // columns and the table name so that that information doesn't need to be
 // set for every sql generation. Each SQL generation method will need to
@@ -504,6 +515,11 @@ func (t *Table) DeleteSQLPK() ([]byte, error) {
 	if pk == nil { // the table doesn't have a primary key; this is not an error.
 		return nil, nil
 	}
+	// don't generate sql for views
+	if t.IsView() {
+		return nil, nil
+	}
+
 	if t.sqlInf.Table == "" { // ensure the table is set
 		t.sqlInf.Table = t.name
 	}
@@ -518,6 +534,10 @@ func (t *Table) DeleteSQLPK() ([]byte, error) {
 
 // InsertSQL returns an INSERT statement for the table.
 func (t *Table) InsertSQL() ([]byte, error) {
+	// don't generate sql for views
+	if t.IsView() {
+		return nil, nil
+	}
 	if len(t.sqlInf.Columns) == 0 { // ensure everything is set
 		t.SQLPrepare()
 	}
