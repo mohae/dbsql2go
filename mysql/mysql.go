@@ -516,6 +516,19 @@ func (t *Table) DeleteSQLPK() ([]byte, error) {
 	return t.buf.Bytes(), nil
 }
 
+// InsertSQL returns an INSERT statement for the table.
+func (t *Table) InsertSQL() ([]byte, error) {
+	if len(t.sqlInf.Columns) == 0 { // ensure everything is set
+		t.SQLPrepare()
+	}
+	t.buf.Reset()
+	err := dbsql2go.InsertSQL.Execute(&t.buf, t.sqlInf)
+	if err != nil {
+		return nil, err
+	}
+	return t.buf.Bytes(), nil
+}
+
 // GetPK returns a tables primary key information, if it has a primary key, or
 // nil if it doesn't have a primary key
 func (t *Table) GetPK() *dbsql2go.Constraint {

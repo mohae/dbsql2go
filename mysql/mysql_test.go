@@ -2060,6 +2060,44 @@ WHERE id = ?`),
 	}
 }
 
+func TestInsertSQL(t *testing.T) {
+	expected := [][]byte{
+		[]byte(`INSERT INTO abc (id, code, description, tiny, small, medium, ger, big, cost, created)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`),
+		[]byte(`INSERT INTO abc_nn (id, code, description, tiny, small, medium, ger, big, cost, created)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`),
+		nil, // INSERT views not supported.
+		[]byte(`INSERT INTO def (id, d_date, d_datetime, d_time, d_year, size, a_set)
+VALUES (?, ?, ?, ?, ?, ?, ?)`),
+		[]byte(`INSERT INTO def_nn (id, d_date, d_datetime, d_time, d_year, size, a_set)
+VALUES (?, ?, ?, ?, ?, ?, ?)`),
+		nil, // INSERT views not supported.
+		[]byte(`INSERT INTO ghi (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)`), // NO PK, no sql generated
+		[]byte(`INSERT INTO ghi_nn (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)`), // NO PK, no sql generated
+		[]byte(`INSERT INTO jkl (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)`),
+		[]byte(`INSERT INTO jkl_nn (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)`),
+		[]byte(`INSERT INTO mno (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`),
+		[]byte(`INSERT INTO mno_nn (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`),
+	}
+
+	for i, tbl := range tableDefs {
+		sql, err := tbl.InsertSQL()
+		if err != nil {
+			t.Errorf("%d: unexpected error: got %q", i, err)
+			continue
+		}
+		if bytes.Compare(sql, expected[i]) != 0 {
+			t.Errorf("%d: got %q; want %q", i, sql, expected[i])
+		}
+	}
+}
+
 func SetupTestDB(m *DB) error {
 	// Everything is ignored because we don't care if it exists. This is just in
 	// case the it wasn't dropped in a prior test due to a panic or something.
