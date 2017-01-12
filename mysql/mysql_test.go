@@ -177,7 +177,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "code", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -185,7 +185,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "char(12)",
 				Key: "UNI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Code",
 			},
 			Column{
 				Name: "description", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -193,7 +193,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 20, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "varchar(20)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Description",
 			},
 			Column{
 				Name: "tiny", OrdinalPosition: 4, Default: sql.NullString{String: "3", Valid: true},
@@ -201,7 +201,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 3, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "tinyint(4)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Tiny",
 			},
 			Column{
 				Name: "small", OrdinalPosition: 5, Default: sql.NullString{String: "11", Valid: true},
@@ -209,7 +209,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 5, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "smallint(6)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Small",
 			},
 			Column{
 				Name: "medium", OrdinalPosition: 6, Default: sql.NullString{String: "42", Valid: true},
@@ -217,7 +217,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 7, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "mediumint(9)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Medium",
 			},
 			Column{
 				Name: "ger", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -225,7 +225,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Ger",
 			},
 			Column{
 				Name: "big", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
@@ -233,7 +233,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 19, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "bigint(20)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Big",
 			},
 			Column{
 				Name: "cost", OrdinalPosition: 9, Default: sql.NullString{String: "", Valid: false},
@@ -241,7 +241,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "decimal(10,0)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Cost",
 			},
 			Column{
 				Name: "created", OrdinalPosition: 10, Default: sql.NullString{String: "CURRENT_TIMESTAMP", Valid: true},
@@ -249,7 +249,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "timestamp",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Created",
 			},
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -272,7 +272,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "code", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -280,7 +280,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "char(12)",
 				Key: "UNI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Code",
 			},
 			Column{
 				Name: "description", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -288,7 +288,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 20, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "varchar(20)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Description",
 			},
 			Column{
 				Name: "tiny", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -296,7 +296,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 3, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "tinyint(4)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Tiny",
 			},
 			Column{
 				Name: "small", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -304,7 +304,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 5, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "smallint(6)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Small",
 			},
 			Column{
 				Name: "medium", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
@@ -312,7 +312,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 7, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "mediumint(9)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Medium",
 			},
 			Column{
 				Name: "ger", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -320,7 +320,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Ger",
 			},
 			Column{
 				Name: "big", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
@@ -328,7 +328,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 19, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "bigint(20)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Big",
 			},
 			Column{
 				Name: "cost", OrdinalPosition: 9, Default: sql.NullString{String: "", Valid: false},
@@ -336,7 +336,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "decimal(10,0)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Cost",
 			},
 			Column{
 				Name: "created", OrdinalPosition: 10, Default: sql.NullString{String: "CURRENT_TIMESTAMP", Valid: true},
@@ -344,7 +344,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "timestamp",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Created",
 			},
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -367,7 +367,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "code", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -375,7 +375,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "char(12)",
 				Key: "UNI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Code",
 			},
 			Column{
 				Name: "description", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -383,7 +383,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 20, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "varchar(20)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Description",
 			},
 		},
 		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
@@ -398,7 +398,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "d_date", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -406,7 +406,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "date",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DDate",
 			},
 			Column{
 				Name: "d_datetime", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -414,7 +414,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "datetime",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DDatetime",
 			},
 			Column{
 				Name: "d_time", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -422,7 +422,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "time",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DTime",
 			},
 			Column{
 				Name: "d_year", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -430,7 +430,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "year(4)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DYear",
 			},
 			Column{
 				Name: "size", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
@@ -438,7 +438,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 18, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "enum('small','medium','large')",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Size",
 			},
 			Column{
 				Name: "a_set", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -446,7 +446,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 15, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "set('a','b','c')",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ASet",
 			},
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -468,7 +468,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "d_date", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -476,7 +476,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "date",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DDate",
 			},
 			Column{
 				Name: "d_datetime", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -484,7 +484,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "datetime",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DDatetime",
 			},
 			Column{
 				Name: "d_time", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -492,7 +492,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "time",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DTime",
 			},
 			Column{
 				Name: "d_year", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -500,7 +500,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "year(4)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DYear",
 			},
 			Column{
 				Name: "size", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
@@ -508,7 +508,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 15, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "enum('small','medium','large')",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Size",
 			},
 			Column{
 				Name: "a_set", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -516,7 +516,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 15, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "set('a','b','c')",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ASet",
 			},
 		}, // 5
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -538,7 +538,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Aid",
 			},
 			Column{
 				Name: "bid", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -546,7 +546,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Bid",
 			},
 			Column{
 				Name: "d_datetime", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -554,7 +554,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "datetime",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DDatetime",
 			},
 			Column{
 				Name: "size", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -562,7 +562,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 18, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "enum('small','medium','large')",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Size",
 			},
 			Column{
 				Name: "stuff", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -570,7 +570,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "blob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Stuff",
 			},
 		},
 		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
@@ -585,7 +585,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "val", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -593,7 +593,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Val",
 			},
 			Column{
 				Name: "def_id", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -601,7 +601,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DefID",
 			},
 			Column{
 				Name: "def_datetime", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -609,7 +609,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "datetime",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DefDatetime",
 			},
 			Column{
 				Name: "tiny_stuff", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -617,7 +617,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "tinyblob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "TinyStuff",
 			},
 			Column{
 				Name: "stuff", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
@@ -625,7 +625,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "blob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Stuff",
 			},
 			Column{
 				Name: "med_stuff", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -633,7 +633,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "mediumblob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MedStuff",
 			},
 			Column{
 				Name: "long_stuff", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
@@ -641,7 +641,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "longblob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "LongStuff",
 			},
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -663,7 +663,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "val", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -671,7 +671,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Val",
 			},
 			Column{
 				Name: "def_id", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -679,7 +679,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DefID",
 			},
 			Column{
 				Name: "def_datetime", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -687,7 +687,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "datetime",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "DefDatetime",
 			},
 			Column{
 				Name: "tiny_stuff", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -695,7 +695,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "tinyblob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "TinyStuff",
 			},
 			Column{
 				Name: "stuff", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
@@ -703,7 +703,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "blob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Stuff",
 			},
 			Column{
 				Name: "med_stuff", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -711,7 +711,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "mediumblob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MedStuff",
 			},
 			Column{
 				Name: "long_stuff", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
@@ -719,7 +719,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "longblob",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "LongStuff",
 			},
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -741,7 +741,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "fid", OrdinalPosition: 2, Default: sql.NullString{String: "0", Valid: true},
@@ -749,7 +749,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "FID",
 			},
 			Column{
 				Name: "tiny_txt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -757,7 +757,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "tinytext",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "TinyTxt",
 			},
 			Column{
 				Name: "txt", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -765,7 +765,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "text",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Txt",
 			},
 			Column{
 				Name: "med_txt", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -773,7 +773,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "mediumtext",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MedTxt",
 			},
 			Column{
 				Name: "long_txt", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
@@ -781,7 +781,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "longtext",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "LongTxt",
 			},
 			Column{
 				Name: "bin", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -789,7 +789,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 3, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "binary(3)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Bin",
 			},
 			Column{
 				Name: "var_bin", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
@@ -797,7 +797,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "varbinary(12)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "VarBin",
 			},
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -820,7 +820,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "fid", OrdinalPosition: 2, Default: sql.NullString{String: "0", Valid: true},
@@ -828,7 +828,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "FID",
 			},
 			Column{
 				Name: "tiny_txt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -836,7 +836,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 255, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "tinytext",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "TinyTxt",
 			},
 			Column{
 				Name: "txt", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -844,7 +844,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 65535, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "text",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Txt",
 			},
 			Column{
 				Name: "med_txt", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -852,7 +852,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 16777215, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "mediumtext",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MedTxt",
 			},
 			Column{
 				Name: "long_txt", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
@@ -860,7 +860,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 4294967295, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "ascii", Valid: true}, Collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Typ: "longtext",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "LongTxt",
 			},
 			Column{
 				Name: "bin", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -868,7 +868,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 3, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "binary(3)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Bin",
 			},
 			Column{
 				Name: "var_bin", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
@@ -876,7 +876,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "varbinary(12)",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "VarBin",
 			},
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -899,7 +899,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "geo", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -907,7 +907,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "geometry",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Geo",
 			},
 			Column{
 				Name: "pt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -915,7 +915,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "point",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Pt",
 			},
 			Column{
 				Name: "lstring", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -923,7 +923,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "linestring",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Lstring",
 			},
 			Column{
 				Name: "poly", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -931,7 +931,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "polygon",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Poly",
 			},
 			Column{
 				Name: "multi_pt", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
@@ -939,7 +939,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "multipoint",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MultiPt",
 			},
 			Column{
 				Name: "multi_lstring", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -947,7 +947,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "multilinestring",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MultiLstring",
 			},
 			Column{
 				Name: "multi_polygon", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
@@ -955,7 +955,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "multipolygon",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MultiPolygon",
 			},
 			Column{
 				Name: "geo_collection", OrdinalPosition: 9, Default: sql.NullString{String: "", Valid: false},
@@ -963,7 +963,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "geometrycollection",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "GeoCollection",
 			},
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -984,7 +984,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
 				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "ID",
 			},
 			Column{
 				Name: "geo", OrdinalPosition: 2, Default: sql.NullString{String: "", Valid: false},
@@ -992,7 +992,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "geometry",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Geo",
 			},
 			Column{
 				Name: "pt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -1000,7 +1000,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "point",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Pt",
 			},
 			Column{
 				Name: "lstring", OrdinalPosition: 4, Default: sql.NullString{String: "", Valid: false},
@@ -1008,7 +1008,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "linestring",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Lstring",
 			},
 			Column{
 				Name: "poly", OrdinalPosition: 5, Default: sql.NullString{String: "", Valid: false},
@@ -1016,7 +1016,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "polygon",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "Poly",
 			},
 			Column{
 				Name: "multi_pt", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
@@ -1024,7 +1024,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "multipoint",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MultiPt",
 			},
 			Column{
 				Name: "multi_lstring", OrdinalPosition: 7, Default: sql.NullString{String: "", Valid: false},
@@ -1032,7 +1032,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "multilinestring",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MultiLstring",
 			},
 			Column{
 				Name: "multi_polygon", OrdinalPosition: 8, Default: sql.NullString{String: "", Valid: false},
@@ -1040,7 +1040,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "multipolygon",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "MultiPolygon",
 			},
 			Column{
 				Name: "geo_collection", OrdinalPosition: 9, Default: sql.NullString{String: "", Valid: false},
@@ -1048,7 +1048,7 @@ var tableDefs = []Table{
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "geometrycollection",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "",
+				Comment: "", propertyName: "GeoCollection",
 			},
 		},
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
@@ -1625,6 +1625,10 @@ func TestTables(t *testing.T) {
 			}
 			if col.Comment != tableDefs[i].ColumnNames[j].Comment {
 				t.Errorf("%s.%s COMMENT: got %q want %q", tbl.name, col.Name, col.Comment, tableDefs[i].ColumnNames[j].Comment)
+				continue
+			}
+			if col.propertyName != tableDefs[i].ColumnNames[j].propertyName {
+				t.Errorf("%s.%s propertyName: got %q want %q", tbl.name, col.Name, col.propertyName, tableDefs[i].ColumnNames[j].propertyName)
 				continue
 			}
 		}
