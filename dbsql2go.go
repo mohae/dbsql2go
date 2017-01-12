@@ -76,13 +76,14 @@ func (u UnsupportedDBErr) Error() string {
 type DBer interface {
 	Get() error
 	GetTables() error
+	Tables() []Tabler
 	GetIndexes() error
 	GetConstraints() error
 	GetViews() error
-	Tables() []Tabler
-	UpdateTableIndexes()
-	UpdateTableConstraints() error
 	Views() []Viewer
+	UpdateTableConstraints() error
+	UpdateTableIndexes()
+	SetReceiverNames()
 }
 
 // Tabler
@@ -93,9 +94,14 @@ type Tabler interface {
 	Collation() string
 	Go() ([]byte, error)
 	GoFmt() ([]byte, error)
+	Columns() []string
 	Indexes() []Index
 	Constraints() []Constraint
 	IsView() bool // If this is actually a view
+	SelectSQLPK() ([]byte, error)
+	DeleteSQLPK() ([]byte, error)
+	InsertSQL() ([]byte, error)
+	GetPK() *Constraint
 	// SelectSQL
 	//InsertSQL() string
 	//	DeleteSQL() string
