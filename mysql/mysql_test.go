@@ -259,8 +259,16 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc", Cols: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.Unique, Name: "code", Table: "abc", Cols: []string{"code"}, RefTable: "", RefCols: nil},
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc", Cols: []string{"id"}, RefTable: "", RefCols: nil},
+			{
+				Type: dbsql2go.Unique, Name: "code", Table: "abc",
+				Cols: []string{"code"}, Fields: []string{"Code"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
+			{
+				Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc",
+				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
 		},
 	},
 	Table{ // 1
@@ -354,8 +362,16 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc_nn", Cols: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.Unique, Name: "code", Table: "abc_nn", Cols: []string{"code"}, RefTable: "", RefCols: nil},
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc_nn", Cols: []string{"id"}, RefTable: "", RefCols: nil},
+			{
+				Type: dbsql2go.Unique, Name: "code", Table: "abc_nn",
+				Cols: []string{"code"}, Fields: []string{"Code"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
+			{
+				Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc_nn",
+				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
 		},
 	},
 	Table{ // 2
@@ -456,7 +472,11 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def", Cols: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "def", Cols: []string{"id"}, RefTable: "", RefCols: nil},
+			{
+				Type: dbsql2go.PK, Name: "PRIMARY", Table: "def",
+				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
 		},
 	},
 	Table{ // 4
@@ -526,7 +546,11 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def_nn", Cols: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "def_nn", Cols: []string{"id"}, RefTable: "", RefCols: nil},
+			{
+				Type: dbsql2go.PK, Name: "PRIMARY", Table: "def_nn",
+				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
 		},
 	},
 	Table{ // 6
@@ -651,7 +675,11 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi", Cols: []string{"val"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.FK, Name: "ghi_ibfk_1", Table: "ghi", Cols: []string{"def_id", "def_datetime"}, RefTable: "def", RefCols: []string{"id", "d_datetime"}},
+			{
+				Type: dbsql2go.FK, Name: "ghi_ibfk_1", Table: "ghi",
+				Cols: []string{"def_id", "def_datetime"}, Fields: []string{"DefID", "DefDatetime"}, RefTable: "def",
+				RefCols: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
+			},
 		},
 	},
 	Table{ // 8
@@ -729,7 +757,11 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi_nn", Cols: []string{"val"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.FK, Name: "ghi_nn_ibfk_1", Table: "ghi_nn", Cols: []string{"def_id", "def_datetime"}, RefTable: "def_nn", RefCols: []string{"id", "d_datetime"}},
+			{
+				Type: dbsql2go.FK, Name: "ghi_nn_ibfk_1", Table: "ghi_nn",
+				Cols: []string{"def_id", "def_datetime"}, Fields: []string{"DefID", "DefDatetime"}, RefTable: "def_nn",
+				RefCols: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
+			},
 		},
 	},
 	Table{ // 9
@@ -807,8 +839,16 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl", Cols: []string{"id", "fid"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.FK, Name: "jkl_ibfk_1", Table: "jkl", Cols: []string{"fid"}, RefTable: "def", RefCols: []string{"id"}},
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl", Cols: []string{"id", "fid"}, RefTable: "", RefCols: nil},
+			{
+				Type: dbsql2go.FK, Name: "jkl_ibfk_1", Table: "jkl",
+				Cols: []string{"fid"}, Fields: []string{"Fid"}, RefTable: "def",
+				RefCols: []string{"id"}, RefFields: []string{"ID"},
+			},
+			{
+				Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl",
+				Cols: []string{"id", "fid"}, Fields: []string{"ID", "Fid"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
 		},
 	},
 	Table{ // 10
@@ -886,8 +926,16 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id", "fid"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.FK, Name: "jkl_nn_ibfk_1", Table: "jkl_nn", Cols: []string{"fid"}, RefTable: "def", RefCols: []string{"id"}},
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id", "fid"}, RefTable: "", RefCols: nil},
+			{
+				Type: dbsql2go.FK, Name: "jkl_nn_ibfk_1", Table: "jkl_nn",
+				Cols: []string{"fid"}, Fields: []string{"Fid"}, RefTable: "def",
+				RefCols: []string{"id"}, RefFields: []string{"ID"},
+			},
+			{
+				Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl_nn",
+				Cols: []string{"id", "fid"}, Fields: []string{"ID", "Fid"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
 		},
 	},
 	Table{ // 11
@@ -972,7 +1020,11 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno", Cols: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "mno", Cols: []string{"id"}, RefTable: "", RefCols: nil},
+			{
+				Type: dbsql2go.PK, Name: "PRIMARY", Table: "mno",
+				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
 		},
 	},
 	Table{ // 12
@@ -1057,7 +1109,11 @@ var tableDefs = []Table{
 			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno_nn", Cols: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
-			{Type: dbsql2go.PK, Name: "PRIMARY", Table: "mno_nn", Cols: []string{"id"}, RefTable: "", RefCols: nil},
+			{
+				Type: dbsql2go.PK, Name: "PRIMARY", Table: "mno_nn",
+				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefCols: nil, RefFields: nil,
+			},
 		},
 	},
 }

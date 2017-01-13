@@ -123,12 +123,14 @@ type Index struct {
 
 // Constraint holds information about a table's constraints, e.g. Primary Key.
 type Constraint struct {
-	Type     ConstraintType // The key or constraint type
-	Name     string         // Name of key
-	Table    string         // the table to which this key belongs.
-	Cols     []string       // the columns that this key/constraint are on, in order.
-	RefTable string         // Referred to table for Foreign Keys
-	RefCols  []string       // Referred to columns, in order, for Foreign Keys
+	Type      ConstraintType // The key or constraint type
+	Name      string         // Name of key
+	Table     string         // the table to which this key belongs.
+	Cols      []string       // the columns that this key/constraint are on, in order.
+	Fields    []string       // the Go struct field names corresponding to the table's column names.
+	RefTable  string         // Referred to table for Foreign Keys
+	RefCols   []string       // Referred to columns, in order, for Foreign Keys
+	RefFields []string       // the Go struct field names corresponding to the table's column names.
 }
 
 // Viewer

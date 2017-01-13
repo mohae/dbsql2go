@@ -278,8 +278,10 @@ func (m *DB) UpdateTableConstraints() error {
 	for i, v := range m.constraints {
 		if v.Table == prior.Table && v.Name == prior.Name { // if this is just another row for the same constraint, add the info
 			c.Cols = append(c.Cols, v.Column)
+			c.Fields = append(c.Fields, fieldName(v.Column))
 			if v.RefCol.Valid {
 				c.RefCols = append(c.RefCols, v.RefCol.String)
+				c.RefFields = append(c.RefFields, fieldName(v.RefCol.String))
 			}
 			prior = v
 			continue
@@ -301,12 +303,13 @@ func (m *DB) UpdateTableConstraints() error {
 		if err != nil {
 			return err
 		}
-		c = dbsql2go.Constraint{Type: typ, Name: v.Name, Table: v.Table, Cols: []string{v.Column}}
+		c = dbsql2go.Constraint{Type: typ, Name: v.Name, Table: v.Table, Cols: []string{v.Column}, Fields: []string{fieldName(v.Column)}}
 		if v.RefTable.Valid {
 			c.RefTable = v.RefTable.String
 		}
 		if v.RefCol.Valid {
 			c.RefCols = append(c.RefCols, v.RefCol.String)
+			c.RefFields = append(c.RefFields, fieldName(v.RefCol.String))
 		}
 		prior = v
 	}
@@ -371,11 +374,6 @@ func (m *DB) UpdateTableIndexes() {
 
 // SetReceiverNames sets the receiver name for each table or view in the DB.
 func (m *DB) SetReceiverNames() {
-	/*	for i := range m.tables {
-			r, _ := utf8.DecodeRuneInString(m.tables[i].Name())
-			m.tables[i].(Table).r = unicode.ToLower(r)
-		}
-	*/
 	for i, tbl := range m.tables {
 		r, _ := utf8.DecodeRuneInString(tbl.Name())
 		tbl.(*Table).r = unicode.ToLower(r)
@@ -654,7 +652,7 @@ func (c *Column) Go() []byte {
 // SetFieldName sets the column's field name; the name of the field in the
 // table struct in which this column's value will be put.
 func (c *Column) SetFieldName() {
-	c.fieldName = mixedcase.Exported(c.Name)
+	c.fieldName = fieldName(c.Name)
 }
 
 type Index struct {
@@ -709,4 +707,9 @@ type View struct {
 
 func (v *View) Name() string {
 	return v.Table
+}
+
+// fieldName makes returns an exported Go fieldName from the received string.
+func fieldName(s string) string {
+	return mixedcase.Exported(s)
 }
