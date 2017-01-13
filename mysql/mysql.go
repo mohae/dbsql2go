@@ -414,50 +414,84 @@ func (t *Table) Collation() string {
 	return ""
 }
 
-// Go creates the struct definition an returns the resulting bytes.
-// TODO: should this accept a writer instead?
-func (t *Table) Go() ([]byte, error) {
-	t.buf.Reset()
-	n, err := t.buf.WriteString("type ")
+// Definition creates the struct definition and appends it to the  internal
+// buffer. The number of bytes written to the buffer is returned along with
+// an error, if one occurs.
+// TODO: should this accept a writer instead
+func (t *Table) Definition() (n int, err error) {
+	n, err = t.buf.WriteString("type ")
 	if err != nil {
-		return nil, err
+		return n, err
 	}
-	n, err = t.buf.WriteString(mixedcase.Exported(t.name))
+	x, err := t.buf.WriteString(mixedcase.Exported(t.name))
+	n += x
 	if err != nil {
-		return nil, err
+		return n, err
 	}
-	n, err = t.buf.WriteString(" struct {\n")
+	x, err = t.buf.WriteString(" struct {\n")
+	n += x
 	if err != nil {
-		return nil, err
+		return n, err
 	}
 
 	// write the column defs
 	for _, col := range t.ColumnNames {
 		err = t.buf.WriteByte('\t')
 		if err != nil {
-			return nil, err
+			return n, err
 		}
-		t.buf.Write(col.Go())
+		n++
+		x, err = t.buf.Write(col.Go())
+		n += x
 		if err != nil {
-			return nil, err
+			return n, err
 		}
 		err = t.buf.WriteByte('\n')
 		if err != nil {
-			return nil, err
+			return n, err
 		}
+		x++
 	}
-	n, err = t.buf.WriteString("}\n")
+	x, err = t.buf.WriteString("}\n")
+	n += x
+	if err != nil {
+		return n, err
+	}
+	return n, nil
+}
+
+// Definition creates the struct definition an returns the resulting bytes.
+// The bytes are copied from the Table's internal buffer which is reset both
+// at the beginning and the end of this method. Anything in the table's
+// internal buffer will be lost. To both preserve the buffer state and keep
+// the generated definition in the buffer, use Table.Definition instead.
+// This resets the table's internal buffer and leaves it in a
+// TODO: should this accept a writer instead?
+func (t *Table) DefinitionBytes() ([]byte, error) {
+	t.buf.Reset()
+	_, err := t.Definition()
 	if err != nil {
 		return nil, err
 	}
-	_ = n // add short write handling
 	// copy the bytes before returning
+	r := make([]byte, t.buf.Len())
+	copy(r, t.buf.Bytes()) // note: this ignores the returned int
+	t.buf.Reset()
+	return r, nil
+}
+
+// Go creats the struct definition and methods for handling single row
+// SQL queries that the struct will use. A struct represents one row of data.
+// Any operations that result in more than one row are handled by something
+// other than the table's struct.
+func (t *Table) Go() ([]byte, error) {
 	r := make([]byte, t.buf.Len())
 	copy(r, t.buf.Bytes()) // note: this ignores the returned int
 	return r, nil
 }
 
-// GoFmt creates a formatted struct definition an returns the resulting bytes.
+// GoFmt creates a formatted struct definition and methods and returns the
+// resulting bytes.
 // TODO: should this accept a writer instead?
 func (t *Table) GoFmt() ([]byte, error) {
 	b, err := t.Go()

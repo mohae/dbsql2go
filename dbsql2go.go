@@ -92,6 +92,8 @@ type Tabler interface {
 	Name() string
 	Schema() string
 	Collation() string
+	Definition() (int, error)
+	DefinitionBytes() ([]byte, error)
 	Go() ([]byte, error)
 	GoFmt() ([]byte, error)
 	Columns() []string

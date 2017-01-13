@@ -1225,7 +1225,7 @@ var tableDefsString = []string{
 `,
 }
 
-var fmtdTableDefsString = []string{
+var structDefs = []string{
 	`type Abc struct {
 	ID          int32
 	Code        string
@@ -2030,7 +2030,7 @@ func TestGenerateDefs(t *testing.T) {
 		if i == 7 { // geospatial is not yet implemented; so skip
 			break
 		}
-		d, err := def.Go()
+		d, err := def.DefinitionBytes()
 		if err != nil {
 			t.Errorf("%s: %s", def.Name(), err)
 		}
@@ -2040,7 +2040,7 @@ func TestGenerateDefs(t *testing.T) {
 	}
 }
 
-func TestGenerateFmtdDefs(t *testing.T) {
+func TestStructDefs(t *testing.T) {
 	for i, def := range tableDefs {
 		if i == 7 { // geospatial is not yet implemented; so skip
 			break
@@ -2049,8 +2049,8 @@ func TestGenerateFmtdDefs(t *testing.T) {
 		if err != nil {
 			t.Errorf("%s: %s", def.Name(), err)
 		}
-		if fmtdTableDefsString[i] != string(d) {
-			t.Errorf("%s: got %q; want %q", def.Name(), string(d), fmtdTableDefsString[i])
+		if structDefs[i] != string(d) {
+			t.Errorf("%s: got %q; want %q", def.Name(), string(d), structDefs[i])
 		}
 	}
 }
