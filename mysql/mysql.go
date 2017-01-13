@@ -146,8 +146,8 @@ func (m *DB) GetTables() error {
 				rows.Close()
 				return err
 			}
-			// set the column's corresponding Go property name
-			c.SetPropertyName()
+			// set the column's corresponding Go field name
+			c.SetFieldName()
 			mTbl.ColumnNames = append(mTbl.ColumnNames, c)
 		}
 		rows.Close()
@@ -598,12 +598,12 @@ type Column struct {
 	Extra            string
 	Privileges       string
 	Comment          string
-	propertyName     string
+	fieldName        string
 }
 
 func (c *Column) Go() []byte {
 	n := make([]byte, 0, len(c.Name)+16) // add enough cap to handle most datatypes w/o growing
-	n = append(n, []byte(c.propertyName)...)
+	n = append(n, []byte(c.fieldName)...)
 	n = append(n, ' ')
 	if c.IsNullable == "YES" {
 		switch c.DataType {
@@ -651,10 +651,10 @@ func (c *Column) Go() []byte {
 	}
 }
 
-// SetPropertyName sets the column's property name; the name of the property
-// in the table struct in which this column's value will be put.
-func (c *Column) SetPropertyName() {
-	c.propertyName = mixedcase.Exported(c.Name)
+// SetFieldName sets the column's field name; the name of the field in the
+// table struct in which this column's value will be put.
+func (c *Column) SetFieldName() {
+	c.fieldName = mixedcase.Exported(c.Name)
 }
 
 type Index struct {
