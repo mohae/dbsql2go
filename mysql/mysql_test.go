@@ -2043,16 +2043,18 @@ func TestGenerateDefs(t *testing.T) {
 }
 
 func TestStructDefs(t *testing.T) {
+	var buf bytes.Buffer
 	for i, def := range tableDefs {
+		buf.Reset()
 		if i == 7 { // geospatial is not yet implemented; so skip
 			break
 		}
-		d, err := def.GoFmt()
+		_, err := def.GoFmt(&buf)
 		if err != nil {
 			t.Errorf("%s: %s", def.Name(), err)
 		}
-		if structDefs[i] != string(d) {
-			t.Errorf("%s: got %q; want %q", def.Name(), string(d), structDefs[i])
+		if structDefs[i] != buf.String() {
+			t.Errorf("%s: got %q; want %q", def.Name(), buf.String(), structDefs[i])
 		}
 	}
 }

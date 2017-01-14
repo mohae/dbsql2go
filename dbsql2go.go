@@ -96,8 +96,8 @@ type Tabler interface {
 	Schema() string
 	Collation() string
 	Definition(io.Writer) (int, error)
-	Go() ([]byte, error)
-	GoFmt() ([]byte, error)
+	Go(io.Writer) (int, error)
+	GoFmt(io.Writer) (int, error)
 	Columns() []string
 	Indexes() []Index
 	Constraints() []Constraint

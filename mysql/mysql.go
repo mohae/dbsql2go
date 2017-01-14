@@ -465,21 +465,25 @@ func (t *Table) Definition(w io.Writer) (n int, err error) {
 // SQL queries that the struct will use. A struct represents one row of data.
 // Any operations that result in more than one row are handled by something
 // other than the table's struct.
-func (t *Table) Go() ([]byte, error) {
-	r := make([]byte, t.buf.Len())
-	copy(r, t.buf.Bytes()) // note: this ignores the returned int
-	return r, nil
+func (t *Table) Go(w io.Writer) (n int, err error) {
+	n, err = t.Definition(w)
+	return n, err
 }
 
 // GoFmt creates a formatted struct definition and methods and returns the
 // resulting bytes.
 // TODO: should this accept a writer instead?
-func (t *Table) GoFmt() ([]byte, error) {
-	b, err := t.Go()
+func (t *Table) GoFmt(w io.Writer) (n int, err error) {
+	t.buf.Reset()
+	_, err = t.Go(&t.buf)
 	if err != nil {
-		return nil, err
+		return 0, err // since it was written to a buffer and not the writer, 0 is returned
 	}
-	return format.Source(b)
+	b, err := format.Source(t.buf.Bytes())
+	if err != nil {
+		return 0, err // since it was written to a buffer and not the writer, 0 is returned
+	}
+	return w.Write(b)
 }
 
 // Columns returns the names of all the columns in the table.
