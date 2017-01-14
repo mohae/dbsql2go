@@ -17,6 +17,7 @@ import (
 	"database/sql"
 	"fmt"
 	"go/format"
+	"io"
 	"reflect"
 	"unicode"
 	"unicode/utf8"
@@ -418,17 +419,17 @@ func (t *Table) Collation() string {
 // buffer. The number of bytes written to the buffer is returned along with
 // an error, if one occurs.
 // TODO: should this accept a writer instead
-func (t *Table) Definition() (n int, err error) {
-	n, err = t.buf.WriteString("type ")
+func (t *Table) Definition(w io.Writer) (n int, err error) {
+	n, err = w.Write([]byte("type "))
 	if err != nil {
 		return n, err
 	}
-	x, err := t.buf.WriteString(mixedcase.Exported(t.name))
+	x, err := w.Write([]byte(mixedcase.Exported(t.name)))
 	n += x
 	if err != nil {
 		return n, err
 	}
-	x, err = t.buf.WriteString(" struct {\n")
+	x, err = w.Write([]byte(" struct {\n"))
 	n += x
 	if err != nil {
 		return n, err
@@ -436,48 +437,28 @@ func (t *Table) Definition() (n int, err error) {
 
 	// write the column defs
 	for _, col := range t.ColumnNames {
-		err = t.buf.WriteByte('\t')
+		x, err = w.Write([]byte{'\t'})
 		if err != nil {
 			return n, err
 		}
-		n++
-		x, err = t.buf.Write(col.Go())
+		n += x
+		x, err = w.Write([]byte(col.Go()))
 		n += x
 		if err != nil {
 			return n, err
 		}
-		err = t.buf.WriteByte('\n')
+		x, err = w.Write([]byte{'\n'})
 		if err != nil {
 			return n, err
 		}
-		x++
+		n += x
 	}
-	x, err = t.buf.WriteString("}\n")
+	x, err = w.Write([]byte("}\n"))
 	n += x
 	if err != nil {
 		return n, err
 	}
 	return n, nil
-}
-
-// Definition creates the struct definition an returns the resulting bytes.
-// The bytes are copied from the Table's internal buffer which is reset both
-// at the beginning and the end of this method. Anything in the table's
-// internal buffer will be lost. To both preserve the buffer state and keep
-// the generated definition in the buffer, use Table.Definition instead.
-// This resets the table's internal buffer and leaves it in a
-// TODO: should this accept a writer instead?
-func (t *Table) DefinitionBytes() ([]byte, error) {
-	t.buf.Reset()
-	_, err := t.Definition()
-	if err != nil {
-		return nil, err
-	}
-	// copy the bytes before returning
-	r := make([]byte, t.buf.Len())
-	copy(r, t.buf.Bytes()) // note: this ignores the returned int
-	t.buf.Reset()
-	return r, nil
 }
 
 // Go creats the struct definition and methods for handling single row

@@ -2026,16 +2026,18 @@ func TestSetReceiverName(t *testing.T) {
 }
 
 func TestGenerateDefs(t *testing.T) {
+	var buf bytes.Buffer
 	for i, def := range tableDefs {
+		buf.Reset()
 		if i == 7 { // geospatial is not yet implemented; so skip
 			break
 		}
-		d, err := def.DefinitionBytes()
+		_, err := def.Definition(&buf)
 		if err != nil {
 			t.Errorf("%s: %s", def.Name(), err)
 		}
-		if tableDefsString[i] != string(d) {
-			t.Errorf("%s: got %q; want %q", def.Name(), string(d), tableDefsString[i])
+		if tableDefsString[i] != buf.String() {
+			t.Errorf("%s: got %q; want %q", def.Name(), buf.String(), tableDefsString[i])
 		}
 	}
 }

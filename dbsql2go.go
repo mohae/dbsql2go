@@ -12,7 +12,10 @@
 // limitations under the License.
 package dbsql2go
 
-import "strings"
+import (
+	"io"
+	"strings"
+)
 
 const (
 	Unsupported DBType = iota
@@ -92,8 +95,7 @@ type Tabler interface {
 	Name() string
 	Schema() string
 	Collation() string
-	Definition() (int, error)
-	DefinitionBytes() ([]byte, error)
+	Definition(io.Writer) (int, error)
 	Go() ([]byte, error)
 	GoFmt() ([]byte, error)
 	Columns() []string
