@@ -149,7 +149,7 @@ func (m *DB) GetTables() error {
 			}
 			// set the column's corresponding Go field name
 			c.SetFieldName()
-			mTbl.ColumnNames = append(mTbl.ColumnNames, c)
+			mTbl.columns = append(mTbl.columns, c)
 		}
 		rows.Close()
 		m.tables[i] = mTbl
@@ -386,7 +386,7 @@ type Table struct {
 	name        string
 	r           rune // the first letter of the name, in lower-case. Used as the receiver name.
 	schema      string
-	ColumnNames []Column
+	columns     []Column
 	Typ         string
 	Engine      sql.NullString
 	collation   sql.NullString
@@ -419,77 +419,90 @@ func (t *Table) Collation() string {
 // buffer. The number of bytes written to the buffer is returned along with
 // an error, if one occurs.
 // TODO: should this accept a writer instead
-func (t *Table) Definition(w io.Writer) (n int, err error) {
-	n, err = w.Write([]byte("type "))
+func (t *Table) Definition(w io.Writer) error {
+	_, err := w.Write([]byte("type "))
 	if err != nil {
-		return n, err
+		return err
 	}
-	x, err := w.Write([]byte(mixedcase.Exported(t.name)))
-	n += x
+	_, err = w.Write([]byte(mixedcase.Exported(t.name)))
 	if err != nil {
-		return n, err
+		return err
 	}
-	x, err = w.Write([]byte(" struct {\n"))
-	n += x
+	_, err = w.Write([]byte(" struct {\n"))
 	if err != nil {
-		return n, err
+		return err
 	}
 
 	// write the column defs
-	for _, col := range t.ColumnNames {
-		x, err = w.Write([]byte{'\t'})
+	for _, col := range t.columns {
+		_, err = w.Write([]byte{'\t'})
 		if err != nil {
-			return n, err
+			return err
 		}
-		n += x
-		x, err = w.Write([]byte(col.Go()))
-		n += x
+		_, err = w.Write([]byte(col.Go()))
 		if err != nil {
-			return n, err
+			return err
 		}
-		x, err = w.Write([]byte{'\n'})
+		_, err = w.Write([]byte{'\n'})
 		if err != nil {
-			return n, err
+			return err
 		}
-		n += x
 	}
-	x, err = w.Write([]byte("}\n"))
-	n += x
+	_, err = w.Write([]byte("}\n"))
 	if err != nil {
-		return n, err
+		return err
 	}
-	return n, nil
+	return nil
 }
 
 // Go creats the struct definition and methods for handling single row
 // SQL queries that the struct will use. A struct represents one row of data.
 // Any operations that result in more than one row are handled by something
 // other than the table's struct.
-func (t *Table) Go(w io.Writer) (n int, err error) {
-	n, err = t.Definition(w)
-	return n, err
+func (t *Table) Go(w io.Writer) error {
+	// generate the struct def
+	err := t.Definition(w)
+	if err != nil {
+		return err
+	}
+
+	// add the select method
+	err = t.SelectPKMethod(w)
+	if err != nil {
+		return err
+	}
+
+	return err
 }
 
 // GoFmt creates a formatted struct definition and methods and returns the
 // resulting bytes.
-// TODO: should this accept a writer instead?
-func (t *Table) GoFmt(w io.Writer) (n int, err error) {
+func (t *Table) GoFmt(w io.Writer) error {
+	// use the buffer for the defintion so that it can be formatted before writing
 	t.buf.Reset()
-	_, err = t.Go(&t.buf)
+	err := t.Go(&t.buf)
 	if err != nil {
-		return 0, err // since it was written to a buffer and not the writer, 0 is returned
+		return fmt.Errorf("%s: create definition: %s", t.name, err)
 	}
+
+	// format the definition
 	b, err := format.Source(t.buf.Bytes())
 	if err != nil {
-		return 0, err // since it was written to a buffer and not the writer, 0 is returned
+		return fmt.Errorf("%s: format definition: %s", t.name, err)
 	}
-	return w.Write(b)
+
+	// write the definition
+	_, err = w.Write(b)
+	if err != nil {
+		return fmt.Errorf("%s: write definition: %s", t.name, err)
+	}
+	return nil
 }
 
 // Columns returns the names of all the columns in the table.
 func (t *Table) Columns() []string {
-	cols := make([]string, 0, len(t.ColumnNames))
-	for _, col := range t.ColumnNames {
+	cols := make([]string, 0, len(t.columns))
+	for _, col := range t.columns {
 		cols = append(cols, col.Name)
 	}
 	return cols
@@ -513,6 +526,69 @@ func (t *Table) IsView() bool {
 	return false
 }
 
+// SelectPKMethod generates the method for selecting a table row using its PK.
+func (t *Table) SelectPKMethod(w io.Writer) error {
+	pk := t.GetPK()
+	if pk == nil {
+		// nothing to do
+		return nil
+	}
+	_, err := w.Write([]byte(fmt.Sprintf("\n func(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.r, t.name)))
+	if err != nil {
+		return err
+	}
+
+	err = t.SelectSQLPK(w)
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write([]byte("\", "))
+	if err != nil {
+		return err
+	}
+
+	for i, v := range pk.Fields {
+		if i == 0 {
+			_, err = w.Write([]byte(fmt.Sprintf("%c.%s", t.r, v)))
+			if err != nil {
+				return err
+			}
+			continue
+		}
+		_, err = w.Write([]byte(fmt.Sprintf(", %c.%s", t.r, v)))
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = w.Write([]byte(").Scan("))
+	if err != nil {
+		return err
+	}
+
+	// buld the struct field stuff
+	for i, v := range t.columns {
+		if i == 0 {
+			_, err = w.Write([]byte(fmt.Sprintf("&%c.%s", t.r, v.fieldName)))
+			if err != nil {
+				return err
+			}
+			continue
+		}
+		_, err = w.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, v.fieldName)))
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn err\n\t}\n\treturn nil}"))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // SQLPrepare prepares the default dbsql2go.TableSQL with all of the tables'
 // columns and the table name so that that information doesn't need to be
 // set for every sql generation. Each SQL generation method will need to
@@ -526,21 +602,21 @@ func (t *Table) SQLPrepare() {
 // table columns using the tables PK. If the table does not have a PK, a nil
 // will be returned and the error will also be nil as this is not an error
 // state.
-func (t *Table) SelectSQLPK() ([]byte, error) {
+func (t *Table) SelectSQLPK(w io.Writer) error {
 	pk := t.GetPK()
 	if pk == nil { // the table doesn't have a primary key; this is not an error.
-		return nil, nil
+		return nil
 	}
 	if len(t.sqlInf.Columns) == 0 { // ensure everything is set
 		t.SQLPrepare()
 	}
 	t.sqlInf.Where = pk.Cols
 	t.buf.Reset()
-	err := dbsql2go.SelectSQL.Execute(&t.buf, t.sqlInf)
+	err := dbsql2go.SelectSQL.Execute(w, t.sqlInf)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return t.buf.Bytes(), nil
+	return nil
 }
 
 // DeleteSQLPK returns a DELETE statement for the table that deletes a row

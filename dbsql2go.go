@@ -95,14 +95,14 @@ type Tabler interface {
 	Name() string
 	Schema() string
 	Collation() string
-	Definition(io.Writer) (int, error)
-	Go(io.Writer) (int, error)
-	GoFmt(io.Writer) (int, error)
+	Definition(io.Writer) error
+	Go(io.Writer) error
+	GoFmt(io.Writer) error
 	Columns() []string
 	Indexes() []Index
 	Constraints() []Constraint
 	IsView() bool // If this is actually a view
-	SelectSQLPK() ([]byte, error)
+	SelectSQLPK(io.Writer) error
 	DeleteSQLPK() ([]byte, error)
 	InsertSQL() ([]byte, error)
 	GetPK() *Constraint

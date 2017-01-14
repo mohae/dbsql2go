@@ -170,7 +170,7 @@ var createViews = []string{
 var tableDefs = []Table{
 	Table{ // 0
 		name: "abc", r: 'a', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -273,7 +273,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 1
 		name: "abc_nn", r: 'a', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -376,7 +376,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 2
 		name: "abc_v", r: 'a', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -407,7 +407,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 3
 		name: "def", r: 'd', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -481,7 +481,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 4
 		name: "def_nn", r: 'd', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -555,7 +555,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 6
 		name: "defghi_v", r: 'd', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "aid", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -602,7 +602,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 7
 		name: "ghi", r: 'g', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "YES", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -684,7 +684,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 8
 		name: "ghi_nn", r: 'g', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -766,7 +766,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 9
 		name: "jkl", r: 'j', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -853,7 +853,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 10
 		name: "jkl_nn", r: 'j', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -940,7 +940,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 11
 		name: "mno", r: 'm', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -1029,7 +1029,7 @@ var tableDefs = []Table{
 	},
 	Table{ // 12
 		name: "mno_nn", r: 'm', schema: "dbsql_test",
-		ColumnNames: []Column{
+		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
@@ -1238,6 +1238,14 @@ var structDefs = []string{
 	Cost        sql.NullFloat64
 	Created     mysql.NullTime
 }
+
+func (a *Abc) Select(db *sql.DB) error {
+	err := db.QueryRow("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc WHERE id = ?", a.ID).Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Ger, &a.Big, &a.Cost, &a.Created)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 `,
 	`type AbcNn struct {
 	ID          int32
@@ -1250,6 +1258,14 @@ var structDefs = []string{
 	Big         int64
 	Cost        float64
 	Created     mysql.NullTime
+}
+
+func (a *AbcNn) Select(db *sql.DB) error {
+	err := db.QueryRow("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc_nn WHERE id = ?", a.ID).Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Ger, &a.Big, &a.Cost, &a.Created)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 `,
 	`type AbcV struct {
@@ -1267,6 +1283,14 @@ var structDefs = []string{
 	Size      sql.NullString
 	ASet      sql.NullString
 }
+
+func (d *Def) Select(db *sql.DB) error {
+	err := db.QueryRow("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def WHERE id = ?", d.ID).Scan(&d.ID, &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 `,
 	`type DefNn struct {
 	ID        int32
@@ -1276,6 +1300,14 @@ var structDefs = []string{
 	DYear     string
 	Size      string
 	ASet      string
+}
+
+func (d *DefNn) Select(db *sql.DB) error {
+	err := db.QueryRow("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def_nn WHERE id = ?", d.ID).Scan(&d.ID, &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 `,
 	`type DefghiV struct {
@@ -1296,6 +1328,14 @@ var structDefs = []string{
 	MedStuff    []byte
 	LongStuff   []byte
 }
+
+func (g *Ghi) Select(db *sql.DB) error {
+	err := db.QueryRow("SELECT id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff FROM ghi WHERE id = ?", g.ID).Scan(&g.ID, &g.Val, &g.DefID, &g.DefDatetime, &g.TinyStuff, &g.Stuff, &g.MedStuff, &g.LongStuff)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 `,
 	`type GhiNn struct {
 	ID        int32
@@ -1306,6 +1346,14 @@ var structDefs = []string{
 	Stuff     []byte
 	MedStuff  []byte
 	LongStuff []byte
+}
+
+func (g *GhiNn) Select(db *sql.DB) error {
+	err := db.QueryRow("SELECT id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff FROM ghi_nn WHERE id = ?", g.ID).Scan(&g.ID, &g.Val, &g.DefID, &g.DefDatetime, &g.TinyStuff, &g.Stuff, &g.MedStuff, &g.LongStuff)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 `,
 	`type Jkl struct {
@@ -1318,6 +1366,14 @@ var structDefs = []string{
 	Bin     []byte
 	VarBin  []byte
 }
+
+func (j *Jkl) Select(db *sql.DB) error {
+	err := db.QueryRow("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl WHERE id = ?", j.ID).Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 `,
 	`type JklNn struct {
 	ID      int32
@@ -1328,6 +1384,14 @@ var structDefs = []string{
 	LongTxt []byte
 	Bin     []byte
 	VarBin  []byte
+}
+
+func (j *JklNn) Select(db *sql.DB) error {
+	err := db.QueryRow("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl_nn WHERE id = ?", j.ID).Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 `,
 }
@@ -1576,115 +1640,115 @@ func TestTables(t *testing.T) {
 			continue
 		}
 		// handle columns
-		for j, col := range tbl.ColumnNames {
-			if col.Name != tableDefs[i].ColumnNames[j].Name {
-				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", tbl.name, col.Name, col.Name, tableDefs[i].ColumnNames[j].Name)
+		for j, col := range tbl.columns {
+			if col.Name != tableDefs[i].columns[j].Name {
+				t.Errorf("%s:%s COLUMN_NAME: got %q want %q", tbl.name, col.Name, col.Name, tableDefs[i].columns[j].Name)
 				continue
 			}
-			if col.OrdinalPosition != tableDefs[i].ColumnNames[j].OrdinalPosition {
-				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", tbl.name, col.Name, col.OrdinalPosition, tableDefs[i].ColumnNames[j].OrdinalPosition)
+			if col.OrdinalPosition != tableDefs[i].columns[j].OrdinalPosition {
+				t.Errorf("%s.%s ORDINAL_POSITION: got %q want %q", tbl.name, col.Name, col.OrdinalPosition, tableDefs[i].columns[j].OrdinalPosition)
 				continue
 			}
-			if col.Default.Valid != tableDefs[i].ColumnNames[j].Default.Valid {
-				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", tbl.name, col.Name, col.Default.Valid, tableDefs[i].ColumnNames[j].Default.Valid)
+			if col.Default.Valid != tableDefs[i].columns[j].Default.Valid {
+				t.Errorf("%s.%s DEFAULT Valid: got %t want %t", tbl.name, col.Name, col.Default.Valid, tableDefs[i].columns[j].Default.Valid)
 				continue
 			}
 			if col.Default.Valid {
-				if col.Default.String != tableDefs[i].ColumnNames[j].Default.String {
-					t.Errorf("%s.%s DEFAULT String: got %s want %s", tbl.name, col.Name, col.Default.String, tableDefs[i].ColumnNames[j].Default.String)
+				if col.Default.String != tableDefs[i].columns[j].Default.String {
+					t.Errorf("%s.%s DEFAULT String: got %s want %s", tbl.name, col.Name, col.Default.String, tableDefs[i].columns[j].Default.String)
 				}
 				continue
 			}
-			if col.IsNullable != tableDefs[i].ColumnNames[j].IsNullable {
-				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", tbl.name, col.Name, col.IsNullable, tableDefs[i].ColumnNames[j].IsNullable)
+			if col.IsNullable != tableDefs[i].columns[j].IsNullable {
+				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", tbl.name, col.Name, col.IsNullable, tableDefs[i].columns[j].IsNullable)
 				continue
 			}
-			if col.DataType != tableDefs[i].ColumnNames[j].DataType {
-				t.Errorf("%s.%s DATA_TYPE: got %q want %q", tbl.name, col.Name, col.DataType, tableDefs[i].ColumnNames[j].DataType)
+			if col.DataType != tableDefs[i].columns[j].DataType {
+				t.Errorf("%s.%s DATA_TYPE: got %q want %q", tbl.name, col.Name, col.DataType, tableDefs[i].columns[j].DataType)
 				continue
 			}
-			if col.CharMaxLen.Valid != tableDefs[i].ColumnNames[j].CharMaxLen.Valid {
-				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharMaxLen.Valid, tableDefs[i].ColumnNames[j].CharMaxLen.Valid)
+			if col.CharMaxLen.Valid != tableDefs[i].columns[j].CharMaxLen.Valid {
+				t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharMaxLen.Valid, tableDefs[i].columns[j].CharMaxLen.Valid)
 				continue
 			}
 			if col.CharMaxLen.Valid {
-				if col.CharMaxLen.Int64 != tableDefs[i].ColumnNames[j].CharMaxLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharMaxLen.Int64, tableDefs[i].ColumnNames[j].CharMaxLen.Int64)
+				if col.CharMaxLen.Int64 != tableDefs[i].columns[j].CharMaxLen.Int64 {
+					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharMaxLen.Int64, tableDefs[i].columns[j].CharMaxLen.Int64)
 				}
 				continue
 			}
-			if col.CharOctetLen.Valid != tableDefs[i].ColumnNames[j].CharOctetLen.Valid {
-				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharOctetLen.Valid, tableDefs[i].ColumnNames[j].CharOctetLen.Valid)
+			if col.CharOctetLen.Valid != tableDefs[i].columns[j].CharOctetLen.Valid {
+				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharOctetLen.Valid, tableDefs[i].columns[j].CharOctetLen.Valid)
 				continue
 			}
 			if col.CharOctetLen.Valid {
-				if col.CharOctetLen.Int64 != tableDefs[i].ColumnNames[j].CharOctetLen.Int64 {
-					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharOctetLen.Int64, tableDefs[i].ColumnNames[j].CharOctetLen.Int64)
+				if col.CharOctetLen.Int64 != tableDefs[i].columns[j].CharOctetLen.Int64 {
+					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharOctetLen.Int64, tableDefs[i].columns[j].CharOctetLen.Int64)
 				}
 				continue
 			}
-			if col.NumericPrecision.Valid != tableDefs[i].ColumnNames[j].NumericPrecision.Valid {
-				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", tbl.name, col.Name, col.NumericPrecision.Valid, tableDefs[i].ColumnNames[j].NumericPrecision.Valid)
+			if col.NumericPrecision.Valid != tableDefs[i].columns[j].NumericPrecision.Valid {
+				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", tbl.name, col.Name, col.NumericPrecision.Valid, tableDefs[i].columns[j].NumericPrecision.Valid)
 				continue
 			}
 			if col.NumericPrecision.Valid {
-				if col.NumericPrecision.Int64 != tableDefs[i].ColumnNames[j].NumericPrecision.Int64 {
-					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", tbl.name, col.Name, col.NumericPrecision.Int64, tableDefs[i].ColumnNames[j].NumericPrecision.Int64)
+				if col.NumericPrecision.Int64 != tableDefs[i].columns[j].NumericPrecision.Int64 {
+					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", tbl.name, col.Name, col.NumericPrecision.Int64, tableDefs[i].columns[j].NumericPrecision.Int64)
 				}
 				continue
 			}
-			if col.NumericScale.Valid != tableDefs[i].ColumnNames[j].NumericScale.Valid {
-				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", tbl.name, col.Name, col.NumericScale.Valid, tableDefs[i].ColumnNames[j].NumericScale.Valid)
+			if col.NumericScale.Valid != tableDefs[i].columns[j].NumericScale.Valid {
+				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", tbl.name, col.Name, col.NumericScale.Valid, tableDefs[i].columns[j].NumericScale.Valid)
 				continue
 			}
 			if col.NumericScale.Valid {
-				if col.NumericScale.Int64 == tableDefs[i].ColumnNames[j].NumericScale.Int64 {
-					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", tbl.name, col.Name, col.NumericScale.Int64, tableDefs[i].ColumnNames[j].NumericScale.Int64)
+				if col.NumericScale.Int64 == tableDefs[i].columns[j].NumericScale.Int64 {
+					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", tbl.name, col.Name, col.NumericScale.Int64, tableDefs[i].columns[j].NumericScale.Int64)
 				}
 				continue
 			}
-			if col.CharacterSet.Valid != tableDefs[i].ColumnNames[j].CharacterSet.Valid {
-				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", tbl.name, col.Name, col.CharacterSet.Valid, tableDefs[i].ColumnNames[j].CharacterSet.Valid)
+			if col.CharacterSet.Valid != tableDefs[i].columns[j].CharacterSet.Valid {
+				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", tbl.name, col.Name, col.CharacterSet.Valid, tableDefs[i].columns[j].CharacterSet.Valid)
 				continue
 			}
 			if col.CharacterSet.Valid {
-				if col.CharacterSet.String != tableDefs[i].ColumnNames[j].CharacterSet.String {
-					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", tbl.name, col.Name, col.CharacterSet.String, tableDefs[i].ColumnNames[j].CharacterSet.String)
+				if col.CharacterSet.String != tableDefs[i].columns[j].CharacterSet.String {
+					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", tbl.name, col.Name, col.CharacterSet.String, tableDefs[i].columns[j].CharacterSet.String)
 				}
 				continue
 			}
-			if col.Collation.Valid != tableDefs[i].ColumnNames[j].Collation.Valid {
-				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", tbl.name, col.Name, col.Collation.Valid, tableDefs[i].ColumnNames[j].Collation.Valid)
+			if col.Collation.Valid != tableDefs[i].columns[j].Collation.Valid {
+				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", tbl.name, col.Name, col.Collation.Valid, tableDefs[i].columns[j].Collation.Valid)
 				continue
 			}
 			if col.Collation.Valid {
-				if col.Collation.String == tableDefs[i].ColumnNames[j].Collation.String {
-					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", tbl.name, col.Name, col.Collation.String, tableDefs[i].ColumnNames[j].Collation.String)
+				if col.Collation.String == tableDefs[i].columns[j].Collation.String {
+					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", tbl.name, col.Name, col.Collation.String, tableDefs[i].columns[j].Collation.String)
 				}
 				continue
 			}
-			if col.Typ != tableDefs[i].ColumnNames[j].Typ {
-				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", tbl.name, col.Name, col.Typ, tableDefs[i].ColumnNames[j].Typ)
+			if col.Typ != tableDefs[i].columns[j].Typ {
+				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", tbl.name, col.Name, col.Typ, tableDefs[i].columns[j].Typ)
 				continue
 			}
-			if col.Key != tableDefs[i].ColumnNames[j].Key {
-				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", tbl.name, col.Name, col.Key, tableDefs[i].ColumnNames[j].Key)
+			if col.Key != tableDefs[i].columns[j].Key {
+				t.Errorf("%s.%s COLUMN_KEY: got %q want %q", tbl.name, col.Name, col.Key, tableDefs[i].columns[j].Key)
 				continue
 			}
-			if col.Extra != tableDefs[i].ColumnNames[j].Extra {
-				t.Errorf("%s.%s EXTRA: got %q want %q", tbl.name, col.Name, col.Extra, tableDefs[i].ColumnNames[j].Extra)
+			if col.Extra != tableDefs[i].columns[j].Extra {
+				t.Errorf("%s.%s EXTRA: got %q want %q", tbl.name, col.Name, col.Extra, tableDefs[i].columns[j].Extra)
 				continue
 			}
-			if col.Privileges != tableDefs[i].ColumnNames[j].Privileges {
-				t.Errorf("%s.%s PRIVILEGES: got %q want %q", tbl.name, col.Name, col.Privileges, tableDefs[i].ColumnNames[j].Privileges)
+			if col.Privileges != tableDefs[i].columns[j].Privileges {
+				t.Errorf("%s.%s PRIVILEGES: got %q want %q", tbl.name, col.Name, col.Privileges, tableDefs[i].columns[j].Privileges)
 				continue
 			}
-			if col.Comment != tableDefs[i].ColumnNames[j].Comment {
-				t.Errorf("%s.%s COMMENT: got %q want %q", tbl.name, col.Name, col.Comment, tableDefs[i].ColumnNames[j].Comment)
+			if col.Comment != tableDefs[i].columns[j].Comment {
+				t.Errorf("%s.%s COMMENT: got %q want %q", tbl.name, col.Name, col.Comment, tableDefs[i].columns[j].Comment)
 				continue
 			}
-			if col.fieldName != tableDefs[i].ColumnNames[j].fieldName {
-				t.Errorf("%s.%s fieldName: got %q want %q", tbl.name, col.Name, col.fieldName, tableDefs[i].ColumnNames[j].fieldName)
+			if col.fieldName != tableDefs[i].columns[j].fieldName {
+				t.Errorf("%s.%s fieldName: got %q want %q", tbl.name, col.Name, col.fieldName, tableDefs[i].columns[j].fieldName)
 				continue
 			}
 		}
@@ -2032,7 +2096,7 @@ func TestGenerateDefs(t *testing.T) {
 		if i == 7 { // geospatial is not yet implemented; so skip
 			break
 		}
-		_, err := def.Definition(&buf)
+		err := def.Definition(&buf)
 		if err != nil {
 			t.Errorf("%s: %s", def.Name(), err)
 		}
@@ -2049,7 +2113,7 @@ func TestStructDefs(t *testing.T) {
 		if i == 7 { // geospatial is not yet implemented; so skip
 			break
 		}
-		_, err := def.GoFmt(&buf)
+		err := def.GoFmt(&buf)
 		if err != nil {
 			t.Errorf("%s: %s", def.Name(), err)
 		}
@@ -2060,47 +2124,49 @@ func TestStructDefs(t *testing.T) {
 }
 
 func TestSelectSQLPK(t *testing.T) {
-	expected := [][]byte{
-		[]byte(`SELECT id, code, description, tiny, small, medium, ger, big, cost, created
+	expected := []string{
+		`SELECT id, code, description, tiny, small, medium, ger, big, cost, created
 FROM abc
-WHERE id = ?`),
-		[]byte(`SELECT id, code, description, tiny, small, medium, ger, big, cost, created
+WHERE id = ?`,
+		`SELECT id, code, description, tiny, small, medium, ger, big, cost, created
 FROM abc_nn
-WHERE id = ?`),
-		nil, // TODO: figure out view part
-		[]byte(`SELECT id, d_date, d_datetime, d_time, d_year, size, a_set
+WHERE id = ?`,
+		"", // views don't have a PK so nothing is generated
+		`SELECT id, d_date, d_datetime, d_time, d_year, size, a_set
 FROM def
-WHERE id = ?`),
-		[]byte(`SELECT id, d_date, d_datetime, d_time, d_year, size, a_set
+WHERE id = ?`,
+		`SELECT id, d_date, d_datetime, d_time, d_year, size, a_set
 FROM def_nn
-WHERE id = ?`),
-		nil, // TODO: figure out view part
-		nil, // NO PK, no sql generated
-		nil, // NO PK, no sql generated
-		[]byte(`SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin
+WHERE id = ?`,
+		"", // views don't have a PK so nothing is generated
+		"", // NO PK, no sql generated
+		"", // NO PK, no sql generated
+		`SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin
 FROM jkl
 WHERE id = ?
-    AND fid = ?`),
-		[]byte(`SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin
+    AND fid = ?`,
+		`SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin
 FROM jkl_nn
 WHERE id = ?
-    AND fid = ?`),
-		[]byte(`SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection
+    AND fid = ?`,
+		`SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection
 FROM mno
-WHERE id = ?`),
-		[]byte(`SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection
+WHERE id = ?`,
+		`SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection
 FROM mno_nn
-WHERE id = ?`),
+WHERE id = ?`,
 	}
 
+	var buf bytes.Buffer
 	for i, tbl := range tableDefs {
-		sql, err := tbl.SelectSQLPK()
+		buf.Reset()
+		err := tbl.SelectSQLPK(&buf)
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
 			continue
 		}
-		if bytes.Compare(sql, expected[i]) != 0 {
-			t.Errorf("%d: got %q; want %q", i, sql, expected[i])
+		if buf.String() != expected[i] {
+			t.Errorf("%d: got %q; want %q", i, buf.String(), expected[i])
 		}
 	}
 }
