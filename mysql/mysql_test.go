@@ -169,7 +169,7 @@ var createViews = []string{
 
 var tableDefs = []Table{
 	Table{ // 0
-		name: "abc", r: 'a', schema: "dbsql_test",
+		name: "abc", r: 'a', structName: "Abc", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -272,7 +272,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 1
-		name: "abc_nn", r: 'a', schema: "dbsql_test",
+		name: "abc_nn", r: 'a', structName: "AbcNn", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -375,7 +375,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 2
-		name: "abc_v", r: 'a', schema: "dbsql_test",
+		name: "abc_v", r: 'a', structName: "AbcV", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
@@ -406,7 +406,7 @@ var tableDefs = []Table{
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
 	},
 	Table{ // 3
-		name: "def", r: 'd', schema: "dbsql_test",
+		name: "def", r: 'd', structName: "Def", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -480,7 +480,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 4
-		name: "def_nn", r: 'd', schema: "dbsql_test",
+		name: "def_nn", r: 'd', structName: "DefNn", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -554,7 +554,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 6
-		name: "defghi_v", r: 'd', schema: "dbsql_test",
+		name: "defghi_v", r: 'd', structName: "DefghiV", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "aid", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
@@ -601,7 +601,7 @@ var tableDefs = []Table{
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
 	},
 	Table{ // 7
-		name: "ghi", r: 'g', schema: "dbsql_test",
+		name: "ghi", r: 'g', structName: "Ghi", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -683,7 +683,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 8
-		name: "ghi_nn", r: 'g', schema: "dbsql_test",
+		name: "ghi_nn", r: 'g', structName: "GhiNn", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -765,7 +765,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 9
-		name: "jkl", r: 'j', schema: "dbsql_test",
+		name: "jkl", r: 'j', structName: "Jkl", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -852,7 +852,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 10
-		name: "jkl_nn", r: 'j', schema: "dbsql_test",
+		name: "jkl_nn", r: 'j', structName: "JklNn", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -939,7 +939,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 11
-		name: "mno", r: 'm', schema: "dbsql_test",
+		name: "mno", r: 'm', structName: "Mno", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -1028,7 +1028,7 @@ var tableDefs = []Table{
 		},
 	},
 	Table{ // 12
-		name: "mno_nn", r: 'm', schema: "dbsql_test",
+		name: "mno_nn", r: 'm', structName: "MnoNn", schema: "dbsql_test",
 		columns: []Column{
 			Column{
 				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
@@ -1240,7 +1240,7 @@ var structDefs = []string{
 }
 
 func (a *Abc) Select(db *sql.DB) error {
-	err := db.QueryRow("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc WHERE id = ?", a.ID).Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Ger, &a.Big, &a.Cost, &a.Created)
+	err := db.QueryRow("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc WHERE id = ?", a.ID).Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
 	if err != nil {
 		return err
 	}
@@ -1261,7 +1261,7 @@ func (a *Abc) Select(db *sql.DB) error {
 }
 
 func (a *AbcNn) Select(db *sql.DB) error {
-	err := db.QueryRow("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc_nn WHERE id = ?", a.ID).Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Ger, &a.Big, &a.Cost, &a.Created)
+	err := db.QueryRow("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc_nn WHERE id = ?", a.ID).Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
 	if err != nil {
 		return err
 	}
@@ -1609,6 +1609,18 @@ func TestTables(t *testing.T) {
 		}
 		if tbl.Name() != tableDefs[i].name {
 			t.Errorf("name: got %q want %q", tbl.name, tableDefs[i].name)
+			continue
+		}
+		if tbl.r != tableDefs[i].r {
+			t.Errorf("%s.r: got %q want %q", tbl.name, tbl.r, tableDefs[i].r)
+			continue
+		}
+		if tbl.StructName() != tableDefs[i].structName {
+			t.Errorf("%s.StructName: got %q want %q", tbl.name, tbl.StructName(), tableDefs[i].structName)
+			continue
+		}
+		if tbl.schema != tableDefs[i].schema {
+			t.Errorf("%s.Schema: got %q want %q", tbl.name, tbl.schema, tableDefs[i].schema)
 			continue
 		}
 		if tbl.Typ != tableDefs[i].Typ {

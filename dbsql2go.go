@@ -86,7 +86,7 @@ type DBer interface {
 	Views() []Viewer
 	UpdateTableConstraints() error
 	UpdateTableIndexes()
-	SetReceiverNames()
+	SetTableStructInfo()
 }
 
 // Tabler
@@ -106,6 +106,7 @@ type Tabler interface {
 	DeleteSQLPK() ([]byte, error)
 	InsertSQL() ([]byte, error)
 	GetPK() *Constraint
+	StructName() string
 	// SelectSQL
 	//InsertSQL() string
 	//	DeleteSQL() string

@@ -84,7 +84,7 @@ func (m *DB) Get() error {
 	if err != nil {
 		return err
 	}
-	m.SetReceiverNames()
+	m.SetTableStructInfo()
 	return nil
 }
 
@@ -373,10 +373,12 @@ func (m *DB) UpdateTableIndexes() {
 	}
 }
 
-// SetReceiverNames sets the receiver name for each table or view in the DB.
-func (m *DB) SetReceiverNames() {
+// SetTableStructInfo sets the struct related information for this table's
+// Go struct.
+func (m *DB) SetTableStructInfo() {
 	for i, tbl := range m.tables {
-		r, _ := utf8.DecodeRuneInString(tbl.Name())
+		tbl.(*Table).structName = mixedcase.Exported(tbl.Name())
+		r, _ := utf8.DecodeRuneInString(tbl.StructName())
 		tbl.(*Table).r = unicode.ToLower(r)
 		m.tables[i] = tbl
 	}
@@ -384,7 +386,8 @@ func (m *DB) SetReceiverNames() {
 
 type Table struct {
 	name        string
-	r           rune // the first letter of the name, in lower-case. Used as the receiver name.
+	r           rune   // the first letter of the name, in lower-case. Used as the receiver name.
+	structName  string // the name of the struct for this table
 	schema      string
 	columns     []Column
 	Typ         string
@@ -400,6 +403,11 @@ type Table struct {
 // Name returns the name of the table.
 func (t *Table) Name() string {
 	return t.name
+}
+
+// StructName returns the name of the Go struct for this table.
+func (t *Table) StructName() string {
+	return t.structName
 }
 
 // Schema returns the table's schema.
@@ -424,7 +432,7 @@ func (t *Table) Definition(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	_, err = w.Write([]byte(mixedcase.Exported(t.name)))
+	_, err = w.Write([]byte(t.structName))
 	if err != nil {
 		return err
 	}
@@ -533,7 +541,7 @@ func (t *Table) SelectPKMethod(w io.Writer) error {
 		// nothing to do
 		return nil
 	}
-	_, err := w.Write([]byte(fmt.Sprintf("\n func(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.r, t.name)))
+	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.r, t.name)))
 	if err != nil {
 		return err
 	}
@@ -582,10 +590,16 @@ func (t *Table) SelectPKMethod(w io.Writer) error {
 		}
 	}
 
-	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn err\n\t}\n\treturn nil}"))
+	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn err\n\t}\n\treturn nil\n}"))
 	if err != nil {
 		return err
 	}
+
+	_, err = w.Write([]byte{'\n'})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -611,7 +625,6 @@ func (t *Table) SelectSQLPK(w io.Writer) error {
 		t.SQLPrepare()
 	}
 	t.sqlInf.Where = pk.Cols
-	t.buf.Reset()
 	err := dbsql2go.SelectSQL.Execute(w, t.sqlInf)
 	if err != nil {
 		return err
