@@ -531,6 +531,15 @@ func (t *Table) IsView() bool {
 	return false
 }
 
+// SQLPrepare prepares the default dbsql2go.TableSQL with all of the tables'
+// columns and the table name so that that information doesn't need to be
+// set for every sql generation. Each SQL generation method will need to
+// set the Where field as it may change depending on the method called.
+func (t *Table) SQLPrepare() {
+	t.sqlInf.Table = t.name
+	t.sqlInf.Columns = t.Columns()
+}
+
 // SelectPKMethod generates the method for selecting a table row using its PK.
 func (t *Table) SelectPKMethod(w io.Writer) error {
 	pk := t.GetPK()
@@ -598,15 +607,6 @@ func (t *Table) SelectPKMethod(w io.Writer) error {
 	}
 
 	return nil
-}
-
-// SQLPrepare prepares the default dbsql2go.TableSQL with all of the tables'
-// columns and the table name so that that information doesn't need to be
-// set for every sql generation. Each SQL generation method will need to
-// set the Where field as it may change depending on the method called.
-func (t *Table) SQLPrepare() {
-	t.sqlInf.Table = t.name
-	t.sqlInf.Columns = t.Columns()
 }
 
 // SelectSQLPK returns a SELECT statement for the table that selects all the
