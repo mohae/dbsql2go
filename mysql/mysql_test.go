@@ -1328,14 +1328,6 @@ func (d *DefNn) Select(db *sql.DB) error {
 	MedStuff    []byte
 	LongStuff   []byte
 }
-
-func (g *Ghi) Select(db *sql.DB) error {
-	err := db.QueryRow("SELECT id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff FROM ghi WHERE id = ?", g.ID).Scan(&g.ID, &g.Val, &g.DefID, &g.DefDatetime, &g.TinyStuff, &g.Stuff, &g.MedStuff, &g.LongStuff)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 `,
 	`type GhiNn struct {
 	ID        int32
@@ -1346,14 +1338,6 @@ func (g *Ghi) Select(db *sql.DB) error {
 	Stuff     []byte
 	MedStuff  []byte
 	LongStuff []byte
-}
-
-func (g *GhiNn) Select(db *sql.DB) error {
-	err := db.QueryRow("SELECT id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff FROM ghi_nn WHERE id = ?", g.ID).Scan(&g.ID, &g.Val, &g.DefID, &g.DefDatetime, &g.TinyStuff, &g.Stuff, &g.MedStuff, &g.LongStuff)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 `,
 	`type Jkl struct {
@@ -1602,6 +1586,7 @@ func TestTables(t *testing.T) {
 		return
 	}
 	tables := m.Tables()
+	m.SetTableStructInfo()
 	for i, v := range tables {
 		tbl, ok := v.(*Table)
 		if !ok {

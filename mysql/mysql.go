@@ -541,7 +541,7 @@ func (t *Table) SelectPKMethod(w io.Writer) error {
 		// nothing to do
 		return nil
 	}
-	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.r, t.name)))
+	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.r, t.structName)))
 	if err != nil {
 		return err
 	}
