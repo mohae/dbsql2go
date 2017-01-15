@@ -1246,6 +1246,14 @@ func (a *Abc) Select(db *sql.DB) error {
 	}
 	return nil
 }
+
+func (a *Abc) Delete(db *sql.DB) (n int, err error) {
+	res, err := db.Exec("DELETE FROM abc WHERE id = ?", a.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
 `,
 	`type AbcNn struct {
 	ID          int32
@@ -1266,6 +1274,14 @@ func (a *AbcNn) Select(db *sql.DB) error {
 		return err
 	}
 	return nil
+}
+
+func (a *AbcNn) Delete(db *sql.DB) (n int, err error) {
+	res, err := db.Exec("DELETE FROM abc_nn WHERE id = ?", a.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 `,
 	`type AbcV struct {
@@ -1291,6 +1307,14 @@ func (d *Def) Select(db *sql.DB) error {
 	}
 	return nil
 }
+
+func (d *Def) Delete(db *sql.DB) (n int, err error) {
+	res, err := db.Exec("DELETE FROM def WHERE id = ?", d.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
 `,
 	`type DefNn struct {
 	ID        int32
@@ -1308,6 +1332,14 @@ func (d *DefNn) Select(db *sql.DB) error {
 		return err
 	}
 	return nil
+}
+
+func (d *DefNn) Delete(db *sql.DB) (n int, err error) {
+	res, err := db.Exec("DELETE FROM def_nn WHERE id = ?", d.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 `,
 	`type DefghiV struct {
@@ -1358,6 +1390,14 @@ func (j *Jkl) Select(db *sql.DB) error {
 	}
 	return nil
 }
+
+func (j *Jkl) Delete(db *sql.DB) (n int, err error) {
+	res, err := db.Exec("DELETE FROM jkl WHERE id = ?", j.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
 `,
 	`type JklNn struct {
 	ID      int32
@@ -1376,6 +1416,14 @@ func (j *JklNn) Select(db *sql.DB) error {
 		return err
 	}
 	return nil
+}
+
+func (j *JklNn) Delete(db *sql.DB) (n int, err error) {
+	res, err := db.Exec("DELETE FROM jkl_nn WHERE id = ?", j.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 `,
 }
@@ -1586,7 +1634,6 @@ func TestTables(t *testing.T) {
 		return
 	}
 	tables := m.Tables()
-	m.SetTableStructInfo()
 	for i, v := range tables {
 		tbl, ok := v.(*Table)
 		if !ok {
@@ -2151,29 +2198,30 @@ func TestSelectSQLPK(t *testing.T) {
 }
 
 func TestDeleteSQLPK(t *testing.T) {
-	expected := [][]byte{
-		[]byte("DELETE FROM abc WHERE id = ?"),
-		[]byte("DELETE FROM abc_nn WHERE id = ?"),
-		nil, // TODO: figure out view part
-		[]byte("DELETE FROM def WHERE id = ?"),
-		[]byte("DELETE FROM def_nn WHERE id = ?"),
-		nil, // TODO: figure out view part
-		nil, // NO PK, no sql generated
-		nil, // NO PK, no sql generated
-		[]byte("DELETE FROM jkl WHERE id = ? AND fid = ?"),
-		[]byte("DELETE FROM jkl_nn WHERE id = ? AND fid = ?"),
-		[]byte("DELETE FROM mno WHERE id = ?"),
-		[]byte("DELETE FROM mno_nn WHERE id = ?"),
+	expected := []string{
+		"DELETE FROM abc WHERE id = ?",
+		"DELETE FROM abc_nn WHERE id = ?",
+		"", // delete from views not supported
+		"DELETE FROM def WHERE id = ?",
+		"DELETE FROM def_nn WHERE id = ?",
+		"", // delete from views not supported
+		"", // NO PK, no sql generated
+		"", // NO PK, no sql generated
+		"DELETE FROM jkl WHERE id = ? AND fid = ?",
+		"DELETE FROM jkl_nn WHERE id = ? AND fid = ?",
+		"DELETE FROM mno WHERE id = ?",
+		"DELETE FROM mno_nn WHERE id = ?",
 	}
-
+	var buf bytes.Buffer
 	for i, tbl := range tableDefs {
-		sql, err := tbl.DeleteSQLPK()
+		buf.Reset()
+		err := tbl.DeleteSQLPK(&buf)
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
 			continue
 		}
-		if bytes.Compare(sql, expected[i]) != 0 {
-			t.Errorf("%d: got %q; want %q", i, sql, expected[i])
+		if buf.String() != expected[i] {
+			t.Errorf("%d: got %q; want %q", i, buf.String(), expected[i])
 		}
 	}
 }

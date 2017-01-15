@@ -86,7 +86,6 @@ type DBer interface {
 	Views() []Viewer
 	UpdateTableConstraints() error
 	UpdateTableIndexes()
-	SetTableStructInfo()
 }
 
 // Tabler
@@ -103,7 +102,7 @@ type Tabler interface {
 	Constraints() []Constraint
 	IsView() bool // If this is actually a view
 	SelectSQLPK(io.Writer) error
-	DeleteSQLPK() ([]byte, error)
+	DeleteSQLPK(io.Writer) error
 	InsertSQL() ([]byte, error)
 	GetPK() *Constraint
 	StructName() string

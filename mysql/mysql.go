@@ -84,7 +84,6 @@ func (m *DB) Get() error {
 	if err != nil {
 		return err
 	}
-	m.SetTableStructInfo()
 	return nil
 }
 
@@ -152,6 +151,9 @@ func (m *DB) GetTables() error {
 			mTbl.columns = append(mTbl.columns, c)
 		}
 		rows.Close()
+		mTbl.structName = mixedcase.Exported(tbl.Name())
+		r, _ := utf8.DecodeRuneInString(tbl.StructName())
+		mTbl.r = unicode.ToLower(r)
 		m.tables[i] = mTbl
 	}
 	return nil
@@ -373,17 +375,6 @@ func (m *DB) UpdateTableIndexes() {
 	}
 }
 
-// SetTableStructInfo sets the struct related information for this table's
-// Go struct.
-func (m *DB) SetTableStructInfo() {
-	for i, tbl := range m.tables {
-		tbl.(*Table).structName = mixedcase.Exported(tbl.Name())
-		r, _ := utf8.DecodeRuneInString(tbl.StructName())
-		tbl.(*Table).r = unicode.ToLower(r)
-		m.tables[i] = tbl
-	}
-}
-
 type Table struct {
 	name        string
 	r           rune   // the first letter of the name, in lower-case. Used as the receiver name.
@@ -480,7 +471,13 @@ func (t *Table) Go(w io.Writer) error {
 		return err
 	}
 
-	return err
+	// add the delete method
+	err = t.DeletePKMethod(w)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GoFmt creates a formatted struct definition and methods and returns the
@@ -632,29 +629,67 @@ func (t *Table) SelectSQLPK(w io.Writer) error {
 	return nil
 }
 
-// DeleteSQLPK returns a DELETE statement for the table that deletes a row
-// using the tables PK. If the table does not have a PK, a nil will be
-// returned and the error will also be nil as this is not an error state.
-func (t *Table) DeleteSQLPK() ([]byte, error) {
+// DeletePKMethod generates the method for deleting a table row using its PK.
+func (t *Table) DeletePKMethod(w io.Writer) error {
 	pk := t.GetPK()
-	if pk == nil { // the table doesn't have a primary key; this is not an error.
-		return nil, nil
+	if pk == nil {
+		// nothing to do
+		return nil
 	}
-	// don't generate sql for views
-	if t.IsView() {
-		return nil, nil
+	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Delete(db *sql.DB) (n int, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	if err != nil {
+		return err
 	}
 
+	err = t.DeleteSQLPK(w)
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write([]byte("\", "))
+	if err != nil {
+		return err
+	}
+
+	for i, v := range pk.Fields {
+		if i == 0 {
+			_, err = w.Write([]byte(fmt.Sprintf("%c.%s", t.r, v)))
+			if err != nil {
+				return err
+			}
+			continue
+		}
+		_, err = w.Write([]byte(fmt.Sprintf(", %c.%s", t.r, v)))
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.RowsAffected()\n}\n"))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteSQLPK returns a DELETE statement for the table that deletes a row
+// using the tables PK. If the table does not have a PK, no SQL will be
+// generated and a nil will be returned as this is not an error state.
+func (t *Table) DeleteSQLPK(w io.Writer) error {
+	pk := t.GetPK()
+	if pk == nil { // the table doesn't have a primary key; this is not an error.
+		return nil
+	}
 	if t.sqlInf.Table == "" { // ensure the table is set
 		t.sqlInf.Table = t.name
 	}
 	t.sqlInf.Where = pk.Cols
-	t.buf.Reset()
-	err := dbsql2go.DeleteSQL.Execute(&t.buf, t.sqlInf)
+	err := dbsql2go.DeleteSQL.Execute(w, t.sqlInf)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return t.buf.Bytes(), nil
+	return nil
 }
 
 // InsertSQL returns an INSERT statement for the table.
