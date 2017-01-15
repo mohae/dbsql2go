@@ -2125,36 +2125,18 @@ func TestStructDefs(t *testing.T) {
 
 func TestSelectSQLPK(t *testing.T) {
 	expected := []string{
-		`SELECT id, code, description, tiny, small, medium, ger, big, cost, created
-FROM abc
-WHERE id = ?`,
-		`SELECT id, code, description, tiny, small, medium, ger, big, cost, created
-FROM abc_nn
-WHERE id = ?`,
+		"SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc WHERE id = ?",
+		"SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc_nn WHERE id = ?",
 		"", // views don't have a PK so nothing is generated
-		`SELECT id, d_date, d_datetime, d_time, d_year, size, a_set
-FROM def
-WHERE id = ?`,
-		`SELECT id, d_date, d_datetime, d_time, d_year, size, a_set
-FROM def_nn
-WHERE id = ?`,
+		"SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def WHERE id = ?",
+		"SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def_nn WHERE id = ?",
 		"", // views don't have a PK so nothing is generated
 		"", // NO PK, no sql generated
 		"", // NO PK, no sql generated
-		`SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin
-FROM jkl
-WHERE id = ?
-    AND fid = ?`,
-		`SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin
-FROM jkl_nn
-WHERE id = ?
-    AND fid = ?`,
-		`SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection
-FROM mno
-WHERE id = ?`,
-		`SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection
-FROM mno_nn
-WHERE id = ?`,
+		"SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl WHERE id = ? AND fid = ?",
+		"SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl_nn WHERE id = ? AND fid = ?",
+		"SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection FROM mno WHERE id = ?",
+		"SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection FROM mno_nn WHERE id = ?",
 	}
 
 	var buf bytes.Buffer
@@ -2173,28 +2155,18 @@ WHERE id = ?`,
 
 func TestDeleteSQLPK(t *testing.T) {
 	expected := [][]byte{
-		[]byte(`DELETE FROM abc
-WHERE id = ?`),
-		[]byte(`DELETE FROM abc_nn
-WHERE id = ?`),
+		[]byte("DELETE FROM abc WHERE id = ?"),
+		[]byte("DELETE FROM abc_nn WHERE id = ?"),
 		nil, // TODO: figure out view part
-		[]byte(`DELETE FROM def
-WHERE id = ?`),
-		[]byte(`DELETE FROM def_nn
-WHERE id = ?`),
+		[]byte("DELETE FROM def WHERE id = ?"),
+		[]byte("DELETE FROM def_nn WHERE id = ?"),
 		nil, // TODO: figure out view part
 		nil, // NO PK, no sql generated
 		nil, // NO PK, no sql generated
-		[]byte(`DELETE FROM jkl
-WHERE id = ?
-    AND fid = ?`),
-		[]byte(`DELETE FROM jkl_nn
-WHERE id = ?
-    AND fid = ?`),
-		[]byte(`DELETE FROM mno
-WHERE id = ?`),
-		[]byte(`DELETE FROM mno_nn
-WHERE id = ?`),
+		[]byte("DELETE FROM jkl WHERE id = ? AND fid = ?"),
+		[]byte("DELETE FROM jkl_nn WHERE id = ? AND fid = ?"),
+		[]byte("DELETE FROM mno WHERE id = ?"),
+		[]byte("DELETE FROM mno_nn WHERE id = ?"),
 	}
 
 	for i, tbl := range tableDefs {
@@ -2211,28 +2183,18 @@ WHERE id = ?`),
 
 func TestInsertSQL(t *testing.T) {
 	expected := [][]byte{
-		[]byte(`INSERT INTO abc (id, code, description, tiny, small, medium, ger, big, cost, created)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`),
-		[]byte(`INSERT INTO abc_nn (id, code, description, tiny, small, medium, ger, big, cost, created)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`),
+		[]byte("INSERT INTO abc (id, code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"),
+		[]byte("INSERT INTO abc_nn (id, code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"),
 		nil, // INSERT views not supported.
-		[]byte(`INSERT INTO def (id, d_date, d_datetime, d_time, d_year, size, a_set)
-VALUES (?, ?, ?, ?, ?, ?, ?)`),
-		[]byte(`INSERT INTO def_nn (id, d_date, d_datetime, d_time, d_year, size, a_set)
-VALUES (?, ?, ?, ?, ?, ?, ?)`),
+		[]byte("INSERT INTO def (id, d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?, ?)"),
+		[]byte("INSERT INTO def_nn (id, d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?, ?)"),
 		nil, // INSERT views not supported.
-		[]byte(`INSERT INTO ghi (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)`), // NO PK, no sql generated
-		[]byte(`INSERT INTO ghi_nn (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)`), // NO PK, no sql generated
-		[]byte(`INSERT INTO jkl (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)`),
-		[]byte(`INSERT INTO jkl_nn (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)`),
-		[]byte(`INSERT INTO mno (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`),
-		[]byte(`INSERT INTO mno_nn (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`),
+		[]byte("INSERT INTO ghi (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
+		[]byte("INSERT INTO ghi_nn (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
+		[]byte("INSERT INTO jkl (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
+		[]byte("INSERT INTO jkl_nn (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
+		[]byte("INSERT INTO mno (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"),
+		[]byte("INSERT INTO mno_nn (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"),
 	}
 
 	for i, tbl := range tableDefs {
