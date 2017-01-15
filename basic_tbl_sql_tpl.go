@@ -41,14 +41,11 @@ SELECT
 	{{- end -}}
 {{- end }}
 {{- end }}
-{{- if ne .Table "" }}
-FROM {{.Table}}
+{{- if ne .Table "" }} FROM {{.Table}}
 {{- end -}}
-{{- if gt (len .Where) 0 }}
-WHERE {{- range $i, $col := .Where -}}
+{{- if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
-	{{- else }}
-    AND {{ $col }} = ?
+	{{- else }} AND {{ $col }} = ?
 	{{- end -}}
 {{- end -}}
 {{- end -}}
@@ -61,11 +58,9 @@ WHERE {{- range $i, $col := .Where -}}
 var deleteSQL = `{{ if ne .Table "" -}}
 DELETE FROM {{.Table}}
 {{- end -}}
-{{ if gt (len .Where) 0 }}
-WHERE {{- range $i, $col := .Where -}}
+{{ if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
-	{{- else }}
-    AND {{ $col }} = ?
+	{{- else }} AND {{ $col }} = ?
 	{{- end -}}
 {{- end -}}
 {{- end -}}
@@ -80,17 +75,13 @@ INSERT INTO {{.Table}}
 {{- end -}}
 {{- if gt (len .Columns) 0 }} ({{- range $i, $col := .Columns -}}
 	{{- if eq $i 0 }}{{ $col -}}
-	{{- else -}}
-		, {{$col}}
+	{{- else -}}, {{$col}}
 	{{- end -}}
+{{- end }})
 {{- end -}}
-)
-{{- end -}}
-{{- if gt (len .Columns) 0 }}
-VALUES ({{- range $i, $col := .Columns -}}
+{{- if gt (len .Columns) 0 }} VALUES ({{- range $i, $col := .Columns -}}
 {{- if eq $i 0 -}} ?
-{{- else -}}
-	, ?
+{{- else }}, ?
 {{- end }}
 {{- end -}}
 )

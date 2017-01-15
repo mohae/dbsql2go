@@ -57,25 +57,13 @@ func TestTableSelectTemplate(t *testing.T) {
 	expected := []string{
 		"",
 		"SELECT bar",
-		`
-FROM foo`,
-		`
-WHERE id = ?`,
-		`SELECT bar
-WHERE id = ?`,
-		`
-FROM foo
-WHERE id = ?`,
-		`SELECT bar
-FROM foo
-WHERE id = ?`,
-		`SELECT bar, biz, baz
-FROM foo
-WHERE id = ?`,
-		`SELECT bar, biz, baz
-FROM foo
-WHERE id = ?
-    AND sid = ?`,
+		" FROM foo",
+		" WHERE id = ?",
+		"SELECT bar WHERE id = ?",
+		" FROM foo WHERE id = ?",
+		"SELECT bar FROM foo WHERE id = ?",
+		"SELECT bar, biz, baz FROM foo WHERE id = ?",
+		"SELECT bar, biz, baz FROM foo WHERE id = ? AND sid = ?",
 	}
 	var buff bytes.Buffer
 	for i, tbl := range tables {
@@ -100,19 +88,12 @@ func TestTableDELETETemplate(t *testing.T) {
 		"",
 		"",
 		"DELETE FROM foo",
-		`
-WHERE id = ?`,
-		`
-WHERE id = ?`,
-		`DELETE FROM foo
-WHERE id = ?`,
-		`DELETE FROM foo
-WHERE id = ?`,
-		`DELETE FROM foo
-WHERE id = ?`,
-		`DELETE FROM foo
-WHERE id = ?
-    AND sid = ?`,
+		" WHERE id = ?",
+		" WHERE id = ?",
+		"DELETE FROM foo WHERE id = ?",
+		"DELETE FROM foo WHERE id = ?",
+		"DELETE FROM foo WHERE id = ?",
+		"DELETE FROM foo WHERE id = ? AND sid = ?",
 	}
 	var buff bytes.Buffer
 	for i, tbl := range tables {
@@ -135,19 +116,14 @@ WHERE id = ?
 func TestTableINSERTTemplate(t *testing.T) {
 	expected := []string{
 		"",
-		` (bar)
-VALUES (?)`,
+		" (bar) VALUES (?)",
 		"INSERT INTO foo",
-		``,
-		` (bar)
-VALUES (?)`,
-		`INSERT INTO foo`,
-		`INSERT INTO foo (bar)
-VALUES (?)`,
-		`INSERT INTO foo (bar, biz, baz)
-VALUES (?, ?, ?)`,
-		`INSERT INTO foo (bar, biz, baz)
-VALUES (?, ?, ?)`,
+		"",
+		" (bar) VALUES (?)",
+		"INSERT INTO foo",
+		"INSERT INTO foo (bar) VALUES (?)",
+		"INSERT INTO foo (bar, biz, baz) VALUES (?, ?, ?)",
+		"INSERT INTO foo (bar, biz, baz) VALUES (?, ?, ?)",
 	}
 	var buff bytes.Buffer
 	for i, tbl := range tables {
