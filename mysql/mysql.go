@@ -510,8 +510,8 @@ func (t *Table) GoFmt(w io.Writer) error {
 	return nil
 }
 
-// Columns returns the names of all the columns in the table.
-func (t *Table) Columns() []string {
+// ColumnNames returns the names of all the columns in the table.
+func (t *Table) ColumnNames() []string {
 	cols := make([]string, 0, len(t.columns))
 	for _, col := range t.columns {
 		cols = append(cols, col.Name)
@@ -519,11 +519,11 @@ func (t *Table) Columns() []string {
 	return cols
 }
 
-// NonPKColumns returns the names of all the non-pk columns in the table
-func (t *Table) NonPKColumns() []string {
+// NonPKColumnNames returns the names of all the non-pk columns in the table
+func (t *Table) NonPKColumnNames() []string {
 	pk := t.GetPK()
 	if pk == nil {
-		return t.Columns() // if there isn't a pk on this table, return all columns
+		return t.ColumnNames() // if there isn't a pk on this table, return all columns
 	}
 
 	cols := make([]string, 0, len(t.columns))
@@ -561,15 +561,6 @@ func (t *Table) IsView() bool {
 	return false
 }
 
-// SQLPrepare prepares the default dbsql2go.TableSQL with all of the tables'
-// columns and the table name so that that information doesn't need to be
-// set for every sql generation. Each SQL generation method will need to
-// set the Where field as it may change depending on the method called.
-func (t *Table) SQLPrepare() {
-	t.sqlInf.Table = t.name
-	t.sqlInf.Columns = t.Columns()
-}
-
 // SelectPKMethod generates the method for selecting a table row using its PK.
 func (t *Table) SelectPKMethod(w io.Writer) error {
 	pk := t.GetPK()
@@ -577,6 +568,7 @@ func (t *Table) SelectPKMethod(w io.Writer) error {
 		// nothing to do
 		return nil
 	}
+
 	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.r, t.structName)))
 	if err != nil {
 		return err
@@ -648,9 +640,9 @@ func (t *Table) SelectSQLPK(w io.Writer) error {
 	if pk == nil { // the table doesn't have a primary key; this is not an error.
 		return nil
 	}
-	if len(t.sqlInf.Columns) == 0 { // ensure everything is set
-		t.SQLPrepare()
-	}
+
+	// set up the relevant infor for the SQL generation; Table is already set.
+	t.sqlInf.Columns = t.ColumnNames()
 	t.sqlInf.Where = pk.Cols
 	err := dbsql2go.SelectSQL.Execute(w, t.sqlInf)
 	if err != nil {
@@ -710,9 +702,6 @@ func (t *Table) DeleteSQLPK(w io.Writer) error {
 	pk := t.GetPK()
 	if pk == nil { // the table doesn't have a primary key; this is not an error.
 		return nil
-	}
-	if t.sqlInf.Table == "" { // ensure the table is set
-		t.sqlInf.Table = t.name
 	}
 	t.sqlInf.Where = pk.Cols
 	err := dbsql2go.DeleteSQL.Execute(w, t.sqlInf)
@@ -782,8 +771,8 @@ func (t *Table) InsertSQL(w io.Writer) error {
 		return nil
 	}
 
-	// set-up the info for generating sql
-	t.sqlInf.Columns = t.NonPKColumns()
+	// set up the relevant infor for the SQL generation; Table is already set.
+	t.sqlInf.Columns = t.NonPKColumnNames()
 
 	err := dbsql2go.InsertSQL.Execute(w, t.sqlInf)
 	if err != nil {

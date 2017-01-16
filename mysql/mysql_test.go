@@ -270,6 +270,9 @@ var tableDefs = []Table{
 				RefCols: nil, RefFields: nil,
 			},
 		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "abc",
+		},
 	},
 	Table{ // 1
 		name: "abc_nn", r: 'a', structName: "AbcNn", schema: "dbsql_test",
@@ -373,6 +376,9 @@ var tableDefs = []Table{
 				RefCols: nil, RefFields: nil,
 			},
 		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "abc_nn",
+		},
 	},
 	Table{ // 2
 		name: "abc_v", r: 'a', structName: "AbcV", schema: "dbsql_test",
@@ -404,6 +410,9 @@ var tableDefs = []Table{
 		},
 		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
+		sqlInf: dbsql2go.TableSQL{
+			Table: "abc_v",
+		},
 	},
 	Table{ // 3
 		name: "def", r: 'd', structName: "Def", schema: "dbsql_test",
@@ -477,6 +486,9 @@ var tableDefs = []Table{
 				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
 				RefCols: nil, RefFields: nil,
 			},
+		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "def",
 		},
 	},
 	Table{ // 4
@@ -552,6 +564,9 @@ var tableDefs = []Table{
 				RefCols: nil, RefFields: nil,
 			},
 		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "def_nn",
+		},
 	},
 	Table{ // 6
 		name: "defghi_v", r: 'd', structName: "DefghiV", schema: "dbsql_test",
@@ -599,6 +614,9 @@ var tableDefs = []Table{
 		},
 		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
+		sqlInf: dbsql2go.TableSQL{
+			Table: "defghi_v",
+		},
 	},
 	Table{ // 7
 		name: "ghi", r: 'g', structName: "Ghi", schema: "dbsql_test",
@@ -681,6 +699,9 @@ var tableDefs = []Table{
 				RefCols: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
 			},
 		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "ghi",
+		},
 	},
 	Table{ // 8
 		name: "ghi_nn", r: 'g', structName: "GhiNn", schema: "dbsql_test",
@@ -762,6 +783,9 @@ var tableDefs = []Table{
 				Cols: []string{"def_id", "def_datetime"}, Fields: []string{"DefID", "DefDatetime"}, RefTable: "def_nn",
 				RefCols: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
 			},
+		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "ghi_nn",
 		},
 	},
 	Table{ // 9
@@ -850,6 +874,9 @@ var tableDefs = []Table{
 				RefCols: nil, RefFields: nil,
 			},
 		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "jkl",
+		},
 	},
 	Table{ // 10
 		name: "jkl_nn", r: 'j', structName: "JklNn", schema: "dbsql_test",
@@ -936,6 +963,9 @@ var tableDefs = []Table{
 				Cols: []string{"id", "fid"}, Fields: []string{"ID", "Fid"}, RefTable: "",
 				RefCols: nil, RefFields: nil,
 			},
+		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "jkl_nn",
 		},
 	},
 	Table{ // 11
@@ -1026,6 +1056,9 @@ var tableDefs = []Table{
 				RefCols: nil, RefFields: nil,
 			},
 		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "mno",
+		},
 	},
 	Table{ // 12
 		name: "mno_nn", r: 'm', structName: "MnoNn", schema: "dbsql_test",
@@ -1114,6 +1147,9 @@ var tableDefs = []Table{
 				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
 				RefCols: nil, RefFields: nil,
 			},
+		},
+		sqlInf: dbsql2go.TableSQL{
+			Table: "mno_nn",
 		},
 	},
 }
@@ -2083,7 +2119,7 @@ func TestColumns(t *testing.T) {
 		{name: "mno_nn", cols: []string{"id", "geo", "pt", "lstring", "poly", "multi_pt", "multi_lstring", "multi_polygon", "geo_collection"}},
 	}
 	for i, tbl := range tableDefs {
-		cols := tbl.Columns()
+		cols := tbl.ColumnNames()
 		if !sliceEqual(cols, expected[i].cols) {
 			t.Errorf("%s: got %v want %v", expected[i].name, cols, expected[i].cols)
 		}
@@ -2295,7 +2331,6 @@ func TestInsertSQL(t *testing.T) {
 	var buf bytes.Buffer
 	for i, tbl := range tableDefs {
 		buf.Reset()
-		tbl.sqlInf.Table = tbl.Name()
 		err := tbl.InsertSQL(&buf)
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)

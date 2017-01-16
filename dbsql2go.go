@@ -97,7 +97,8 @@ type Tabler interface {
 	Definition(io.Writer) error
 	Go(io.Writer) error
 	GoFmt(io.Writer) error
-	Columns() []string
+	ColumnNames() []string
+	NonPKColumnNames() []string
 	Indexes() []Index
 	Constraints() []Constraint
 	IsView() bool // If this is actually a view
