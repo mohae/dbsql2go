@@ -520,6 +520,7 @@ func (t *Table) ColumnNames() []string {
 }
 
 // NonPKColumnNames returns the names of all the non-pk columns in the table
+// TODO: is this still necessary?
 func (t *Table) NonPKColumnNames() []string {
 	pk := t.GetPK()
 	if pk == nil {
@@ -539,6 +540,20 @@ func (t *Table) NonPKColumnNames() []string {
 		if !pkCol {
 			cols = append(cols, col.Name)
 		}
+	}
+	return cols
+}
+
+// NonAutoIncrementColumnNames returns the names of all the auto-increment
+// columns in the table
+// TODO: is this still necessary?
+func (t *Table) NonAutoIncrementColumnNames() []string {
+	cols := make([]string, 0, len(t.columns))
+	for _, col := range t.columns {
+		if col.Extra == "auto_increment" {
+			continue
+		}
+		cols = append(cols, col.Name)
 	}
 	return cols
 }
@@ -772,7 +787,7 @@ func (t *Table) InsertSQL(w io.Writer) error {
 	}
 
 	// set up the relevant infor for the SQL generation; Table is already set.
-	t.sqlInf.Columns = t.NonPKColumnNames()
+	t.sqlInf.Columns = t.NonAutoIncrementColumnNames()
 
 	err := dbsql2go.InsertSQL.Execute(w, t.sqlInf)
 	if err != nil {

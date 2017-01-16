@@ -1468,7 +1468,7 @@ func (j *Jkl) Delete(db *sql.DB) (n int, err error) {
 }
 
 func (j *Jkl) Insert(db *sql.DB) (id int64, err error) {
-	res, err := db.Exec("INSERT INTO jkl (fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?)", &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+	res, err := db.Exec("INSERT INTO jkl (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?)", &j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
 	if err != nil {
 		return 0, err
 	}
@@ -1503,7 +1503,7 @@ func (j *JklNn) Delete(db *sql.DB) (n int, err error) {
 }
 
 func (j *JklNn) Insert(db *sql.DB) (id int64, err error) {
-	res, err := db.Exec("INSERT INTO jkl_nn (fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?)", &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+	res, err := db.Exec("INSERT INTO jkl_nn (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?)", &j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
 	if err != nil {
 		return 0, err
 	}
@@ -2326,8 +2326,8 @@ func TestInsertSQL(t *testing.T) {
 		"", // INSERT views not supported.
 		"INSERT INTO ghi (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		"INSERT INTO ghi_nn (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-		"INSERT INTO jkl (tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?)",
-		"INSERT INTO jkl_nn (tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?)",
+		"INSERT INTO jkl (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO jkl_nn (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		"INSERT INTO mno (geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		"INSERT INTO mno_nn (geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 	}
