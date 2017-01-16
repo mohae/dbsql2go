@@ -1767,6 +1767,10 @@ func TestTables(t *testing.T) {
 			t.Errorf("%s.Comment: got %q want %q", tbl.name, tbl.Comment, tableDefs[i].Comment)
 			continue
 		}
+		if tbl.sqlInf.Table != tableDefs[i].sqlInf.Table {
+			t.Errorf("%s.sqlInf.Table: got %q want %q", tbl.name, tbl.sqlInf.Table, tableDefs[i].sqlInf.Table)
+			continue
+		}
 		// handle columns
 		for j, col := range tbl.columns {
 			if col.Name != tableDefs[i].columns[j].Name {
