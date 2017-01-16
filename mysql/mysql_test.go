@@ -62,8 +62,8 @@ var createTables = []string{
 		d_datetime DATETIME NOT NULL,
 		d_time TIME NOT NULL,
 		d_year YEAR NOT NULL,
-		size ENUM('small', 'med', 'large') NOT NULL,
-		a_set SET('1', '2', '3') NOT NULL,
+		size ENUM('small', 'medium', 'large') NOT NULL,
+		a_set SET('a', 'b', 'c') NOT NULL,
 		INDEX (id, d_datetime)
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
@@ -176,7 +176,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "PRI", Extra: "auto_increment", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "ID",
 			},
 			Column{
@@ -248,7 +248,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "timestamp", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "timestamp",
-				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Key: "", Extra: "on update CURRENT_TIMESTAMP", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "Created",
 			},
 		},
@@ -282,7 +282,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "PRI", Extra: "auto_increment", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "ID",
 			},
 			Column{
@@ -354,7 +354,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "timestamp", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "timestamp",
-				Key: "", Extra: "", Privileges: "select,insert,update,references",
+				Key: "", Extra: "on update CURRENT_TIMESTAMP", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "Created",
 			},
 		},
@@ -388,7 +388,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "ID",
 			},
 			Column{
@@ -396,7 +396,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "char", CharMaxLen: sql.NullInt64{Int64: 12, Valid: true},
 				CharOctetLen: sql.NullInt64{Int64: 12, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "latin1", Valid: true}, Collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Typ: "char(12)",
-				Key: "UNI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "Code",
 			},
 			Column{
@@ -422,7 +422,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "PRI", Extra: "auto_increment", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "ID",
 			},
 			Column{
@@ -499,7 +499,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "PRI", Extra: "auto_increment", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "ID",
 			},
 			Column{
@@ -536,8 +536,8 @@ var tableDefs = []Table{
 			},
 			Column{
 				Name: "size", OrdinalPosition: 6, Default: sql.NullString{String: "", Valid: false},
-				IsNullable: "NO", DataType: "enum", CharMaxLen: sql.NullInt64{Int64: 5, Valid: true},
-				CharOctetLen: sql.NullInt64{Int64: 15, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
+				IsNullable: "NO", DataType: "enum", CharMaxLen: sql.NullInt64{Int64: 6, Valid: true},
+				CharOctetLen: sql.NullInt64{Int64: 18, Valid: true}, NumericPrecision: sql.NullInt64{Int64: 0, Valid: false}, NumericScale: sql.NullInt64{Int64: 0, Valid: false},
 				CharacterSet: sql.NullString{String: "utf8", Valid: true}, Collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Typ: "enum('small','medium','large')",
 				Key: "", Extra: "", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "Size",
@@ -576,7 +576,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "Aid",
 			},
 			Column{
@@ -584,7 +584,7 @@ var tableDefs = []Table{
 				IsNullable: "YES", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "", Extra: "", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "Bid",
 			},
 			Column{
@@ -801,11 +801,11 @@ var tableDefs = []Table{
 			},
 			Column{
 				Name: "fid", OrdinalPosition: 2, Default: sql.NullString{String: "0", Valid: true},
-				IsNullable: "YES", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
+				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "", fieldName: "FID",
+				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "", fieldName: "Fid",
 			},
 			Column{
 				Name: "tiny_txt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -894,8 +894,8 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "MUL", Extra: "", Privileges: "select,insert,update,references",
-				Comment: "", fieldName: "FID",
+				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Comment: "", fieldName: "Fid",
 			},
 			Column{
 				Name: "tiny_txt", OrdinalPosition: 3, Default: sql.NullString{String: "", Valid: false},
@@ -976,7 +976,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "PRI", Extra: "auto_increment", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "ID",
 			},
 			Column{
@@ -1068,7 +1068,7 @@ var tableDefs = []Table{
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
-				Key: "PRI", Extra: "", Privileges: "select,insert,update,references",
+				Key: "PRI", Extra: "auto_increment", Privileges: "select,insert,update,references",
 				Comment: "", fieldName: "ID",
 			},
 			Column{
@@ -1788,8 +1788,8 @@ func TestTables(t *testing.T) {
 			if col.Default.Valid {
 				if col.Default.String != tableDefs[i].columns[j].Default.String {
 					t.Errorf("%s.%s DEFAULT String: got %s want %s", tbl.name, col.Name, col.Default.String, tableDefs[i].columns[j].Default.String)
+					continue
 				}
-				continue
 			}
 			if col.IsNullable != tableDefs[i].columns[j].IsNullable {
 				t.Errorf("%s.%s IS_NULLABLE: got %q want %q", tbl.name, col.Name, col.IsNullable, tableDefs[i].columns[j].IsNullable)
@@ -1806,8 +1806,8 @@ func TestTables(t *testing.T) {
 			if col.CharMaxLen.Valid {
 				if col.CharMaxLen.Int64 != tableDefs[i].columns[j].CharMaxLen.Int64 {
 					t.Errorf("%s.%s CHARACTER_MAXIMUM_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharMaxLen.Int64, tableDefs[i].columns[j].CharMaxLen.Int64)
+					continue
 				}
-				continue
 			}
 			if col.CharOctetLen.Valid != tableDefs[i].columns[j].CharOctetLen.Valid {
 				t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Valid: got %t want %t", tbl.name, col.Name, col.CharOctetLen.Valid, tableDefs[i].columns[j].CharOctetLen.Valid)
@@ -1816,8 +1816,8 @@ func TestTables(t *testing.T) {
 			if col.CharOctetLen.Valid {
 				if col.CharOctetLen.Int64 != tableDefs[i].columns[j].CharOctetLen.Int64 {
 					t.Errorf("%s.%s CHARACTER_OCTET_LENGTH Int64: got %v want %v", tbl.name, col.Name, col.CharOctetLen.Int64, tableDefs[i].columns[j].CharOctetLen.Int64)
+					continue
 				}
-				continue
 			}
 			if col.NumericPrecision.Valid != tableDefs[i].columns[j].NumericPrecision.Valid {
 				t.Errorf("%s.%s NUMERIC_PRECISION Valid: got %t want %t", tbl.name, col.Name, col.NumericPrecision.Valid, tableDefs[i].columns[j].NumericPrecision.Valid)
@@ -1826,18 +1826,18 @@ func TestTables(t *testing.T) {
 			if col.NumericPrecision.Valid {
 				if col.NumericPrecision.Int64 != tableDefs[i].columns[j].NumericPrecision.Int64 {
 					t.Errorf("%s.%s NUMERIC_PRECISION Int64: got %v want %v", tbl.name, col.Name, col.NumericPrecision.Int64, tableDefs[i].columns[j].NumericPrecision.Int64)
+					continue
 				}
-				continue
 			}
 			if col.NumericScale.Valid != tableDefs[i].columns[j].NumericScale.Valid {
 				t.Errorf("%s.%s NUMERIC_SCALE Valid: got %t want %t", tbl.name, col.Name, col.NumericScale.Valid, tableDefs[i].columns[j].NumericScale.Valid)
 				continue
 			}
 			if col.NumericScale.Valid {
-				if col.NumericScale.Int64 == tableDefs[i].columns[j].NumericScale.Int64 {
+				if col.NumericScale.Int64 != tableDefs[i].columns[j].NumericScale.Int64 {
 					t.Errorf("%s.%s NUMERIC_SCALE Int64: got %v want %v", tbl.name, col.Name, col.NumericScale.Int64, tableDefs[i].columns[j].NumericScale.Int64)
+					continue
 				}
-				continue
 			}
 			if col.CharacterSet.Valid != tableDefs[i].columns[j].CharacterSet.Valid {
 				t.Errorf("%s.%s CHARACTER_SET_NAME Valid: got %t want %t", tbl.name, col.Name, col.CharacterSet.Valid, tableDefs[i].columns[j].CharacterSet.Valid)
@@ -1846,18 +1846,18 @@ func TestTables(t *testing.T) {
 			if col.CharacterSet.Valid {
 				if col.CharacterSet.String != tableDefs[i].columns[j].CharacterSet.String {
 					t.Errorf("%s.%s CHARACTER_SET_NAME String: got %s want %s", tbl.name, col.Name, col.CharacterSet.String, tableDefs[i].columns[j].CharacterSet.String)
+					continue
 				}
-				continue
 			}
 			if col.Collation.Valid != tableDefs[i].columns[j].Collation.Valid {
 				t.Errorf("%s.%s COLLATION_NAME Valid: got %t want %t", tbl.name, col.Name, col.Collation.Valid, tableDefs[i].columns[j].Collation.Valid)
 				continue
 			}
 			if col.Collation.Valid {
-				if col.Collation.String == tableDefs[i].columns[j].Collation.String {
+				if col.Collation.String != tableDefs[i].columns[j].Collation.String {
 					t.Errorf("%s.%s COLLATION_NAME String: got %s want %s", tbl.name, col.Name, col.Collation.String, tableDefs[i].columns[j].Collation.String)
+					continue
 				}
-				continue
 			}
 			if col.Typ != tableDefs[i].columns[j].Typ {
 				t.Errorf("%s.%s COLUMN_TYPE: got %q want %q", tbl.name, col.Name, col.Typ, tableDefs[i].columns[j].Typ)
