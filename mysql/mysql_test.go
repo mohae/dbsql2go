@@ -94,7 +94,7 @@ var createTables = []string{
 	)
 	CHARACTER SET utf8 COLLATE utf8_general_ci`,
 	`CREATE TABLE jkl (
-		id INT AUTO_INCREMENT,
+		id INT,
 		fid INT,
 		tiny_txt TINYTEXT,
 		txt TEXT,
@@ -110,7 +110,7 @@ var createTables = []string{
 	)
 	CHARACTER SET ascii COLLATE ascii_general_ci`,
 	`CREATE TABLE jkl_nn (
-		id INT AUTO_INCREMENT,
+		id INT,
 		fid INT,
 		tiny_txt TINYTEXT NOT NULL,
 		txt TEXT NOT NULL,
@@ -792,7 +792,7 @@ var tableDefs = []Table{
 		name: "jkl", r: 'j', structName: "Jkl", schema: "dbsql_test",
 		columns: []Column{
 			Column{
-				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
@@ -882,7 +882,7 @@ var tableDefs = []Table{
 		name: "jkl_nn", r: 'j', structName: "JklNn", schema: "dbsql_test",
 		columns: []Column{
 			Column{
-				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "", Valid: false},
+				Name: "id", OrdinalPosition: 1, Default: sql.NullString{String: "0", Valid: true},
 				IsNullable: "NO", DataType: "int", CharMaxLen: sql.NullInt64{Int64: 0, Valid: false},
 				CharOctetLen: sql.NullInt64{Int64: 0, Valid: false}, NumericPrecision: sql.NullInt64{Int64: 10, Valid: true}, NumericScale: sql.NullInt64{Int64: 0, Valid: true},
 				CharacterSet: sql.NullString{String: "", Valid: false}, Collation: sql.NullString{String: "", Valid: false}, Typ: "int(11)",
