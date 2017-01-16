@@ -151,6 +151,7 @@ func (m *DB) GetTables() error {
 			mTbl.columns = append(mTbl.columns, c)
 		}
 		rows.Close()
+		mTbl.sqlInf.Table = tbl.Name()
 		mTbl.structName = mixedcase.Exported(tbl.Name())
 		r, _ := utf8.DecodeRuneInString(tbl.StructName())
 		mTbl.r = unicode.ToLower(r)
@@ -518,6 +519,30 @@ func (t *Table) Columns() []string {
 	return cols
 }
 
+// NonPKColumns returns the names of all the non-pk columns in the table
+func (t *Table) NonPKColumns() []string {
+	pk := t.GetPK()
+	if pk == nil {
+		return t.Columns() // if there isn't a pk on this table, return all columns
+	}
+
+	cols := make([]string, 0, len(t.columns))
+	for _, col := range t.columns {
+		var pkCol bool
+		// this isn't optimal but good enough considering number of PK Cols will be low, if any
+		for _, v := range pk.Cols {
+			if v == col.Name {
+				pkCol = true
+				break
+			}
+		}
+		if !pkCol {
+			cols = append(cols, col.Name)
+		}
+	}
+	return cols
+}
+
 // Indexes returns information on all of the tables indexes.
 func (t *Table) Indexes() []dbsql2go.Index {
 	return t.indexes
@@ -720,9 +745,16 @@ func (t *Table) InsertMethod(w io.Writer) error {
 		return err
 	}
 
-	// buld the struct field stuff
-	for i, v := range t.columns {
-		if i == 0 {
+	// buld the struct field stuff: skip the pk cols and only use the fields
+	// that have corresponding columns in sqlInf
+	var j int // index into the sqlInf cols
+	for _, v := range t.columns {
+		// skip if this column isn't in sqlInf; columns are in same order
+		if v.Name != t.sqlInf.Columns[j] {
+			continue
+		}
+		j++         // point to next column
+		if j == 1 { // if this is the first element added, don't prefix with ', '
 			_, err = w.Write([]byte(fmt.Sprintf("&%c.%s", t.r, v.fieldName)))
 			if err != nil {
 				return err
@@ -735,12 +767,7 @@ func (t *Table) InsertMethod(w io.Writer) error {
 		}
 	}
 
-	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.LastInsertID()\n}"))
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write([]byte{'\n'})
+	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.LastInsertID()\n}\n"))
 	if err != nil {
 		return err
 	}
@@ -754,10 +781,9 @@ func (t *Table) InsertSQL(w io.Writer) error {
 	if t.IsView() {
 		return nil
 	}
-	if len(t.sqlInf.Columns) == 0 { // ensure everything is set
-		t.SQLPrepare()
-	}
-	// TODO remove auto-increment columns
+
+	// set-up the info for generating sql
+	t.sqlInf.Columns = t.NonPKColumns()
 
 	err := dbsql2go.InsertSQL.Execute(w, t.sqlInf)
 	if err != nil {

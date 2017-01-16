@@ -1256,7 +1256,7 @@ func (a *Abc) Delete(db *sql.DB) (n int, err error) {
 }
 
 func (a *Abc) Insert(db *sql.DB) (id int64, err error) {
-	res, err := db.Exec("INSERT INTO abc (code, description, tiny, small, medium, ger, big, cost, created) Values (?, ?, ?, ?, ?, ?, ?, ?, ?)", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
+	res, err := db.Exec("INSERT INTO abc (code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
 	if err != nil {
 		return 0, err
 	}
@@ -2191,6 +2191,7 @@ func TestGenerateDefs(t *testing.T) {
 		err := def.Definition(&buf)
 		if err != nil {
 			t.Errorf("%s: %s", def.Name(), err)
+			continue
 		}
 		if tableDefsString[i] != buf.String() {
 			t.Errorf("%s: got %q; want %q", def.Name(), buf.String(), tableDefsString[i])
@@ -2208,6 +2209,7 @@ func TestStructDefs(t *testing.T) {
 		err := def.GoFmt(&buf)
 		if err != nil {
 			t.Errorf("%s: %s", def.Name(), err)
+			continue
 		}
 		if structDefs[i] != buf.String() {
 			t.Errorf("%s: got %q; want %q", def.Name(), buf.String(), structDefs[i])
@@ -2276,23 +2278,24 @@ func TestDeleteSQLPK(t *testing.T) {
 
 func TestInsertSQL(t *testing.T) {
 	expected := []string{
-		"INSERT INTO abc (id, code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		"INSERT INTO abc_nn (id, code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO abc (code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO abc_nn (code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		"", // INSERT views not supported.
-		"INSERT INTO def (id, d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?, ?)",
-		"INSERT INTO def_nn (id, d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO def (d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?)",
+		"INSERT INTO def_nn (d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?)",
 		"", // INSERT views not supported.
 		"INSERT INTO ghi (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		"INSERT INTO ghi_nn (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-		"INSERT INTO jkl (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-		"INSERT INTO jkl_nn (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-		"INSERT INTO mno (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		"INSERT INTO mno_nn (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO jkl (tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?)",
+		"INSERT INTO jkl_nn (tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?)",
+		"INSERT INTO mno (geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO mno_nn (geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 	}
 
 	var buf bytes.Buffer
 	for i, tbl := range tableDefs {
 		buf.Reset()
+		tbl.sqlInf.Table = tbl.Name()
 		err := tbl.InsertSQL(&buf)
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
