@@ -477,6 +477,11 @@ func (t *Table) Go(w io.Writer) error {
 		return err
 	}
 
+	// add the insert method
+	err = t.InsertMethod(w)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -692,21 +697,73 @@ func (t *Table) DeleteSQLPK(w io.Writer) error {
 	return nil
 }
 
+// InsertMethod generates the method for inserting the Table's data into the
+// db table.
+func (t *Table) InsertMethod(w io.Writer) error {
+	pk := t.GetPK()
+	if pk == nil {
+		// nothing to do
+		return nil
+	}
+	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Insert(db *sql.DB) (id int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	if err != nil {
+		return err
+	}
+
+	err = t.InsertSQL(w)
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write([]byte("\", "))
+	if err != nil {
+		return err
+	}
+
+	// buld the struct field stuff
+	for i, v := range t.columns {
+		if i == 0 {
+			_, err = w.Write([]byte(fmt.Sprintf("&%c.%s", t.r, v.fieldName)))
+			if err != nil {
+				return err
+			}
+			continue
+		}
+		_, err = w.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, v.fieldName)))
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.LastInsertID()\n}"))
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write([]byte{'\n'})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // InsertSQL returns an INSERT statement for the table.
-func (t *Table) InsertSQL() ([]byte, error) {
+func (t *Table) InsertSQL(w io.Writer) error {
 	// don't generate sql for views
 	if t.IsView() {
-		return nil, nil
+		return nil
 	}
 	if len(t.sqlInf.Columns) == 0 { // ensure everything is set
 		t.SQLPrepare()
 	}
-	t.buf.Reset()
-	err := dbsql2go.InsertSQL.Execute(&t.buf, t.sqlInf)
+	// TODO remove auto-increment columns
+
+	err := dbsql2go.InsertSQL.Execute(w, t.sqlInf)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return t.buf.Bytes(), nil
+	return nil
 }
 
 // GetPK returns a tables primary key information, if it has a primary key, or

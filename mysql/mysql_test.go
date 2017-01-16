@@ -1254,6 +1254,14 @@ func (a *Abc) Delete(db *sql.DB) (n int, err error) {
 	}
 	return res.RowsAffected()
 }
+
+func (a *Abc) Insert(db *sql.DB) (id int64, err error) {
+	res, err := db.Exec("INSERT INTO abc (code, description, tiny, small, medium, ger, big, cost, created) Values (?, ?, ?, ?, ?, ?, ?, ?, ?)", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertID()
+}
 `,
 	`type AbcNn struct {
 	ID          int32
@@ -1282,6 +1290,14 @@ func (a *AbcNn) Delete(db *sql.DB) (n int, err error) {
 		return 0, err
 	}
 	return res.RowsAffected()
+}
+
+func (a *AbcNn) Insert(db *sql.DB) (id int64, err error) {
+	res, err := db.Exec("INSERT INTO abc_nn (code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertID()
 }
 `,
 	`type AbcV struct {
@@ -1315,6 +1331,14 @@ func (d *Def) Delete(db *sql.DB) (n int, err error) {
 	}
 	return res.RowsAffected()
 }
+
+func (d *Def) Insert(db *sql.DB) (id int64, err error) {
+	res, err := db.Exec("INSERT INTO def (d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?)", &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertID()
+}
 `,
 	`type DefNn struct {
 	ID        int32
@@ -1340,6 +1364,14 @@ func (d *DefNn) Delete(db *sql.DB) (n int, err error) {
 		return 0, err
 	}
 	return res.RowsAffected()
+}
+
+func (d *DefNn) Insert(db *sql.DB) (id int64, err error) {
+	res, err := db.Exec("INSERT INTO def_nn (d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?)", &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertID()
 }
 `,
 	`type DefghiV struct {
@@ -1398,6 +1430,14 @@ func (j *Jkl) Delete(db *sql.DB) (n int, err error) {
 	}
 	return res.RowsAffected()
 }
+
+func (j *Jkl) Insert(db *sql.DB) (id int64, err error) {
+	res, err := db.Exec("INSERT INTO jkl (fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?)", &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertID()
+}
 `,
 	`type JklNn struct {
 	ID      int32
@@ -1424,6 +1464,14 @@ func (j *JklNn) Delete(db *sql.DB) (n int, err error) {
 		return 0, err
 	}
 	return res.RowsAffected()
+}
+
+func (j *JklNn) Insert(db *sql.DB) (id int64, err error) {
+	res, err := db.Exec("INSERT INTO jkl_nn (fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?)", &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertID()
 }
 `,
 }
@@ -2227,29 +2275,31 @@ func TestDeleteSQLPK(t *testing.T) {
 }
 
 func TestInsertSQL(t *testing.T) {
-	expected := [][]byte{
-		[]byte("INSERT INTO abc (id, code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"),
-		[]byte("INSERT INTO abc_nn (id, code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"),
-		nil, // INSERT views not supported.
-		[]byte("INSERT INTO def (id, d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?, ?)"),
-		[]byte("INSERT INTO def_nn (id, d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?, ?)"),
-		nil, // INSERT views not supported.
-		[]byte("INSERT INTO ghi (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
-		[]byte("INSERT INTO ghi_nn (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
-		[]byte("INSERT INTO jkl (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
-		[]byte("INSERT INTO jkl_nn (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
-		[]byte("INSERT INTO mno (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"),
-		[]byte("INSERT INTO mno_nn (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"),
+	expected := []string{
+		"INSERT INTO abc (id, code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO abc_nn (id, code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"", // INSERT views not supported.
+		"INSERT INTO def (id, d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO def_nn (id, d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		"", // INSERT views not supported.
+		"INSERT INTO ghi (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO ghi_nn (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO jkl (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO jkl_nn (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO mno (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO mno_nn (id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 	}
 
+	var buf bytes.Buffer
 	for i, tbl := range tableDefs {
-		sql, err := tbl.InsertSQL()
+		buf.Reset()
+		err := tbl.InsertSQL(&buf)
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
 			continue
 		}
-		if bytes.Compare(sql, expected[i]) != 0 {
-			t.Errorf("%d: got %q; want %q", i, sql, expected[i])
+		if buf.String() != expected[i] {
+			t.Errorf("%d: got %q; want %q", i, buf.String(), expected[i])
 		}
 	}
 }

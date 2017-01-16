@@ -103,7 +103,7 @@ type Tabler interface {
 	IsView() bool // If this is actually a view
 	SelectSQLPK(io.Writer) error
 	DeleteSQLPK(io.Writer) error
-	InsertSQL() ([]byte, error)
+	InsertSQL(io.Writer) error
 	GetPK() *Constraint
 	StructName() string
 	// SelectSQL
