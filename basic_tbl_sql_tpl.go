@@ -34,21 +34,19 @@ func init() {
 // columns in the WHERE field are assumed to use AND. Support for other
 // conditions may be added in the future, but it complicates things, and,
 // initially, this is meant to just create the basic SELECTs from a table.
-var selectSQL = `{{ if gt (len .Columns) 0 -}}
+var selectSQL = `{{ if and (ne .Table "") (gt (len .Columns) 0) -}}
 SELECT
 {{- range $i, $col := .Columns -}}
 	{{- if eq $i 0 }} {{ $col -}}
 	{{- else -}}
 		, {{$col}}
 	{{- end -}}
-{{- end }}
-{{- end }}
-{{- if ne .Table "" }} FROM {{.Table}}
-{{- end -}}
+{{- end }} FROM {{.Table}}
 {{- if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }} AND {{ $col }} = ?
 	{{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 `
@@ -59,11 +57,11 @@ SELECT
 // initially, this is meant to just create the basic DELETEs from a table.
 var deleteSQL = `{{ if ne .Table "" -}}
 DELETE FROM {{.Table}}
-{{- end -}}
-{{ if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
+{{- if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }} AND {{ $col }} = ?
 	{{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 `
@@ -72,19 +70,17 @@ DELETE FROM {{.Table}}
 // columns in the WHERE field are assumed to use AND. Support for other
 // conditions may be added in the future, but it complicates things, and,
 // initially, this is meant to just create the basic INSERTs into a table.
-var insertSQL = `{{ if ne .Table "" -}}
-INSERT INTO {{.Table}}
-{{- end -}}
-{{- if gt (len .Columns) 0 }} ({{- range $i, $col := .Columns -}}
+var insertSQL = `{{ if and (ne .Table "") (gt (len .Columns) 0) -}}
+INSERT INTO {{.Table}} (
+{{- range $i, $col := .Columns -}}
 	{{- if eq $i 0 }}{{ $col -}}
 	{{- else -}}, {{$col}}
 	{{- end -}}
-{{- end }})
 {{- end -}}
-{{- if gt (len .Columns) 0 }} VALUES ({{- range $i, $col := .Columns -}}
+) VALUES ({{- range $i, $col := .Columns -}}
 {{- if eq $i 0 -}} ?
 {{- else }}, ?
-{{- end }}
+{{- end -}}
 {{- end -}}
 )
 {{- end -}}
@@ -94,18 +90,17 @@ INSERT INTO {{.Table}}
 // columns in the WHERE field are assumed to use AND. Support for other
 // conditions may be added in the future, but it complicates things, and,
 // initially, this is meant to just create the basic UPDATES to a table row.
-var updateSQL = `{{ if ne .Table "" -}}
-UPDATE {{.Table}} SET {{ end -}}
-{{- if gt (len .Columns) 0 }}{{- range $i, $col := .Columns -}}
+var updateSQL = `{{ if and (ne .Table "") (gt (len .Columns) 0) -}}
+UPDATE {{.Table}} SET {{ range $i, $col := .Columns -}}
 	{{- if eq $i 0 }}{{ $col }} = ?
 	{{- else -}}, {{$col}} = ?
 	{{- end -}}
-{{- end -}}
 {{- end -}}
 {{ if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }} AND {{ $col }} = ?
 	{{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 `
