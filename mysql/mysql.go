@@ -481,6 +481,12 @@ func (t *Table) Go(w io.Writer) error {
 	// add the insert method
 	err = t.InsertMethod(w)
 	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	err = t.UpdateMethod(w)
+	if err != nil {
 		return err
 	}
 	return nil
@@ -501,7 +507,6 @@ func (t *Table) GoFmt(w io.Writer) error {
 	if err != nil {
 		return fmt.Errorf("%s: format definition: %s", t.name, err)
 	}
-
 	// write the definition
 	_, err = w.Write(b)
 	if err != nil {
@@ -790,6 +795,103 @@ func (t *Table) InsertSQL(w io.Writer) error {
 	t.sqlInf.Columns = t.NonAutoIncrementColumnNames()
 
 	err := dbsql2go.InsertSQL.Execute(w, t.sqlInf)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdateMethod generates the method for updatating a table row using its PK.
+func (t *Table) UpdateMethod(w io.Writer) error {
+	pk := t.GetPK()
+	if pk == nil {
+		// nothing to do
+		return nil
+	}
+
+	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Update(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	if err != nil {
+		return err
+	}
+
+	err = t.UpdateSQL(w)
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write([]byte("\", "))
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write([]byte(""))
+	if err != nil {
+		return err
+	}
+
+	var j int //keep track of what's been added
+
+	// buld the struct field stuff
+	for _, v := range t.columns {
+		var b bool
+		// if the column isn't in the list of columns added to the query, skip it
+		for _, col := range t.sqlInf.Columns {
+			if v.Name == col {
+				b = true
+				break
+			}
+		}
+		if !b {
+			continue
+		}
+		j++
+		if j == 1 {
+			_, err = w.Write([]byte(fmt.Sprintf("&%c.%s", t.r, v.fieldName)))
+			if err != nil {
+				return err
+			}
+			continue
+		}
+		_, err = w.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, v.fieldName)))
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, v := range pk.Fields {
+		_, err = w.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, v)))
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.RowsAffected()\n}"))
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write([]byte{'\n'})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateSQLPK returns an UPDATE statement for the table that updates all
+// non-auto increment columns using the table's pk in the WHERE clause. If
+// the table does not have a PK, no UPDATE statement will be generated and a
+// nil will be returned as this is not an error state.
+func (t *Table) UpdateSQL(w io.Writer) error {
+	pk := t.GetPK()
+	if pk == nil { // the table doesn't have a primary key; this is not an error.
+		return nil
+	}
+
+	// set up the relevant infor for the SQL generation; Table is already set.
+	t.sqlInf.Columns = t.NonAutoIncrementColumnNames()
+	t.sqlInf.Where = pk.Cols
+	err := dbsql2go.UpdateSQL.Execute(w, t.sqlInf)
 	if err != nil {
 		return err
 	}

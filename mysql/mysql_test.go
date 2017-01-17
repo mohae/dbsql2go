@@ -1298,6 +1298,14 @@ func (a *Abc) Insert(db *sql.DB) (id int64, err error) {
 	}
 	return res.LastInsertID()
 }
+
+func (a *Abc) Update(db *sql.DB) (n int64, err error) {
+	res, err := db.Exec("UPDATE abc SET code = ?, description = ?, tiny = ?, small = ?, medium = ?, ger = ?, big = ?, cost = ?, created = ? WHERE id = ?", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created, &a.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
 `,
 	`type AbcNn struct {
 	ID          int32
@@ -1334,6 +1342,14 @@ func (a *AbcNn) Insert(db *sql.DB) (id int64, err error) {
 		return 0, err
 	}
 	return res.LastInsertID()
+}
+
+func (a *AbcNn) Update(db *sql.DB) (n int64, err error) {
+	res, err := db.Exec("UPDATE abc_nn SET code = ?, description = ?, tiny = ?, small = ?, medium = ?, ger = ?, big = ?, cost = ?, created = ? WHERE id = ?", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created, &a.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 `,
 	`type AbcV struct {
@@ -1375,6 +1391,14 @@ func (d *Def) Insert(db *sql.DB) (id int64, err error) {
 	}
 	return res.LastInsertID()
 }
+
+func (d *Def) Update(db *sql.DB) (n int64, err error) {
+	res, err := db.Exec("UPDATE def SET d_date = ?, d_datetime = ?, d_time = ?, d_year = ?, size = ?, a_set = ? WHERE id = ?", &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet, &d.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
 `,
 	`type DefNn struct {
 	ID        int32
@@ -1408,6 +1432,14 @@ func (d *DefNn) Insert(db *sql.DB) (id int64, err error) {
 		return 0, err
 	}
 	return res.LastInsertID()
+}
+
+func (d *DefNn) Update(db *sql.DB) (n int64, err error) {
+	res, err := db.Exec("UPDATE def_nn SET d_date = ?, d_datetime = ?, d_time = ?, d_year = ?, size = ?, a_set = ? WHERE id = ?", &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet, &d.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 `,
 	`type DefghiV struct {
@@ -1474,6 +1506,14 @@ func (j *Jkl) Insert(db *sql.DB) (id int64, err error) {
 	}
 	return res.LastInsertID()
 }
+
+func (j *Jkl) Update(db *sql.DB) (n int64, err error) {
+	res, err := db.Exec("UPDATE jkl SET id = ?, fid = ?, tiny_txt = ?, txt = ?, med_txt = ?, long_txt = ?, bin = ?, var_bin = ? WHERE id = ?", &j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin, &j,ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
 `,
 	`type JklNn struct {
 	ID      int32
@@ -1487,7 +1527,7 @@ func (j *Jkl) Insert(db *sql.DB) (id int64, err error) {
 }
 
 func (j *JklNn) Select(db *sql.DB) error {
-	err := db.QueryRow("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl_nn WHERE id = ?", j.ID).Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+	err := db.QueryRow("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl_nn WHERE id = ?", j.ID).Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin, &j,ID)
 	if err != nil {
 		return err
 	}
@@ -1508,6 +1548,14 @@ func (j *JklNn) Insert(db *sql.DB) (id int64, err error) {
 		return 0, err
 	}
 	return res.LastInsertID()
+}
+
+func (j *JklNn) Update(db *sql.DB) ( int64, err error) {
+	res, err := db.Exec("UPDATE jkl_nn SET id = ?, fid = ?, tiny_txt = ?, txt = ?, med_txt = ?, long_txt = ?, bin = ?, var_bin = ? WHERE id = ?", &j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 `,
 }
@@ -2336,6 +2384,36 @@ func TestInsertSQL(t *testing.T) {
 	for i, tbl := range tableDefs {
 		buf.Reset()
 		err := tbl.InsertSQL(&buf)
+		if err != nil {
+			t.Errorf("%d: unexpected error: got %q", i, err)
+			continue
+		}
+		if buf.String() != expected[i] {
+			t.Errorf("%d: got %q; want %q", i, buf.String(), expected[i])
+		}
+	}
+}
+
+func TestUpdateSQL(t *testing.T) {
+	expected := []string{
+		"UPDATE abc SET code = ?, description = ?, tiny = ?, small = ?, medium = ?, ger = ?, big = ?, cost = ?, created = ? WHERE id = ?",
+		"UPDATE abc_nn SET code = ?, description = ?, tiny = ?, small = ?, medium = ?, ger = ?, big = ?, cost = ?, created = ? WHERE id = ?",
+		"", // Update views not supported.
+		"UPDATE def SET d_date = ?, d_datetime = ?, d_time = ?, d_year = ?, size = ?, a_set = ? WHERE id = ?",
+		"UPDATE def_nn SET d_date = ?, d_datetime = ?, d_time = ?, d_year = ?, size = ?, a_set = ? WHERE id = ?",
+		"", // Update views not supported.
+		"", // NO PK, no sql generated
+		"", // NO PK, no sql generated
+		"UPDATE jkl SET id = ?, fid = ?, tiny_txt = ?, txt = ?, med_txt = ?, long_txt = ?, bin = ?, var_bin = ? WHERE id = ? AND fid = ?",
+		"UPDATE jkl_nn SET id = ?, fid = ?, tiny_txt = ?, txt = ?, med_txt = ?, long_txt = ?, bin = ?, var_bin = ? WHERE id = ? AND fid = ?",
+		"UPDATE mno SET geo = ?, pt = ?, lstring = ?, poly = ?, multi_pt = ?, multi_lstring = ?, multi_polygon = ?, geo_collection = ? WHERE id = ?",
+		"UPDATE mno_nn SET geo = ?, pt = ?, lstring = ?, poly = ?, multi_pt = ?, multi_lstring = ?, multi_polygon = ?, geo_collection = ? WHERE id = ?",
+	}
+
+	var buf bytes.Buffer
+	for i, tbl := range tableDefs {
+		buf.Reset()
+		err := tbl.UpdateSQL(&buf)
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
 			continue
