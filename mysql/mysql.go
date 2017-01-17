@@ -678,7 +678,7 @@ func (t *Table) DeletePKMethod(w io.Writer) error {
 		// nothing to do
 		return nil
 	}
-	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Delete(db *sql.DB) (n int, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Delete(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
 	if err != nil {
 		return err
 	}

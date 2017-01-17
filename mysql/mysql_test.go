@@ -1283,7 +1283,7 @@ func (a *Abc) Select(db *sql.DB) error {
 	return nil
 }
 
-func (a *Abc) Delete(db *sql.DB) (n int, err error) {
+func (a *Abc) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM abc WHERE id = ?", a.ID)
 	if err != nil {
 		return 0, err
@@ -1328,7 +1328,7 @@ func (a *AbcNn) Select(db *sql.DB) error {
 	return nil
 }
 
-func (a *AbcNn) Delete(db *sql.DB) (n int, err error) {
+func (a *AbcNn) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM abc_nn WHERE id = ?", a.ID)
 	if err != nil {
 		return 0, err
@@ -1376,7 +1376,7 @@ func (d *Def) Select(db *sql.DB) error {
 	return nil
 }
 
-func (d *Def) Delete(db *sql.DB) (n int, err error) {
+func (d *Def) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM def WHERE id = ?", d.ID)
 	if err != nil {
 		return 0, err
@@ -1418,7 +1418,7 @@ func (d *DefNn) Select(db *sql.DB) error {
 	return nil
 }
 
-func (d *DefNn) Delete(db *sql.DB) (n int, err error) {
+func (d *DefNn) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM def_nn WHERE id = ?", d.ID)
 	if err != nil {
 		return 0, err
@@ -1491,7 +1491,7 @@ func (j *Jkl) Select(db *sql.DB) error {
 	return nil
 }
 
-func (j *Jkl) Delete(db *sql.DB) (n int, err error) {
+func (j *Jkl) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM jkl WHERE id = ?", j.ID)
 	if err != nil {
 		return 0, err
@@ -1534,7 +1534,7 @@ func (j *JklNn) Select(db *sql.DB) error {
 	return nil
 }
 
-func (j *JklNn) Delete(db *sql.DB) (n int, err error) {
+func (j *JklNn) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM jkl_nn WHERE id = ?", j.ID)
 	if err != nil {
 		return 0, err
