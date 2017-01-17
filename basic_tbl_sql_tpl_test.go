@@ -142,3 +142,33 @@ func TestTableINSERTTemplate(t *testing.T) {
 		}
 	}
 }
+
+func TestTableUpdateTemplate(t *testing.T) {
+	expected := []string{
+		"",
+		"bar = ?",
+		"UPDATE foo SET ",
+		" WHERE id = ?",
+		"bar = ? WHERE id = ?",
+		"UPDATE foo SET  WHERE id = ?",
+		"UPDATE foo SET bar = ? WHERE id = ?",
+		"UPDATE foo SET bar = ?, biz = ?, baz = ? WHERE id = ?",
+		"UPDATE foo SET bar = ?, biz = ?, baz = ? WHERE id = ? AND sid = ?",
+	}
+	var buff bytes.Buffer
+	for i, tbl := range tables {
+		// it's just simpler to reset it here
+		buff.Reset()
+		err := UpdateSQL.Execute(&buff, tbl)
+		if err != nil {
+			t.Errorf("%d: %s", i, err)
+			continue
+		}
+		if buff.String() != expected[i] {
+			// use the hex values because it makes it easier to spot difference that
+			// aren't always obvious visually, e.g. trailing blanks
+			t.Errorf("%d: got %x want %x", i, buff.String(), expected[i])
+			t.Errorf("%d: got %q want %q", i, buff.String(), expected[i])
+		}
+	}
+}

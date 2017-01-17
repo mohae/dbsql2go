@@ -19,13 +19,15 @@ import "html/template"
 var (
 	SelectSQL *template.Template // Template to SELECT from a single table with only ANDs
 	DeleteSQL *template.Template // Template to DELETE from a single table with only ANDs
-	InsertSQL *template.Template // Template to INSERT from a single table with only ANDs
+	InsertSQL *template.Template // Template to INSERT into a single table with only ANDs
+	UpdateSQL *template.Template // Template to UPDATE a row in a single table with only ANDs
 )
 
 func init() {
 	SelectSQL = template.Must(template.New("select").Parse(selectSQL))
 	DeleteSQL = template.Must(template.New("delete").Parse(deleteSQL))
 	InsertSQL = template.Must(template.New("insert").Parse(insertSQL))
+	UpdateSQL = template.Must(template.New("update").Parse(updateSQL))
 }
 
 // selectSQL is the template for selecting data from a single table. All
@@ -69,7 +71,7 @@ DELETE FROM {{.Table}}
 // insertSQL is the template for inserting data from a single table. All
 // columns in the WHERE field are assumed to use AND. Support for other
 // conditions may be added in the future, but it complicates things, and,
-// initially, this is meant to just create the basic INSERTs from a table.
+// initially, this is meant to just create the basic INSERTs into a table.
 var insertSQL = `{{ if ne .Table "" -}}
 INSERT INTO {{.Table}}
 {{- end -}}
@@ -85,5 +87,25 @@ INSERT INTO {{.Table}}
 {{- end }}
 {{- end -}}
 )
+{{- end -}}
+`
+
+// updateSQL is the template for updating a row in a single table. All
+// columns in the WHERE field are assumed to use AND. Support for other
+// conditions may be added in the future, but it complicates things, and,
+// initially, this is meant to just create the basic UPDATES to a table row.
+var updateSQL = `{{ if ne .Table "" -}}
+UPDATE {{.Table}} SET {{ end -}}
+{{- if gt (len .Columns) 0 }}{{- range $i, $col := .Columns -}}
+	{{- if eq $i 0 }}{{ $col }} = ?
+	{{- else -}}, {{$col}} = ?
+	{{- end -}}
+{{- end -}}
+{{- end -}}
+{{ if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
+	{{- if eq $i 0 }} {{ $col }} = ?
+	{{- else }} AND {{ $col }} = ?
+	{{- end -}}
+{{- end -}}
 {{- end -}}
 `
