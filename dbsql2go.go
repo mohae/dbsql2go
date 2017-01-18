@@ -13,14 +13,18 @@
 package dbsql2go
 
 import (
+	"fmt"
 	"io"
 	"strings"
+	"unicode"
 )
 
 const (
 	Unsupported DBType = iota
 	MySQL
 )
+
+const commentStart = "// "
 
 //go:generate stringer -type=DBType
 type DBType int
@@ -141,4 +145,53 @@ type Constraint struct {
 // Viewer
 type Viewer interface {
 	Name() string // Just so that there's semething to fulfill until this gets fleshed out further.
+}
+
+// string to comments takes a string splits it up into comments l chars in
+// length and returns a slice of comments. A comment starts with `// `. If
+// l == 0; the comments will be 80 chars in length. The comment length refers
+// the length in characters (runes) and not bytes.
+func StringToComments(s string, l int) []string {
+	if s == "" { // if the string is empty, no comment
+		return nil
+	}
+	if l == 0 { // set the default if 0
+		l = 80
+	}
+	// reduce the length by the length of commentBegin.
+	l -= len(commentStart)
+	var c []string
+	if len(s) <= l {
+		return append(c, fmt.Sprintf("%s%s", commentStart, s))
+	}
+
+	var (
+		r []rune // line buffer
+		b int    // current line length in characters
+		k int    // k is the index of the last space in r
+	)
+
+	// separate out to words and comment lines
+	for _, v := range s {
+		if b > l {
+			// only do if space was encountered
+			if k != 0 {
+				c = append(c, fmt.Sprintf("%s%s", commentStart, string(r[:k]))) // use everything up to the space
+				if k+1 <= len(r) {
+					r = r[k+1:] // if there were runes processed after the last seen space, keep them for next line
+				} else {
+					r = r[:0] // if the line happened on a space boundary, the next line starts out empty
+				}
+				b = len(r) // keep track of number of chars already in the next line
+				k = 0      // reset space tracker
+			}
+		}
+		if unicode.IsSpace(v) {
+			k = b // set space index to current
+		}
+		r = append(r, v) // add the rune to the current line.
+		b++              // increment the character count for the current line
+	}
+	c = append(c, fmt.Sprintf("%s%s", commentStart, string(r)))
+	return c
 }
