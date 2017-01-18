@@ -589,7 +589,7 @@ func (t *Table) SelectPKMethod(w io.Writer) error {
 		return nil
 	}
 
-	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.r, t.structName)))
+	_, err := w.Write([]byte(fmt.Sprintf("\n// Select SELECTs the row from %s that corresponds with the struct's primary\n// key and populates the struct with the SELECTed data. Any error that occurs\n// will be returned.\nfunc(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.name, t.r, t.structName)))
 	if err != nil {
 		return err
 	}
@@ -678,7 +678,7 @@ func (t *Table) DeletePKMethod(w io.Writer) error {
 		// nothing to do
 		return nil
 	}
-	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Delete(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	_, err := w.Write([]byte(fmt.Sprintf("\n// Delete DELETEs the row from %s that corresponds with the struct's primary\n// key, if there is any. The number of rows DELETEd is returned. If an error\n// occurs during the DELETE, an error will be returned along with 0.\nfunc(%c *%s) Delete(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.name, t.r, t.structName)))
 	if err != nil {
 		return err
 	}
@@ -739,7 +739,7 @@ func (t *Table) InsertMethod(w io.Writer) error {
 		// nothing to do
 		return nil
 	}
-	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Insert(db *sql.DB) (id int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	_, err := w.Write([]byte(fmt.Sprintf("\n//Insert INSERTs the data in the struct into %s. The ID from the INSERT, if\n// applicable, is returned. If an error occurs that is returned along with a 0.\nfunc(%c *%s) Insert(db *sql.DB) (id int64, err error) {\n\tres, err := db.Exec(\"", t.name, t.r, t.structName)))
 	if err != nil {
 		return err
 	}
@@ -809,7 +809,7 @@ func (t *Table) UpdateMethod(w io.Writer) error {
 		return nil
 	}
 
-	_, err := w.Write([]byte(fmt.Sprintf("\nfunc(%c *%s) Update(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	_, err := w.Write([]byte(fmt.Sprintf("\n// Update UPDATEs the row in %s that corresponds with the struct's key\n// values. The number of rows affected by the update will be returned. If an\n// error occurs, the error will be returned along with 0.\nfunc(%c *%s) Update(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.name, t.r, t.structName)))
 	if err != nil {
 		return err
 	}

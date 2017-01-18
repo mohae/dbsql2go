@@ -1275,6 +1275,9 @@ var structDefs = []string{
 	Created     mysql.NullTime
 }
 
+// Select SELECTs the row from abc that corresponds with the struct's primary
+// key and populates the struct with the SELECTed data. Any error that occurs
+// will be returned.
 func (a *Abc) Select(db *sql.DB) error {
 	err := db.QueryRow("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc WHERE id = ?", a.ID).Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
 	if err != nil {
@@ -1283,6 +1286,9 @@ func (a *Abc) Select(db *sql.DB) error {
 	return nil
 }
 
+// Delete DELETEs the row from abc that corresponds with the struct's primary
+// key, if there is any. The number of rows DELETEd is returned. If an error
+// occurs during the DELETE, an error will be returned along with 0.
 func (a *Abc) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM abc WHERE id = ?", a.ID)
 	if err != nil {
@@ -1291,6 +1297,8 @@ func (a *Abc) Delete(db *sql.DB) (n int64, err error) {
 	return res.RowsAffected()
 }
 
+// Insert INSERTs the data in the struct into abc. The ID from the INSERT, if
+// applicable, is returned. If an error occurs that is returned along with a 0.
 func (a *Abc) Insert(db *sql.DB) (id int64, err error) {
 	res, err := db.Exec("INSERT INTO abc (code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
 	if err != nil {
@@ -1299,6 +1307,9 @@ func (a *Abc) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 
+// Update UPDATEs the row in abc that corresponds with the struct's key
+// values. The number of rows affected by the update will be returned. If an
+// error occurs, the error will be returned along with 0.
 func (a *Abc) Update(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("UPDATE abc SET code = ?, description = ?, tiny = ?, small = ?, medium = ?, ger = ?, big = ?, cost = ?, created = ? WHERE id = ?", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created, &a.ID)
 	if err != nil {
@@ -1320,6 +1331,9 @@ func (a *Abc) Update(db *sql.DB) (n int64, err error) {
 	Created     mysql.NullTime
 }
 
+// Select SELECTs the row from abc_nn that corresponds with the struct's primary
+// key and populates the struct with the SELECTed data. Any error that occurs
+// will be returned.
 func (a *AbcNn) Select(db *sql.DB) error {
 	err := db.QueryRow("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc_nn WHERE id = ?", a.ID).Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
 	if err != nil {
@@ -1328,6 +1342,9 @@ func (a *AbcNn) Select(db *sql.DB) error {
 	return nil
 }
 
+// Delete DELETEs the row from abc_nn that corresponds with the struct's primary
+// key, if there is any. The number of rows DELETEd is returned. If an error
+// occurs during the DELETE, an error will be returned along with 0.
 func (a *AbcNn) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM abc_nn WHERE id = ?", a.ID)
 	if err != nil {
@@ -1336,6 +1353,8 @@ func (a *AbcNn) Delete(db *sql.DB) (n int64, err error) {
 	return res.RowsAffected()
 }
 
+// Insert INSERTs the data in the struct into abc_nn. The ID from the INSERT, if
+// applicable, is returned. If an error occurs that is returned along with a 0.
 func (a *AbcNn) Insert(db *sql.DB) (id int64, err error) {
 	res, err := db.Exec("INSERT INTO abc_nn (code, description, tiny, small, medium, ger, big, cost, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
 	if err != nil {
@@ -1344,6 +1363,9 @@ func (a *AbcNn) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 
+// Update UPDATEs the row in abc_nn that corresponds with the struct's key
+// values. The number of rows affected by the update will be returned. If an
+// error occurs, the error will be returned along with 0.
 func (a *AbcNn) Update(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("UPDATE abc_nn SET code = ?, description = ?, tiny = ?, small = ?, medium = ?, ger = ?, big = ?, cost = ?, created = ? WHERE id = ?", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created, &a.ID)
 	if err != nil {
@@ -1368,6 +1390,9 @@ func (a *AbcNn) Update(db *sql.DB) (n int64, err error) {
 	ASet      sql.NullString
 }
 
+// Select SELECTs the row from def that corresponds with the struct's primary
+// key and populates the struct with the SELECTed data. Any error that occurs
+// will be returned.
 func (d *Def) Select(db *sql.DB) error {
 	err := db.QueryRow("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def WHERE id = ?", d.ID).Scan(&d.ID, &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
 	if err != nil {
@@ -1376,6 +1401,9 @@ func (d *Def) Select(db *sql.DB) error {
 	return nil
 }
 
+// Delete DELETEs the row from def that corresponds with the struct's primary
+// key, if there is any. The number of rows DELETEd is returned. If an error
+// occurs during the DELETE, an error will be returned along with 0.
 func (d *Def) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM def WHERE id = ?", d.ID)
 	if err != nil {
@@ -1384,6 +1412,8 @@ func (d *Def) Delete(db *sql.DB) (n int64, err error) {
 	return res.RowsAffected()
 }
 
+// Insert INSERTs the data in the struct into def. The ID from the INSERT, if
+// applicable, is returned. If an error occurs that is returned along with a 0.
 func (d *Def) Insert(db *sql.DB) (id int64, err error) {
 	res, err := db.Exec("INSERT INTO def (d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?)", &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
 	if err != nil {
@@ -1392,6 +1422,9 @@ func (d *Def) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 
+// Update UPDATEs the row in def that corresponds with the struct's key
+// values. The number of rows affected by the update will be returned. If an
+// error occurs, the error will be returned along with 0.
 func (d *Def) Update(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("UPDATE def SET d_date = ?, d_datetime = ?, d_time = ?, d_year = ?, size = ?, a_set = ? WHERE id = ?", &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet, &d.ID)
 	if err != nil {
@@ -1410,6 +1443,9 @@ func (d *Def) Update(db *sql.DB) (n int64, err error) {
 	ASet      string
 }
 
+// Select SELECTs the row from def_nn that corresponds with the struct's primary
+// key and populates the struct with the SELECTed data. Any error that occurs
+// will be returned.
 func (d *DefNn) Select(db *sql.DB) error {
 	err := db.QueryRow("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def_nn WHERE id = ?", d.ID).Scan(&d.ID, &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
 	if err != nil {
@@ -1418,6 +1454,9 @@ func (d *DefNn) Select(db *sql.DB) error {
 	return nil
 }
 
+// Delete DELETEs the row from def_nn that corresponds with the struct's primary
+// key, if there is any. The number of rows DELETEd is returned. If an error
+// occurs during the DELETE, an error will be returned along with 0.
 func (d *DefNn) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM def_nn WHERE id = ?", d.ID)
 	if err != nil {
@@ -1426,6 +1465,8 @@ func (d *DefNn) Delete(db *sql.DB) (n int64, err error) {
 	return res.RowsAffected()
 }
 
+// Insert INSERTs the data in the struct into def_nn. The ID from the INSERT, if
+// applicable, is returned. If an error occurs that is returned along with a 0.
 func (d *DefNn) Insert(db *sql.DB) (id int64, err error) {
 	res, err := db.Exec("INSERT INTO def_nn (d_date, d_datetime, d_time, d_year, size, a_set) VALUES (?, ?, ?, ?, ?, ?)", &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
 	if err != nil {
@@ -1434,6 +1475,9 @@ func (d *DefNn) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 
+// Update UPDATEs the row in def_nn that corresponds with the struct's key
+// values. The number of rows affected by the update will be returned. If an
+// error occurs, the error will be returned along with 0.
 func (d *DefNn) Update(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("UPDATE def_nn SET d_date = ?, d_datetime = ?, d_time = ?, d_year = ?, size = ?, a_set = ? WHERE id = ?", &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet, &d.ID)
 	if err != nil {
@@ -1483,6 +1527,9 @@ func (d *DefNn) Update(db *sql.DB) (n int64, err error) {
 	VarBin  []byte
 }
 
+// Select SELECTs the row from jkl that corresponds with the struct's primary
+// key and populates the struct with the SELECTed data. Any error that occurs
+// will be returned.
 func (j *Jkl) Select(db *sql.DB) error {
 	err := db.QueryRow("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl WHERE id = ?", j.ID).Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
 	if err != nil {
@@ -1491,6 +1538,9 @@ func (j *Jkl) Select(db *sql.DB) error {
 	return nil
 }
 
+// Delete DELETEs the row from jkl that corresponds with the struct's primary
+// key, if there is any. The number of rows DELETEd is returned. If an error
+// occurs during the DELETE, an error will be returned along with 0.
 func (j *Jkl) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM jkl WHERE id = ?", j.ID)
 	if err != nil {
@@ -1499,6 +1549,8 @@ func (j *Jkl) Delete(db *sql.DB) (n int64, err error) {
 	return res.RowsAffected()
 }
 
+// Insert INSERTs the data in the struct into jkl. The ID from the INSERT, if
+// applicable, is returned. If an error occurs that is returned along with a 0.
 func (j *Jkl) Insert(db *sql.DB) (id int64, err error) {
 	res, err := db.Exec("INSERT INTO jkl (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?)", &j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
 	if err != nil {
@@ -1507,6 +1559,9 @@ func (j *Jkl) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 
+// Update UPDATEs the row in jkl that corresponds with the struct's key
+// values. The number of rows affected by the update will be returned. If an
+// error occurs, the error will be returned along with 0.
 func (j *Jkl) Update(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("UPDATE jkl SET id = ?, fid = ?, tiny_txt = ?, txt = ?, med_txt = ?, long_txt = ?, bin = ?, var_bin = ? WHERE id = ?", &j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin, &j,ID)
 	if err != nil {
@@ -1526,6 +1581,9 @@ func (j *Jkl) Update(db *sql.DB) (n int64, err error) {
 	VarBin  []byte
 }
 
+// Select SELECTs the row from jkl_nn that corresponds with the struct's primary
+// key and populates the struct with the SELECTed data. Any error that occurs
+// will be returned.
 func (j *JklNn) Select(db *sql.DB) error {
 	err := db.QueryRow("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl_nn WHERE id = ?", j.ID).Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin, &j,ID)
 	if err != nil {
@@ -1534,6 +1592,9 @@ func (j *JklNn) Select(db *sql.DB) error {
 	return nil
 }
 
+// Delete DELETEs the row from jkl_nn that corresponds with the struct's primary
+// key, if there is any. The number of rows DELETEd is returned. If an error
+// occurs during the DELETE, an error will be returned along with 0.
 func (j *JklNn) Delete(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("DELETE FROM jkl_nn WHERE id = ?", j.ID)
 	if err != nil {
@@ -1542,6 +1603,8 @@ func (j *JklNn) Delete(db *sql.DB) (n int64, err error) {
 	return res.RowsAffected()
 }
 
+// Insert INSERTs the data in the struct into jkl_nn. The ID from the INSERT, if
+// applicable, is returned. If an error occurs that is returned along with a 0.
 func (j *JklNn) Insert(db *sql.DB) (id int64, err error) {
 	res, err := db.Exec("INSERT INTO jkl_nn (id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin) VALUES (?, ?, ?, ?, ?, ?, ?)", &j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
 	if err != nil {
@@ -1550,7 +1613,10 @@ func (j *JklNn) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 
-func (j *JklNn) Update(db *sql.DB) ( int64, err error) {
+// Update UPDATEs the row in jkl_nn that corresponds with the struct's key
+// values. The number of rows affected by the update will be returned. If an
+// error occurs, the error will be returned along with 0.
+func (j *JklNn) Update(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("UPDATE jkl_nn SET id = ?, fid = ?, tiny_txt = ?, txt = ?, med_txt = ?, long_txt = ?, bin = ?, var_bin = ? WHERE id = ?", &j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
 	if err != nil {
 		return 0, err
