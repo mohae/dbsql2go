@@ -85,31 +85,27 @@ func TestParseConstraintType(t *testing.T) {
 
 func TestStringInComments(t *testing.T) {
 	tests := []struct {
-		line  string
-		l     int
-		lines []string
+		line    string
+		l       int
+		comment string
 	}{
-		{"", 10, nil},
-		{"Hello", 10, []string{"// Hello"}},
-		{"Hello World", 10, []string{"// Hello", "// World"}},
-		{"This sentence is a meaningless one", 0, []string{"// This sentence is a meaningless one"}},
-		{"This sentence is a meaningless one", 20, []string{"// This sentence is", "// a meaningless one"}},
-		{"못 알아 듣겠어요 전혀 모르겠어요", 10, []string{"// 못 알아", "// 듣겠어요 전혀", "// 모르겠어요"}},
+		{"", 10, ""},
+		{"Hello", 10, "// Hello\n"},
+		{"Hello World", 10, "// Hello\n// World\n"},
+		{"This sentence is a meaningless one", 0, "// This sentence is a meaningless one\n"},
+		{"This sentence is a meaningless one", 20, "// This sentence is\n// a meaningless one\n"},
+		{"못 알아 듣겠어요 전혀 모르겠어요", 10, "// 못 알아\n// 듣겠어요 전혀\n// 모르겠어요\n"},
 		// outlier, but if a word > l then use the whole word anyways
-		{"hello Χαίρετε Здравствуйте", 10, []string{"// hello", "// Χαίρετε", "// Здравствуйте"}},
+		{"hello Χαίρετε Здравствуйте", 10, "// hello\n// Χαίρετε\n// Здравствуйте\n"},
 	}
 	for i, test := range tests {
-		lines := StringToComments(test.line, test.l)
-		if len(lines) != len(test.lines) {
-			t.Errorf("%d: got %d lines; want %d", i, len(lines), len(test.lines))
-			t.Errorf("%s", lines)
+		c, err := StringToComments(test.line, test.l)
+		if err != nil {
+			t.Errorf("%d: unexpected error: %q", i, err)
 			continue
 		}
-		for j, v := range lines {
-			if v != test.lines[j] {
-				t.Errorf("%d:%d: got %q; want %q", i, j, v, test.lines[j])
-				continue
-			}
+		if c != test.comment {
+			t.Errorf("%d: got %q; want %q", i, c, test.comment)
 		}
 	}
 }

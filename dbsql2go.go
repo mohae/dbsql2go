@@ -13,6 +13,7 @@
 package dbsql2go
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"strings"
@@ -24,10 +25,7 @@ const (
 	MySQL
 )
 
-const (
-	commentStart = "// "
-	LF           = []byte{'\n'}
-)
+const commentStart = "// "
 
 //go:generate stringer -type=DBType
 type DBType int
@@ -150,24 +148,28 @@ type Viewer interface {
 	Name() string // Just so that there's semething to fulfill until this gets fleshed out further.
 }
 
-// string to comments takes a string splits it up into comments l chars in
-// length and returns a slice of comments. A comment starts with `// `. If
-// l == 0; the comments will be 80 chars in length. The comment length refers
-// the length in characters (runes) and not bytes.
-func StringToComments(s string, l int) []string {
+// StringToComments creates line comments of length l out of a string. The
+// resulting comment block is returned.  If s is an empty string, an empty
+// string is returned. If an error occurs, the error is returned, along with
+// an empty string.
+func StringToComments(s string, l int) (comment string, err error) {
 	if s == "" { // if the string is empty, no comment
-		return nil
+		return s, nil
 	}
 	if l == 0 { // set the default if 0
 		l = 80
 	}
 	// reduce the length by the length of commentBegin.
 	l -= len(commentStart)
-	var c []string
+
+	// Short circuit: if the comment is only a one line comment return.
 	if len(s) <= l {
-		return append(c, fmt.Sprintf("%s%s", commentStart, s))
+		return fmt.Sprintf("%s%s\n", commentStart, s), nil
 	}
 
+	// TODO: if speed and memory consumption becomes an issue, either make this
+	// and the line buffer a package global or put this in a struct.
+	var buf bytes.Buffer
 	var (
 		r []rune // line buffer
 		b int    // current line length in characters
@@ -179,7 +181,10 @@ func StringToComments(s string, l int) []string {
 		if b > l {
 			// only do if space was encountered
 			if k != 0 {
-				c = append(c, fmt.Sprintf("%s%s", commentStart, string(r[:k]))) // use everything up to the space
+				_, err := buf.Write([]byte(fmt.Sprintf("%s%s\n", commentStart, string(r[:k])))) // use everything up to the space
+				if err != nil {
+					return "", fmt.Errorf("comment formatting error: %s", err)
+				}
 				if k+1 <= len(r) {
 					r = r[k+1:] // if there were runes processed after the last seen space, keep them for next line
 				} else {
@@ -195,6 +200,10 @@ func StringToComments(s string, l int) []string {
 		r = append(r, v) // add the rune to the current line.
 		b++              // increment the character count for the current line
 	}
-	c = append(c, fmt.Sprintf("%s%s", commentStart, string(r)))
-	return c
+	_, err = buf.Write([]byte(fmt.Sprintf("%s%s\n", commentStart, string(r)))) // use everything up to the space
+	if err != nil {
+		return "", fmt.Errorf("comment formatting error: %s", err)
+	}
+
+	return buf.String(), nil
 }
