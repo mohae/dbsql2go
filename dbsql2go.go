@@ -24,7 +24,10 @@ const (
 	MySQL
 )
 
-const commentStart = "// "
+const (
+	commentStart = "// "
+	LF           = []byte{'\n'}
+)
 
 //go:generate stringer -type=DBType
 type DBType int
