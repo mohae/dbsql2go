@@ -1307,9 +1307,9 @@ func (a *Abc) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 
-// Update UPDATEs the row in abc that corresponds with the struct's key
-// values. The number of rows affected by the update will be returned. If an
-// error occurs, the error will be returned along with 0.
+// Update UPDATEs the row in abc that corresponds with the struct's key values.
+// The number of rows affected by the update will be returned. If an error
+// occurs, the error will be returned along with 0.
 func (a *Abc) Update(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("UPDATE abc SET code = ?, description = ?, tiny = ?, small = ?, medium = ?, ger = ?, big = ?, cost = ?, created = ? WHERE id = ?", &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created, &a.ID)
 	if err != nil {
@@ -1422,9 +1422,9 @@ func (d *Def) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 
-// Update UPDATEs the row in def that corresponds with the struct's key
-// values. The number of rows affected by the update will be returned. If an
-// error occurs, the error will be returned along with 0.
+// Update UPDATEs the row in def that corresponds with the struct's key values.
+// The number of rows affected by the update will be returned. If an error
+// occurs, the error will be returned along with 0.
 func (d *Def) Update(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("UPDATE def SET d_date = ?, d_datetime = ?, d_time = ?, d_year = ?, size = ?, a_set = ? WHERE id = ?", &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet, &d.ID)
 	if err != nil {
@@ -1559,9 +1559,9 @@ func (j *Jkl) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 
-// Update UPDATEs the row in jkl that corresponds with the struct's key
-// values. The number of rows affected by the update will be returned. If an
-// error occurs, the error will be returned along with 0.
+// Update UPDATEs the row in jkl that corresponds with the struct's key values.
+// The number of rows affected by the update will be returned. If an error
+// occurs, the error will be returned along with 0.
 func (j *Jkl) Update(db *sql.DB) (n int64, err error) {
 	res, err := db.Exec("UPDATE jkl SET id = ?, fid = ?, tiny_txt = ?, txt = ?, med_txt = ?, long_txt = ?, bin = ?, var_bin = ? WHERE id = ?", &j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin, &j,ID)
 	if err != nil {
