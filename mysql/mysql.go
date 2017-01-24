@@ -663,7 +663,7 @@ func (t *Table) SelectSQLPK(w io.Writer) error {
 
 	// set up the relevant infor for the SQL generation; Table is already set.
 	t.sqlInf.Columns = t.ColumnNames()
-	t.sqlInf.Where = pk.Cols
+	t.sqlInf.WhereColumns = pk.Cols
 	err := dbsql2go.SelectSQL.Execute(w, t.sqlInf)
 	if err != nil {
 		return err
@@ -723,7 +723,7 @@ func (t *Table) DeleteSQLPK(w io.Writer) error {
 	if pk == nil { // the table doesn't have a primary key; this is not an error.
 		return nil
 	}
-	t.sqlInf.Where = pk.Cols
+	t.sqlInf.WhereColumns = pk.Cols
 	err := dbsql2go.DeleteSQL.Execute(w, t.sqlInf)
 	if err != nil {
 		return err
@@ -739,7 +739,7 @@ func (t *Table) InsertMethod(w io.Writer) error {
 		// nothing to do
 		return nil
 	}
-	_, err := w.Write([]byte(fmt.Sprintf("\n//Insert INSERTs the data in the struct into %s. The ID from the INSERT, if\n// applicable, is returned. If an error occurs that is returned along with a 0.\nfunc(%c *%s) Insert(db *sql.DB) (id int64, err error) {\n\tres, err := db.Exec(\"", t.name, t.r, t.structName)))
+	_, err := w.Write([]byte(fmt.Sprintf("\n// Insert INSERTs the data in the struct into %s. The ID from the INSERT, if\n// applicable, is returned. If an error occurs that is returned along with a 0.\nfunc(%c *%s) Insert(db *sql.DB) (id int64, err error) {\n\tres, err := db.Exec(\"", t.name, t.r, t.structName)))
 	if err != nil {
 		return err
 	}
@@ -890,7 +890,7 @@ func (t *Table) UpdateSQL(w io.Writer) error {
 
 	// set up the relevant infor for the SQL generation; Table is already set.
 	t.sqlInf.Columns = t.NonAutoIncrementColumnNames()
-	t.sqlInf.Where = pk.Cols
+	t.sqlInf.WhereColumns = pk.Cols
 	err := dbsql2go.UpdateSQL.Execute(w, t.sqlInf)
 	if err != nil {
 		return err

@@ -17,7 +17,9 @@ package dbsql2go
 // AND. This is mainly meant for basic INSERT, UPDATE, SELECT, DELETE
 // statements on a table.
 type TableSQL struct {
-	Columns []string // the columns that will be SELECTed
-	Table   string   // the table from which to SELECT
-	Where   []string // the where fragment, excluding ?; e.g. id ==, id !=
+	Columns           []string // the columns that will be SELECTed
+	Table             string   // the table from which to SELECT
+	WhereColumns      []string // the where column names
+	WhereComparisonOp []string // the comparison operator for the corresponding column index
+	WhereCondition    []string // The conditional operator for Column pairs.
 }

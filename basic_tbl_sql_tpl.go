@@ -42,7 +42,7 @@ SELECT
 		, {{$col}}
 	{{- end -}}
 {{- end }} FROM {{.Table}}
-{{- if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
+{{- if gt (len .WhereColumns) 0 }} WHERE {{- range $i, $col := .WhereColumns -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }} AND {{ $col }} = ?
 	{{- end -}}
@@ -57,7 +57,7 @@ SELECT
 // initially, this is meant to just create the basic DELETEs from a table.
 var deleteSQL = `{{ if ne .Table "" -}}
 DELETE FROM {{.Table}}
-{{- if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
+{{- if gt (len .WhereColumns) 0 }} WHERE {{- range $i, $col := .WhereColumns -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }} AND {{ $col }} = ?
 	{{- end -}}
@@ -96,7 +96,7 @@ UPDATE {{.Table}} SET {{ range $i, $col := .Columns -}}
 	{{- else -}}, {{$col}} = ?
 	{{- end -}}
 {{- end -}}
-{{ if gt (len .Where) 0 }} WHERE {{- range $i, $col := .Where -}}
+{{ if gt (len .WhereColumns) 0 }} WHERE {{- range $i, $col := .WhereColumns -}}
 	{{- if eq $i 0 }} {{ $col }} = ?
 	{{- else }} AND {{ $col }} = ?
 	{{- end -}}
