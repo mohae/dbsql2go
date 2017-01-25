@@ -255,19 +255,19 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "code", Table: "abc", Cols: []string{"code"}},
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc", Cols: []string{"id"}},
+			{Type: "BTREE", Primary: false, Name: "code", Table: "abc", Columns: []string{"code"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc", Columns: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.Unique, Name: "code", Table: "abc",
-				Cols: []string{"code"}, Fields: []string{"Code"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"code"}, Fields: []string{"Code"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 			{
 				Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc",
-				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -361,19 +361,19 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "latin1_swedish_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "code", Table: "abc_nn", Cols: []string{"code"}},
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc_nn", Cols: []string{"id"}},
+			{Type: "BTREE", Primary: false, Name: "code", Table: "abc_nn", Columns: []string{"code"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "abc_nn", Columns: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.Unique, Name: "code", Table: "abc_nn",
-				Cols: []string{"code"}, Fields: []string{"Code"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"code"}, Fields: []string{"Code"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 			{
 				Type: dbsql2go.PK, Name: "PRIMARY", Table: "abc_nn",
-				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -477,14 +477,14 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "id", Table: "def", Cols: []string{"id", "d_datetime"}},
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def", Cols: []string{"id"}},
+			{Type: "BTREE", Primary: false, Name: "id", Table: "def", Columns: []string{"id", "d_datetime"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def", Columns: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.PK, Name: "PRIMARY", Table: "def",
-				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -554,14 +554,14 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "id", Table: "def_nn", Cols: []string{"id", "d_datetime"}},
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def_nn", Cols: []string{"id"}},
+			{Type: "BTREE", Primary: false, Name: "id", Table: "def_nn", Columns: []string{"id", "d_datetime"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "def_nn", Columns: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.PK, Name: "PRIMARY", Table: "def_nn",
-				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -689,14 +689,14 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi", Cols: []string{"def_id", "def_datetime"}},
-			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi", Cols: []string{"val"}},
+			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi", Columns: []string{"def_id", "def_datetime"}},
+			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi", Columns: []string{"val"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.FK, Name: "ghi_ibfk_1", Table: "ghi",
-				Cols: []string{"def_id", "def_datetime"}, Fields: []string{"DefID", "DefDatetime"}, RefTable: "def",
-				RefCols: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
+				Columns: []string{"def_id", "def_datetime"}, Fields: []string{"DefID", "DefDatetime"}, RefTable: "def",
+				RefColumns: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -774,14 +774,14 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi_nn", Cols: []string{"def_id", "def_datetime"}},
-			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi_nn", Cols: []string{"val"}},
+			{Type: "BTREE", Primary: false, Name: "fk_def", Table: "ghi_nn", Columns: []string{"def_id", "def_datetime"}},
+			{Type: "BTREE", Primary: false, Name: "val", Table: "ghi_nn", Columns: []string{"val"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.FK, Name: "ghi_nn_ibfk_1", Table: "ghi_nn",
-				Cols: []string{"def_id", "def_datetime"}, Fields: []string{"DefID", "DefDatetime"}, RefTable: "def_nn",
-				RefCols: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
+				Columns: []string{"def_id", "def_datetime"}, Fields: []string{"DefID", "DefDatetime"}, RefTable: "def_nn",
+				RefColumns: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -859,19 +859,19 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl", Cols: []string{"fid"}},
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl", Cols: []string{"id", "fid"}},
+			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl", Columns: []string{"fid"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl", Columns: []string{"id", "fid"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.FK, Name: "jkl_ibfk_1", Table: "jkl",
-				Cols: []string{"fid"}, Fields: []string{"Fid"}, RefTable: "def",
-				RefCols: []string{"id"}, RefFields: []string{"ID"},
+				Columns: []string{"fid"}, Fields: []string{"Fid"}, RefTable: "def",
+				RefColumns: []string{"id"}, RefFields: []string{"ID"},
 			},
 			{
 				Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl",
-				Cols: []string{"id", "fid"}, Fields: []string{"ID", "Fid"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"id", "fid"}, Fields: []string{"ID", "Fid"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -949,19 +949,19 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "ascii_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl_nn", Cols: []string{"fid"}},
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl_nn", Cols: []string{"id", "fid"}},
+			{Type: "BTREE", Primary: false, Name: "fid", Table: "jkl_nn", Columns: []string{"fid"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "jkl_nn", Columns: []string{"id", "fid"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.FK, Name: "jkl_nn_ibfk_1", Table: "jkl_nn",
-				Cols: []string{"fid"}, Fields: []string{"Fid"}, RefTable: "def",
-				RefCols: []string{"id"}, RefFields: []string{"ID"},
+				Columns: []string{"fid"}, Fields: []string{"Fid"}, RefTable: "def",
+				RefColumns: []string{"id"}, RefFields: []string{"ID"},
 			},
 			{
 				Type: dbsql2go.PK, Name: "PRIMARY", Table: "jkl_nn",
-				Cols: []string{"id", "fid"}, Fields: []string{"ID", "Fid"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"id", "fid"}, Fields: []string{"ID", "Fid"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -1047,13 +1047,13 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno", Cols: []string{"id"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno", Columns: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.PK, Name: "PRIMARY", Table: "mno",
-				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -1139,13 +1139,13 @@ var tableDefs = []Table{
 		Typ: "BASE TABLE", Engine: sql.NullString{String: "InnoDB", Valid: true},
 		collation: sql.NullString{String: "utf8_general_ci", Valid: true}, Comment: "",
 		indexes: []dbsql2go.Index{
-			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno_nn", Cols: []string{"id"}},
+			{Type: "BTREE", Primary: true, Name: "PRIMARY", Table: "mno_nn", Columns: []string{"id"}},
 		},
 		constraints: []dbsql2go.Constraint{
 			{
 				Type: dbsql2go.PK, Name: "PRIMARY", Table: "mno_nn",
-				Cols: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
-				RefCols: nil, RefFields: nil,
+				Columns: []string{"id"}, Fields: []string{"ID"}, RefTable: "",
+				RefColumns: nil, RefFields: nil,
 			},
 		},
 		sqlInf: dbsql2go.TableSQL{
@@ -2220,26 +2220,26 @@ func TestViews(t *testing.T) {
 
 func TestColumns(t *testing.T) {
 	expected := []struct {
-		name string
-		cols []string
+		name    string
+		Columns []string
 	}{
-		{name: "abc", cols: []string{"id", "code", "description", "tiny", "small", "medium", "ger", "big", "cost", "created"}},
-		{name: "abc_nn", cols: []string{"id", "code", "description", "tiny", "small", "medium", "ger", "big", "cost", "created"}},
-		{name: "abc_v", cols: []string{"id", "code", "description"}},
-		{name: "def", cols: []string{"id", "d_date", "d_datetime", "d_time", "d_year", "size", "a_set"}},
-		{name: "def_nn", cols: []string{"id", "d_date", "d_datetime", "d_time", "d_year", "size", "a_set"}},
-		{name: "defghi_v", cols: []string{"aid", "bid", "d_datetime", "size", "stuff"}},
-		{name: "ghi", cols: []string{"id", "val", "def_id", "def_datetime", "tiny_stuff", "stuff", "med_stuff", "long_stuff"}},
-		{name: "ghi_nn", cols: []string{"id", "val", "def_id", "def_datetime", "tiny_stuff", "stuff", "med_stuff", "long_stuff"}},
-		{name: "jkl", cols: []string{"id", "fid", "tiny_txt", "txt", "med_txt", "long_txt", "bin", "var_bin"}},
-		{name: "jkl_nn", cols: []string{"id", "fid", "tiny_txt", "txt", "med_txt", "long_txt", "bin", "var_bin"}},
-		{name: "mno", cols: []string{"id", "geo", "pt", "lstring", "poly", "multi_pt", "multi_lstring", "multi_polygon", "geo_collection"}},
-		{name: "mno_nn", cols: []string{"id", "geo", "pt", "lstring", "poly", "multi_pt", "multi_lstring", "multi_polygon", "geo_collection"}},
+		{name: "abc", Columns: []string{"id", "code", "description", "tiny", "small", "medium", "ger", "big", "cost", "created"}},
+		{name: "abc_nn", Columns: []string{"id", "code", "description", "tiny", "small", "medium", "ger", "big", "cost", "created"}},
+		{name: "abc_v", Columns: []string{"id", "code", "description"}},
+		{name: "def", Columns: []string{"id", "d_date", "d_datetime", "d_time", "d_year", "size", "a_set"}},
+		{name: "def_nn", Columns: []string{"id", "d_date", "d_datetime", "d_time", "d_year", "size", "a_set"}},
+		{name: "defghi_v", Columns: []string{"aid", "bid", "d_datetime", "size", "stuff"}},
+		{name: "ghi", Columns: []string{"id", "val", "def_id", "def_datetime", "tiny_stuff", "stuff", "med_stuff", "long_stuff"}},
+		{name: "ghi_nn", Columns: []string{"id", "val", "def_id", "def_datetime", "tiny_stuff", "stuff", "med_stuff", "long_stuff"}},
+		{name: "jkl", Columns: []string{"id", "fid", "tiny_txt", "txt", "med_txt", "long_txt", "bin", "var_bin"}},
+		{name: "jkl_nn", Columns: []string{"id", "fid", "tiny_txt", "txt", "med_txt", "long_txt", "bin", "var_bin"}},
+		{name: "mno", Columns: []string{"id", "geo", "pt", "lstring", "poly", "multi_pt", "multi_lstring", "multi_polygon", "geo_collection"}},
+		{name: "mno_nn", Columns: []string{"id", "geo", "pt", "lstring", "poly", "multi_pt", "multi_lstring", "multi_polygon", "geo_collection"}},
 	}
 	for i, tbl := range tableDefs {
-		cols := tbl.ColumnNames()
-		if !sliceEqual(cols, expected[i].cols) {
-			t.Errorf("%s: got %v want %v", expected[i].name, cols, expected[i].cols)
+		Columns := tbl.ColumnNames()
+		if !sliceEqual(Columns, expected[i].Columns) {
+			t.Errorf("%s: got %v want %v", expected[i].name, Columns, expected[i].Columns)
 		}
 	}
 }
@@ -2275,9 +2275,9 @@ func TestUpdateTables(t *testing.T) {
 				t.Errorf("Index: %d:%d: %s:%s.Type: got %v; want %v", i, j, tbl.Name(), ndx.Name, ndx.Table, tableDefs[i].indexes[j].Table)
 				continue
 			}
-			for k, col := range ndx.Cols {
-				if tableDefs[i].indexes[j].Cols[k] != col {
-					t.Errorf("Index: %d:%d:%d: %s:%s.Cols.%d: got %s; want %s", i, j, k, tbl.Name(), ndx.Name, k, col, tableDefs[i].indexes[j].Cols[k])
+			for k, col := range ndx.Columns {
+				if tableDefs[i].indexes[j].Columns[k] != col {
+					t.Errorf("Index: %d:%d:%d: %s:%s.Columns.%d: got %s; want %s", i, j, k, tbl.Name(), ndx.Name, k, col, tableDefs[i].indexes[j].Columns[k])
 					continue
 				}
 			}
@@ -2296,9 +2296,9 @@ func TestUpdateTables(t *testing.T) {
 				t.Errorf("Constraint: %d:%d: %s:%s.Table: got %v; want %v", i, j, tbl.Name(), c.Name, c.Table, tableDefs[i].constraints[j].Table)
 				continue
 			}
-			for k, col := range c.Cols {
-				if tableDefs[i].constraints[j].Cols[k] != col {
-					t.Errorf("Constraint: %d:%d:%d: %s:%s.Cols.%d: got %s; want %s", i, j, k, tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].Cols[k])
+			for k, col := range c.Columns {
+				if tableDefs[i].constraints[j].Columns[k] != col {
+					t.Errorf("Constraint: %d:%d:%d: %s:%s.Columns.%d: got %s; want %s", i, j, k, tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].Columns[k])
 					continue
 				}
 			}
@@ -2306,9 +2306,9 @@ func TestUpdateTables(t *testing.T) {
 				t.Errorf("Constraint: %d:%d: %s:%s.RefTable: got %v; want %v", i, j, tbl.Name(), c.Name, c.RefTable, tableDefs[i].constraints[j].RefTable)
 				continue
 			}
-			for k, col := range c.RefCols {
-				if tableDefs[i].constraints[j].RefCols[k] != col {
-					t.Errorf("Constraint: %d:%d:%d: %s:%s.RefCols.%d: got %s; want %s", i, j, k, tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].RefCols[k])
+			for k, col := range c.RefColumns {
+				if tableDefs[i].constraints[j].RefColumns[k] != col {
+					t.Errorf("Constraint: %d:%d:%d: %s:%s.RefColumns.%d: got %s; want %s", i, j, k, tbl.Name(), c.Name, k, col, tableDefs[i].constraints[j].RefColumns[k])
 					continue
 				}
 			}
@@ -2488,6 +2488,10 @@ func TestUpdateSQL(t *testing.T) {
 			t.Errorf("%d: got %q; want %q", i, buf.String(), expected[i])
 		}
 	}
+}
+
+func TestSelectAndOrSQL(t *testing.T) {
+
 }
 
 func SetupTestDB(m *DB) error {

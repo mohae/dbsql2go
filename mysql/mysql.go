@@ -285,10 +285,10 @@ func (m *DB) UpdateTableConstraints() error {
 	var c dbsql2go.Constraint
 	for i, v := range m.constraints {
 		if v.Table == prior.Table && v.Name == prior.Name { // if this is just another row for the same constraint, add the info
-			c.Cols = append(c.Cols, v.Column)
+			c.Columns = append(c.Columns, v.Column)
 			c.Fields = append(c.Fields, fieldName(v.Column))
 			if v.RefCol.Valid {
-				c.RefCols = append(c.RefCols, v.RefCol.String)
+				c.RefColumns = append(c.RefColumns, v.RefCol.String)
 				c.RefFields = append(c.RefFields, fieldName(v.RefCol.String))
 			}
 			prior = v
@@ -311,12 +311,12 @@ func (m *DB) UpdateTableConstraints() error {
 		if err != nil {
 			return err
 		}
-		c = dbsql2go.Constraint{Type: typ, Name: v.Name, Table: v.Table, Cols: []string{v.Column}, Fields: []string{fieldName(v.Column)}}
+		c = dbsql2go.Constraint{Type: typ, Name: v.Name, Table: v.Table, Columns: []string{v.Column}, Fields: []string{fieldName(v.Column)}}
 		if v.RefTable.Valid {
 			c.RefTable = v.RefTable.String
 		}
 		if v.RefCol.Valid {
-			c.RefCols = append(c.RefCols, v.RefCol.String)
+			c.RefColumns = append(c.RefColumns, v.RefCol.String)
 			c.RefFields = append(c.RefFields, fieldName(v.RefCol.String))
 		}
 		prior = v
@@ -344,7 +344,7 @@ func (m *DB) UpdateTableIndexes() {
 	var ndx dbsql2go.Index
 	for i, v := range m.indexes {
 		if v.Table == prior.Table && v.name == prior.name { // if this is just another row for the same index, add the info
-			ndx.Cols = append(ndx.Cols, v.Column)
+			ndx.Columns = append(ndx.Columns, v.Column)
 			prior = v
 			continue
 		}
@@ -361,7 +361,7 @@ func (m *DB) UpdateTableIndexes() {
 			break
 		}
 	process:
-		ndx = dbsql2go.Index{Type: v.Type, Name: v.name, Table: v.Table, Cols: []string{v.Column}}
+		ndx = dbsql2go.Index{Type: v.Type, Name: v.name, Table: v.Table, Columns: []string{v.Column}}
 		if v.name == "PRIMARY" {
 			ndx.Primary = true
 		}
@@ -521,11 +521,11 @@ func (t *Table) GoFmt(w io.Writer) error {
 
 // ColumnNames returns the names of all the columns in the table.
 func (t *Table) ColumnNames() []string {
-	cols := make([]string, 0, len(t.columns))
+	Columns := make([]string, 0, len(t.columns))
 	for _, col := range t.columns {
-		cols = append(cols, col.Name)
+		Columns = append(Columns, col.Name)
 	}
-	return cols
+	return Columns
 }
 
 // NonPKColumnNames returns the names of all the non-pk columns in the table
@@ -536,35 +536,35 @@ func (t *Table) NonPKColumnNames() []string {
 		return t.ColumnNames() // if there isn't a pk on this table, return all columns
 	}
 
-	cols := make([]string, 0, len(t.columns))
+	Columns := make([]string, 0, len(t.columns))
 	for _, col := range t.columns {
 		var pkCol bool
-		// this isn't optimal but good enough considering number of PK Cols will be low, if any
-		for _, v := range pk.Cols {
+		// this isn't optimal but good enough considering number of PK Columns will be low, if any
+		for _, v := range pk.Columns {
 			if v == col.Name {
 				pkCol = true
 				break
 			}
 		}
 		if !pkCol {
-			cols = append(cols, col.Name)
+			Columns = append(Columns, col.Name)
 		}
 	}
-	return cols
+	return Columns
 }
 
 // NonAutoIncrementColumnNames returns the names of all the auto-increment
 // columns in the table
 // TODO: is this still necessary?
 func (t *Table) NonAutoIncrementColumnNames() []string {
-	cols := make([]string, 0, len(t.columns))
+	Columns := make([]string, 0, len(t.columns))
 	for _, col := range t.columns {
 		if col.Extra == "auto_increment" {
 			continue
 		}
-		cols = append(cols, col.Name)
+		Columns = append(Columns, col.Name)
 	}
-	return cols
+	return Columns
 }
 
 // Indexes returns information on all of the tables indexes.
@@ -683,7 +683,7 @@ func (t *Table) SelectSQLPK(w io.Writer) error {
 
 	// set up the relevant infor for the SQL generation; Table is already set.
 	t.sqlInf.Columns = t.ColumnNames()
-	t.sqlInf.WhereColumns = pk.Cols
+	t.sqlInf.WhereColumns = pk.Columns
 	err := dbsql2go.SelectSQL.Execute(w, t.sqlInf)
 	if err != nil {
 		return err
@@ -760,7 +760,7 @@ func (t *Table) DeleteSQLPK(w io.Writer) error {
 	if pk == nil { // the table doesn't have a primary key; this is not an error.
 		return nil
 	}
-	t.sqlInf.WhereColumns = pk.Cols
+	t.sqlInf.WhereColumns = pk.Columns
 	err := dbsql2go.DeleteSQL.Execute(w, t.sqlInf)
 	if err != nil {
 		return err
@@ -808,9 +808,9 @@ func (t *Table) InsertMethod(w io.Writer) error {
 		return err
 	}
 
-	// buld the struct field stuff: skip the pk cols and only use the fields
+	// buld the struct field stuff: skip the pk Columns and only use the fields
 	// that have corresponding columns in sqlInf
-	var j int // index into the sqlInf cols
+	var j int // index into the sqlInf Columns
 	for _, v := range t.columns {
 		// skip if this column isn't in sqlInf; columns are in same order
 		if v.Name != t.sqlInf.Columns[j] {
@@ -960,7 +960,7 @@ func (t *Table) UpdateSQL(w io.Writer) error {
 
 	// set up the relevant infor for the SQL generation; Table is already set.
 	t.sqlInf.Columns = t.NonAutoIncrementColumnNames()
-	t.sqlInf.WhereColumns = pk.Cols
+	t.sqlInf.WhereColumns = pk.Columns
 	err := dbsql2go.UpdateSQL.Execute(w, t.sqlInf)
 	if err != nil {
 		return err
