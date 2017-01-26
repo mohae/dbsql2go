@@ -28,12 +28,13 @@ import (
 )
 
 const (
-	schema          = "information_schema"
-	viewType        = "VIEW"
-	selectPKComment = "Select SELECTs the row from %s that corresponds with the struct's primary key and populates the struct with the SELECTed data. Any error that occurs will be returned."
-	deletePKComment = "Delete DELETEs the row from %s that corresponds with the struct's primary key, if there is any. The number of rows DELETEd is returned. If an error occurs during the DELETE, an error will be returned along with 0."
-	insertPKComment = "Insert INSERTs the data in the struct into %s. The ID from the INSERT, if applicable, is returned. If an error occurs that is returned along with a 0."
-	updatePKComment = "Update UPDATEs the row in %s that corresponds with the struct's key values. The number of rows affected by the update will be returned. If an error occurs, the error will be returned along with 0."
+	schema                 = "information_schema"
+	viewType               = "VIEW"
+	selectPKComment        = "Select SELECTs the row from %s that corresponds with the struct's primary key and populates the struct with the SELECTed data. Any error that occurs will be returned."
+	selectPKInRangeComment = "%sSelectInRange%s SELECTs a range of rows from the %s table whose PK values are within the specified range and returns a slice of %s structs. The range values are %s. If there is an error, the error will be returned and the results slice will be nil."
+	deletePKComment        = "Delete DELETEs the row from %s that corresponds with the struct's primary key, if there is any. The number of rows DELETEd is returned. If an error occurs during the DELETE, an error will be returned along with 0."
+	insertPKComment        = "Insert INSERTs the data in the struct into %s. The ID from the INSERT, if applicable, is returned. If an error occurs that is returned along with a 0."
+	updatePKComment        = "Update UPDATEs the row in %s that corresponds with the struct's key values. The number of rows affected by the update will be returned. If an error occurs, the error will be returned along with 0."
 )
 
 type DB struct {
@@ -380,6 +381,140 @@ func (m *DB) UpdateTableIndexes() {
 	}
 }
 
+// SelectRangeSQL creates in range select funcs for each table that has a
+// primary key. Both an exclusive and inclusive func will be created. The
+// Range funcs are written to the writer. Any error is returned.
+func (m *DB) SelectRangeSQLFuncs(w io.Writer) error {
+	// Go through each table
+	for _, tbl := range m.tables {
+		t, ok := tbl.(*Table)
+		if !ok {
+			return fmt.Errorf("Invalid assertion, %s is not type mysql.Table", tbl.Name())
+		}
+		// If the table has a primary key
+		pk := tbl.GetPK()
+		if pk == nil { // skip anything that doesn't have a pk
+			continue
+		}
+
+		// Set-up the TableSQL struct for inclusive
+		parm := dbsql2go.TableSQL{
+			Table:   tbl.Name(),
+			Columns: tbl.ColumnNames(),
+		}
+
+		// for Where columns, each pk column is used twice to set up >= <=.
+		for i, col := range pk.Columns {
+			if i != 0 {
+				parm.WhereConditions = append(parm.WhereConditions, "AND")
+			}
+			parm.WhereColumns = append(parm.WhereColumns, col)
+			parm.WhereColumns = append(parm.WhereColumns, col)
+			parm.WhereComparisonOps = append(parm.WhereComparisonOps, ">=")
+			parm.WhereComparisonOps = append(parm.WhereComparisonOps, "<=")
+			parm.WhereConditions = append(parm.WhereConditions, "AND")
+		}
+
+		err := selectInRangeInclusiveFunc(t, pk, parm)
+		if err != nil {
+			return err
+		}
+
+		_, err = t.buf.WriteTo(w)
+		if err != nil {
+			return err
+		}
+		/*
+			selectInRangeInclusiveFunc(tbl.StructName(), w, parm)
+			// Set-up the TableSQL struct for exclusive
+			for i, v := range parm.WhereCompaisonOps {
+				parm.WhereComparisonOps[i] = v[1]
+			}
+
+		*/
+		//		buf.Reset()
+	}
+	return nil
+}
+
+func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint, parm dbsql2go.TableSQL) error {
+	t.buf.Reset()
+	err := t.buf.WriteByte('\n')
+	if err != nil {
+		return err
+	}
+
+	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, dbsql2go.TitleInclusive, t.name, t.structName, dbsql2go.LowerInclusive), 80)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.buf.WriteString(c)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.buf.WriteString(fmt.Sprintf("func %sSelectInRangeInclusive(db *sql.DB) (results []%s, err error) {\n\trows, err := db.QueryRow(\"", t.structName, t.structName))
+	if err != nil {
+		return err
+	}
+
+	// write the sql
+	err = dbsql2go.SelectAndOrSQL.Execute(&t.buf, parm)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.buf.WriteString("\", ")
+	if err != nil {
+		return err
+	}
+
+	// write out the args to pass
+	for i, v := range pk.Fields { // each field is used twice because range takes two evaluations
+		if i > 0 {
+			_, err = t.buf.WriteString(", ")
+			if err != nil {
+				return err
+			}
+		}
+		_, err = t.buf.WriteString(fmt.Sprintf("%c.%s, %c.%s", t.r, v, t.r, v))
+		if err != nil {
+			return err
+		}
+
+	}
+
+	_, err = t.buf.WriteString(")\nif err != nil {\n\t\treturn nil, err\n\t}\n\tdefer rows.Close()\n\n\tfor rows.Next() {\n\t\tvar }")
+	if err != nil {
+		return err
+	}
+
+	_, err = t.buf.WriteString(fmt.Sprintf("%c %s\n\t\terr = rows.Scan(", t.r, t.structName))
+	if err != nil {
+		return err
+	}
+
+	_, err = t.buf.WriteString(fmt.Sprintf("%c.%s", t.r, pk.Fields[0]))
+	if err != nil {
+		return err
+	}
+
+	for i := 1; i < len(pk.Fields); i++ {
+		_, err = t.buf.Write([]byte(fmt.Sprintf(", %c.%s", t.r, pk.Fields[i])))
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = t.buf.WriteString(")\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tresults = append(results, a)\n\t}\n\n\treturn results, nil\n}")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type Table struct {
 	name        string
 	r           rune   // the first letter of the name, in lower-case. Used as the receiver name.
@@ -485,7 +620,6 @@ func (t *Table) Go(w io.Writer) error {
 	// add the insert method
 	err = t.InsertMethod(w)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 

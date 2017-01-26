@@ -1820,6 +1820,7 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
+/*
 func TestTables(t *testing.T) {
 	m, err := New(server, user, password, testDB)
 	if err != nil {
@@ -2489,9 +2490,51 @@ func TestUpdateSQL(t *testing.T) {
 		}
 	}
 }
+*/
 
-func TestSelectAndOrSQL(t *testing.T) {
+func TestSelectInRangeSqlFuncs(t *testing.T) {
+	expected := `// AbcSelectInRangeInclusive SELECTs a range of rows from the abc table whose PK
+// values are within the specified range and returns a slice of Abc structs. The
+// range values are inclusive. If there is an error, the error will be returned
+// and the results slice will be nil.
+func AbcSelectInRangeInclusive(db *sql.DB) (results []Abc, err error) {
+	rows, err := db.QueryRow("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def WHERE id >= ? AND id <=?", p.ID, p.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
+	for rows.Next() {
+		var a Abc
+		err = rows.Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, a)
+	}
+
+	return results, nil
+}`
+
+	m, err := New(server, user, password, testDB)
+	if err != nil {
+		t.Errorf("unexpected connection error: %s", err)
+		return
+	}
+	err = m.Get()
+	if err != nil {
+		t.Errorf("unexpected error getting database information: %s", err)
+		return
+	}
+
+	var buf bytes.Buffer
+	err = m.(*DB).SelectRangeSQLFuncs(&buf)
+	if err != nil {
+		t.Errorf("unexpected error generating InRangeSQLFuncs")
+	}
+	if buf.String() != expected {
+		t.Errorf("got\n%q\nwant:\n%q", buf.String(), expected)
+	}
 }
 
 func SetupTestDB(m *DB) error {

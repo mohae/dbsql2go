@@ -25,8 +25,6 @@ const (
 	MySQL
 )
 
-const commentStart = "// "
-
 //go:generate stringer -type=DBType
 type DBType int
 
@@ -80,6 +78,12 @@ type UnsupportedDBErr struct {
 func (u UnsupportedDBErr) Error() string {
 	return u.Value + " is not a supported database system"
 }
+
+const (
+	commentStart   = "// "
+	LowerInclusive = "inclusive"
+	TitleInclusive = "Inclusive"
+)
 
 type DBer interface {
 	Get() error
