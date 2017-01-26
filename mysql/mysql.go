@@ -301,7 +301,7 @@ func (m *DB) UpdateTableConstraints() error {
 		}
 		// find the table and add this index to it
 		for j := 0; j < len(m.tables); j++ {
-			if m.tables[j].Name() != c.Name {
+			if m.tables[j].Name() != c.Table {
 				continue
 			}
 			m.tables[j].(*Table).constraints = append(m.tables[j].(*Table).constraints, c)

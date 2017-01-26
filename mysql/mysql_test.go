@@ -1820,7 +1820,6 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-/*
 func TestTables(t *testing.T) {
 	m, err := New(server, user, password, testDB)
 	if err != nil {
@@ -2490,7 +2489,6 @@ func TestUpdateSQL(t *testing.T) {
 		}
 	}
 }
-*/
 
 func TestSelectInRangeSqlFuncs(t *testing.T) {
 	expected := `// AbcSelectInRangeInclusive SELECTs a range of rows from the abc table whose PK
