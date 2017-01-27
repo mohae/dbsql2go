@@ -24,6 +24,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mohae/dbsql2go"
+	"github.com/mohae/int2word"
 	"github.com/mohae/mixedcase"
 )
 
@@ -31,7 +32,7 @@ const (
 	schema                 = "information_schema"
 	viewType               = "VIEW"
 	selectPKComment        = "Select SELECTs the row from %s that corresponds with the struct's primary key and populates the struct with the SELECTed data. Any error that occurs will be returned."
-	selectPKInRangeComment = "%sSelectInRange%s SELECTs a range of rows from the %s table whose PK values are within the specified range and returns a slice of %s structs. The range values are %s. If there is an error, the error will be returned and the results slice will be nil."
+	selectPKInRangeComment = "%sSelectInRange%s SELECTs a range of rows from the %s table whose PK values are within the specified range and returns a slice of %s structs. The range values are %s. %s args must be passed for the values of the query's range boundaries in the WHERE clause. The WHERE clause is in the form of %q. If there is an error, the error will be returned and the results slice will be nil."
 	deletePKComment        = "Delete DELETEs the row from %s that corresponds with the struct's primary key, if there is any. The number of rows DELETEd is returned. If an error occurs during the DELETE, an error will be returned along with 0."
 	insertPKComment        = "Insert INSERTs the data in the struct into %s. The ID from the INSERT, if applicable, is returned. If an error occurs that is returned along with a 0."
 	updatePKComment        = "Update UPDATEs the row in %s that corresponds with the struct's key values. The number of rows affected by the update will be returned. If an error occurs, the error will be returned along with 0."
@@ -444,7 +445,8 @@ func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint, parm dbsql2go
 		return err
 	}
 
-	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, dbsql2go.TitleInclusive, t.name, t.structName, dbsql2go.LowerInclusive), 80)
+	num := int2word.Sentence(len(pk.Columns) * 2)
+	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, dbsql2go.TitleInclusive, t.name, t.structName, dbsql2go.LowerInclusive, num), 80)
 	if err != nil {
 		return err
 	}
@@ -454,7 +456,7 @@ func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint, parm dbsql2go
 		return err
 	}
 
-	_, err = t.buf.WriteString(fmt.Sprintf("func %sSelectInRangeInclusive(db *sql.DB) (results []%s, err error) {\n\trows, err := db.QueryRow(\"", t.structName, t.structName))
+	_, err = t.buf.WriteString(fmt.Sprintf("func %sSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []%s, err error) {\n\trows, err := db.Query(\"", t.structName, t.structName))
 	if err != nil {
 		return err
 	}
@@ -465,27 +467,7 @@ func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint, parm dbsql2go
 		return err
 	}
 
-	_, err = t.buf.WriteString("\", ")
-	if err != nil {
-		return err
-	}
-
-	// write out the args to pass
-	for i, v := range pk.Fields { // each field is used twice because range takes two evaluations
-		if i > 0 {
-			_, err = t.buf.WriteString(", ")
-			if err != nil {
-				return err
-			}
-		}
-		_, err = t.buf.WriteString(fmt.Sprintf("%c.%s, %c.%s", t.r, v, t.r, v))
-		if err != nil {
-			return err
-		}
-
-	}
-
-	_, err = t.buf.WriteString(")\nif err != nil {\n\t\treturn nil, err\n\t}\n\tdefer rows.Close()\n\n\tfor rows.Next() {\n\t\tvar }")
+	_, err = t.buf.WriteString("\", args...)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\tdefer rows.Close()\n\n\tfor rows.Next() {\n\t\tvar ")
 	if err != nil {
 		return err
 	}
@@ -495,19 +477,19 @@ func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint, parm dbsql2go
 		return err
 	}
 
-	_, err = t.buf.WriteString(fmt.Sprintf("%c.%s", t.r, pk.Fields[0]))
+	_, err = t.buf.WriteString(fmt.Sprintf("&%c.%s", t.r, t.columns[0].fieldName))
 	if err != nil {
 		return err
 	}
 
-	for i := 1; i < len(pk.Fields); i++ {
-		_, err = t.buf.Write([]byte(fmt.Sprintf(", %c.%s", t.r, pk.Fields[i])))
+	for i := 1; i < len(t.columns); i++ {
+		_, err = t.buf.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, t.columns[i].fieldName)))
 		if err != nil {
 			return err
 		}
 	}
 
-	_, err = t.buf.WriteString(")\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tresults = append(results, a)\n\t}\n\n\treturn results, nil\n}")
+	_, err = t.buf.WriteString(")\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tresults = append(results, a)\n\t}\n\n\treturn results, nil\n}\n")
 	if err != nil {
 		return err
 	}
