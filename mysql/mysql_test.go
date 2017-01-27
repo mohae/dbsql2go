@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/mohae/dbsql2go"
@@ -2549,7 +2550,7 @@ func AbcNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Abc
 // of "WHERE id >= arg[0] AND id <= arg[1]". If there is an error, the error
 // will be returned and the results slice will be nil.
 func DefSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def, err error) {
-	rows, err := db.Query("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def WHERE id >= ? AND id <=?", args...)
+	rows, err := db.Query("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def WHERE id >= ? AND id <= ?", args...)
 	if err != nil {
 		return nil, err
 	}
@@ -2574,7 +2575,7 @@ func DefSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def, 
 // is in the form of "WHERE id >= arg[0] AND id <= arg[1]". If there is an
 // error, the error will be returned and the results slice will be nil.
 func DefNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []DefNn, err error) {
-	rows, err := db.Query("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def WHERE id >= ? AND id <=?", args...)
+	rows, err := db.Query("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def_nn WHERE id >= ? AND id <= ?", args...)
 	if err != nil {
 		return nil, err
 	}
@@ -2594,12 +2595,13 @@ func DefNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def
 
 // JklSelectInRangeInclusive SELECTs a range of rows from the jkl table whose PK
 // values are within the specified range and returns a slice of Jkl structs. The
-// range values are inclusive. Two args must be passed for the values of the
+// range values are inclusive. Four args must be passed for the values of the
 // query's range boundaries in the WHERE clause. The WHERE clause is in the form
-// of "WHERE id >= arg[0] AND id <= arg[1]. If there is an error, the error will
-// be returned and the results slice will be nil.
+// of "WHERE id >= arg[0] AND id <= arg[1] AND fid >= arg[2] AND fid <= arg[3]".
+// If there is an error, the error will be returned and the results slice will
+// be nil.
 func JklSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Jkl, err error) {
-	rows, err := db.QueryRow("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl WHERE id >= ? AND id <=?", args...)
+	rows, err := db.Query("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl WHERE id >= ? AND id <= ? AND fid >= ? AND fid <= ?", args...)
 	if err != nil {
 		return nil, err
 	}
@@ -2607,7 +2609,7 @@ func JklSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Jkl, 
 
 	for rows.Next() {
 		var j Jkl
-		err = rows.Scan(j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+		err = rows.Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j.MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
 		if err != nil {
 			return nil, err
 		}
@@ -2619,27 +2621,78 @@ func JklSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Jkl, 
 
 // JklNnSelectInRangeInclusive SELECTs a range of rows from the jkl_nn table
 // whose PK values are within the specified range and returns a slice of JklNn
-// structs. The range values are inclusive. Two args must be passed for the
+// structs. The range values are inclusive. Four args must be passed for the
 // values of the query's range boundaries in the WHERE clause. The WHERE clause
-// is in the form of "WHERE id >= arg[0] AND id <= arg[1]". If there is an
-// error, the error will be returned and the results slice will be nil.
-func JklSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Jkl, err error) {
-	rows, err := db.QueryRow("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl WHERE id >= ? AND id <=?", args...)
+// is in the form of "WHERE id >= arg[0] AND id <= arg[1] AND fid >= arg[2] AND
+// fid <= arg[3]". If there is an error, the error will be returned and the
+// results slice will be nil.
+func JklNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []JklNn, err error) {
+	rows, err := db.Query("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl_nn WHERE id >= ? AND id <= ? AND fid >= ? AND fid <= ?", args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var j Jkl
-		err = rows.Scan(j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j,MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+		var j JklNn
+		err = rows.Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j.MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
 		if err != nil {
 			return nil, err
 		}
 		results = append(results, j)
+	}
 
 	return results, nil
 }
+
+// MnoSelectInRangeInclusive SELECTs a range of rows from the mno table whose PK
+// values are within the specified range and returns a slice of Mno structs. The
+// range values are inclusive. Two args must be passed for the values of the
+// query's range boundaries in the WHERE clause. The WHERE clause is in the form
+// of "WHERE id >= arg[0] AND id <= arg[1]". If there is an error, the error
+// will be returned and the results slice will be nil.
+func MnoSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Mno, err error) {
+	rows, err := db.Query("SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection FROM mno WHERE id >= ? AND id <= ?", args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var m Mno
+		err = rows.Scan(&m.ID, &m.Geo, &m.Pt, &m.Lstring, &m.Poly, &m.MultiPt, &m.MultiLstring, &m.MultiPolygon, &m.GeoCollection)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, m)
+	}
+
+	return results, nil
+}
+
+// MnoNnSelectInRangeInclusive SELECTs a range of rows from the mno_nn table
+// whose PK values are within the specified range and returns a slice of MnoNn
+// structs. The range values are inclusive. Two args must be passed for the
+// values of the query's range boundaries in the WHERE clause. The WHERE clause
+// is in the form of "WHERE id >= arg[0] AND id <= arg[1]". If there is an
+// error, the error will be returned and the results slice will be nil.
+func MnoNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []MnoNn, err error) {
+	rows, err := db.Query("SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection FROM mno_nn WHERE id >= ? AND id <= ?", args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var m MnoNn
+		err = rows.Scan(&m.ID, &m.Geo, &m.Pt, &m.Lstring, &m.Poly, &m.MultiPt, &m.MultiLstring, &m.MultiPolygon, &m.GeoCollection)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, m)
+	}
+
+	return results, nil
 }
 `
 
@@ -2659,8 +2712,12 @@ func JklSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Jkl, 
 	if err != nil {
 		t.Errorf("unexpected error generating InRangeSQLFuncs")
 	}
-	if buf.String() != expected {
-		t.Errorf("got\n%q\nwant:\n%q", buf.String(), expected)
+	got := strings.Split(buf.String(), "\n")
+	want := strings.Split(expected, "\n")
+	for i, v := range got {
+		if v != want[i] {
+			t.Errorf("%d: got\n%q\nwant:\n%q", i, v, want[i])
+		}
 	}
 }
 

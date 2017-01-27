@@ -399,24 +399,25 @@ func (m *DB) SelectRangeSQLFuncs(w io.Writer) error {
 		}
 
 		// Set-up the TableSQL struct for inclusive
-		parm := dbsql2go.TableSQL{
-			Table:   tbl.Name(),
-			Columns: tbl.ColumnNames(),
-		}
+		t.sqlInf.Table = t.name
+		t.sqlInf.Columns = tbl.ColumnNames()
+		t.sqlInf.WhereColumns = nil
+		t.sqlInf.WhereComparisonOps = nil
+		t.sqlInf.WhereConditions = nil
 
 		// for Where columns, each pk column is used twice to set up >= <=.
 		for i, col := range pk.Columns {
 			if i != 0 {
-				parm.WhereConditions = append(parm.WhereConditions, "AND")
+				t.sqlInf.WhereConditions = append(t.sqlInf.WhereConditions, "AND")
 			}
-			parm.WhereColumns = append(parm.WhereColumns, col)
-			parm.WhereColumns = append(parm.WhereColumns, col)
-			parm.WhereComparisonOps = append(parm.WhereComparisonOps, ">=")
-			parm.WhereComparisonOps = append(parm.WhereComparisonOps, "<=")
-			parm.WhereConditions = append(parm.WhereConditions, "AND")
+			t.sqlInf.WhereColumns = append(t.sqlInf.WhereColumns, col)
+			t.sqlInf.WhereColumns = append(t.sqlInf.WhereColumns, col)
+			t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, ">=")
+			t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, "<=")
+			t.sqlInf.WhereConditions = append(t.sqlInf.WhereConditions, "AND")
 		}
 
-		err := selectInRangeInclusiveFunc(t, pk, parm)
+		err := selectInRangeInclusiveFunc(t, pk)
 		if err != nil {
 			return err
 		}
@@ -438,15 +439,23 @@ func (m *DB) SelectRangeSQLFuncs(w io.Writer) error {
 	return nil
 }
 
-func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint, parm dbsql2go.TableSQL) error {
+func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint) error {
 	t.buf.Reset()
-	err := t.buf.WriteByte('\n')
+
+	err := dbsql2go.SelectAndOrWhereComment.Execute(&t.buf, t.sqlInf)
 	if err != nil {
 		return err
 	}
 
 	num := int2word.Sentence(len(pk.Columns) * 2)
-	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, dbsql2go.TitleInclusive, t.name, t.structName, dbsql2go.LowerInclusive, num), 80)
+	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, dbsql2go.TitleInclusive, t.name, t.structName, dbsql2go.LowerInclusive, num, t.buf.String()), 80)
+	if err != nil {
+		return err
+	}
+
+	t.buf.Reset()
+
+	err = t.buf.WriteByte('\n')
 	if err != nil {
 		return err
 	}
@@ -462,7 +471,7 @@ func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint, parm dbsql2go
 	}
 
 	// write the sql
-	err = dbsql2go.SelectAndOrSQL.Execute(&t.buf, parm)
+	err = dbsql2go.SelectAndOrSQL.Execute(&t.buf, t.sqlInf)
 	if err != nil {
 		return err
 	}
@@ -489,7 +498,12 @@ func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint, parm dbsql2go
 		}
 	}
 
-	_, err = t.buf.WriteString(")\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tresults = append(results, a)\n\t}\n\n\treturn results, nil\n}\n")
+	_, err = t.buf.WriteString(")\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tresults = append(results, ")
+	if err != nil {
+		return err
+	}
+
+	_, err = t.buf.WriteString(fmt.Sprintf("%c)\n\t}\n\n\treturn results, nil\n}\n", t.r))
 	if err != nil {
 		return err
 	}
