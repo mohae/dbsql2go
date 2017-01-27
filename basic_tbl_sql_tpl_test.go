@@ -173,72 +173,91 @@ func TestTableUpdateTemplate(t *testing.T) {
 	}
 }
 
+var andOrtests = []struct {
+	TableSQL
+	expectedSQL   string
+	expectedWhere string
+}{
+	{ //not enough comparison ops for the where columns == empty string
+		TableSQL{
+			Columns:            []string{"id", "val"},
+			Table:              "abc",
+			WhereColumns:       []string{"id", "id"},
+			WhereComparisonOps: []string{">"},
+			WhereConditions:    []string{},
+		},
+		"",
+		"",
+	},
+	{ // no where condition == empty string
+		TableSQL{
+			Columns:            []string{"id", "val"},
+			Table:              "abc",
+			WhereColumns:       []string{"id", "id"},
+			WhereComparisonOps: []string{">", "<"},
+			WhereConditions:    []string{},
+		},
+		"",
+		"",
+	},
+	{
+		TableSQL{
+			Columns:            []string{"id", "val"},
+			Table:              "abc",
+			WhereColumns:       []string{"id", "id"},
+			WhereComparisonOps: []string{">", "<"},
+			WhereConditions:    []string{"AND"},
+		},
+		`SELECT id, val FROM abc WHERE id > ? AND id < ?`,
+		`WHERE id > arg[0] AND id < arg[1]`,
+	},
+	{
+		TableSQL{
+			Columns:            []string{"id", "val"},
+			Table:              "abc",
+			WhereColumns:       []string{"id", "id"},
+			WhereComparisonOps: []string{"<", ">"},
+			WhereConditions:    []string{"OR"},
+		},
+		`SELECT id, val FROM abc WHERE id < ? OR id > ?`,
+		`WHERE id < arg[0] OR id > arg[1]`,
+	},
+	{
+		TableSQL{
+			Columns:            []string{"id", "val"},
+			Table:              "abc",
+			WhereColumns:       []string{"id", "id", "name"},
+			WhereComparisonOps: []string{">", "<", "="},
+			WhereConditions:    []string{"AND", "OR"},
+		},
+		`SELECT id, val FROM abc WHERE id > ? AND id < ? OR name = ?`,
+		`WHERE id > arg[0] AND id < arg[1] OR name = arg[2]`,
+	},
+	{
+		TableSQL{
+			Columns:            []string{"id", "val"},
+			Table:              "abc",
+			WhereColumns:       []string{"id", "id", "val", "name"},
+			WhereComparisonOps: []string{">", "<", "!=", "="},
+			WhereConditions:    []string{"AND", "AND", "OR"},
+		},
+		`SELECT id, val FROM abc WHERE id > ? AND id < ? AND val != ? OR name = ?`,
+		`WHERE id > arg[0] AND id < arg[1] AND val != arg[2] OR name = arg[3]`,
+	},
+	{
+		TableSQL{
+			Columns:            []string{"id", "val"},
+			Table:              "abc",
+			WhereColumns:       []string{"id", "id", "val", "val"},
+			WhereComparisonOps: []string{">", "<", ">", "<"},
+			WhereConditions:    []string{"AND", "AND", "AND"},
+		},
+		`SELECT id, val FROM abc WHERE id > ? AND id < ? AND val > ? AND val < ?`,
+		`WHERE id > arg[0] AND id < arg[1] AND val > arg[2] AND val < arg[3]`,
+	},
+}
+
 func TestTableSelectANDORSQLTemplate(t *testing.T) {
-	tests := []struct {
-		TableSQL
-		expected string
-	}{
-		{ //not enough comparison ops for the where columns == empty string
-			TableSQL{
-				Columns:            []string{"id", "val"},
-				Table:              "abc",
-				WhereColumns:       []string{"id", "id"},
-				WhereComparisonOps: []string{">"},
-				WhereConditions:    []string{},
-			},
-			"",
-		},
-		{ // no where condition == empty string
-			TableSQL{
-				Columns:            []string{"id", "val"},
-				Table:              "abc",
-				WhereColumns:       []string{"id", "id"},
-				WhereComparisonOps: []string{">", "<"},
-				WhereConditions:    []string{},
-			},
-			"",
-		},
-		{
-			TableSQL{
-				Columns:            []string{"id", "val"},
-				Table:              "abc",
-				WhereColumns:       []string{"id", "id"},
-				WhereComparisonOps: []string{">", "<"},
-				WhereConditions:    []string{"AND"},
-			},
-			`SELECT id, val FROM abc WHERE id > ? AND id < ?`,
-		},
-		{
-			TableSQL{
-				Columns:            []string{"id", "val"},
-				Table:              "abc",
-				WhereColumns:       []string{"id", "id"},
-				WhereComparisonOps: []string{"<", ">"},
-				WhereConditions:    []string{"OR"},
-			},
-			`SELECT id, val FROM abc WHERE id < ? OR id > ?`,
-		},
-		{
-			TableSQL{
-				Columns:            []string{"id", "val"},
-				Table:              "abc",
-				WhereColumns:       []string{"id", "id", "name"},
-				WhereComparisonOps: []string{">", "<", "="},
-				WhereConditions:    []string{"AND", "OR"},
-			},
-			`SELECT id, val FROM abc WHERE id > ? AND id < ? OR name = ?`,
-		},
-		{
-			TableSQL{
-				Columns:            []string{"id", "val"},
-				Table:              "abc",
-				WhereColumns:       []string{"id", "id", "val", "name"},
-				WhereComparisonOps: []string{">", "<", "!=", "="},
-				WhereConditions:    []string{"AND", "AND", "OR"},
-			},
-			`SELECT id, val FROM abc WHERE id > ? AND id < ? AND val != ? OR name = ?`,
-		},
-	}
 
 	var buff bytes.Buffer
 	// first do the basic tests to see if the results are as expected; all
@@ -261,7 +280,7 @@ func TestTableSelectANDORSQLTemplate(t *testing.T) {
 	}
 
 	// now do the actual tests
-	for i, test := range tests {
+	for i, test := range andOrtests {
 		// it's just simpler to reset it here
 		buff.Reset()
 		err := SelectAndOrSQL.Execute(&buff, test.TableSQL)
@@ -269,11 +288,31 @@ func TestTableSelectANDORSQLTemplate(t *testing.T) {
 			t.Errorf("%d: %s", i, err)
 			continue
 		}
-		if buff.String() != test.expected {
+		if buff.String() != test.expectedSQL {
 			// use the hex values because it makes it easier to spot difference that
 			// aren't always obvious visually, e.g. trailing blanks
-			t.Errorf("%d: got %x want %x", i, buff.String(), test.expected)
-			t.Errorf("%d: got %q want %q", i, buff.String(), test.expected)
+			t.Errorf("%d: got %x want %x", i, buff.String(), test.expectedSQL)
+			t.Errorf("%d: got %q want %q", i, buff.String(), test.expectedSQL)
+		}
+	}
+}
+
+func TestTableSelectANDORWhereCommentTemplate(t *testing.T) {
+
+	var buff bytes.Buffer
+	for i, test := range andOrtests {
+		// it's just simpler to reset it here
+		buff.Reset()
+		err := SelectAndOrWhereComment.Execute(&buff, test.TableSQL)
+		if err != nil {
+			t.Errorf("%d: %s", i, err)
+			continue
+		}
+		if buff.String() != test.expectedWhere {
+			// use the hex values because it makes it easier to spot difference that
+			// aren't always obvious visually, e.g. trailing blanks
+			t.Errorf("%d: got %x want %x", i, buff.String(), test.expectedWhere)
+			t.Errorf("%d: got %q want %q", i, buff.String(), test.expectedWhere)
 		}
 	}
 }

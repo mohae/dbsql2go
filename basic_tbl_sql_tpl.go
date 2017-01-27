@@ -16,6 +16,7 @@ import "text/template"
 
 // the basic sql stuff for a single table go in this file.
 
+// Templates
 var (
 	SelectSQL *template.Template // Template to SELECT from a single table with only ANDs
 	// SelectAndOrSQL allows for between and not between type statements on a single
@@ -28,6 +29,9 @@ var (
 	DeleteSQL      *template.Template // Template to DELETE from a single table with only ANDs
 	InsertSQL      *template.Template // Template to INSERT into a single table with only ANDs
 	UpdateSQL      *template.Template // Template to UPDATE a row in a single table with only ANDs
+
+	// Comment fragments
+	SelectAndOrWhereComment *template.Template // The WHERE clause comment fragment for AndOR SQL funcs.
 )
 
 func init() {
@@ -39,6 +43,8 @@ func init() {
 	DeleteSQL = template.Must(template.New("delete").Parse(deleteSQL))
 	InsertSQL = template.Must(template.New("insert").Parse(insertSQL))
 	UpdateSQL = template.Must(template.New("update").Parse(updateSQL))
+
+	SelectAndOrWhereComment = template.Must(template.New("selectandorcomment").Funcs(funcMap).Parse(selectAndOrWhereComment))
 }
 
 func minusOne(i int) int {
@@ -138,6 +144,18 @@ UPDATE {{.Table}} SET {{ range $i, $col := .Columns -}}
 	{{- else }} AND {{ $col }} = ?
 	{{- end -}}
 {{- end -}}
+{{- end -}}
+{{- end -}}
+`
+
+// selectAndOrWhereComment generates the example WHERE clause for the comments
+// of a SELECT range func.
+var selectAndOrWhereComment = `{{ $ComparisonMinus := minusOne (len .WhereComparisonOps) -}}
+{{ if and (gt (len .WhereColumns) 0) (and (eq (len .WhereColumns) (len .WhereComparisonOps)) (and (eq (len .WhereConditions) $ComparisonMinus))) -}}
+WHERE {{- range $i, $col := .WhereColumns -}}
+	{{- if eq $i 0 }} {{ $col }} {{ index $.WhereComparisonOps $i }} arg[{{ $i }}]
+	{{- else }} {{index $.WhereConditions (minusOne ($i))}} {{ $col }} {{ index $.WhereComparisonOps $i }} arg[{{ $i }}]
+	{{- end -}}
 {{- end -}}
 {{- end -}}
 `
