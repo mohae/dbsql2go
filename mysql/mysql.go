@@ -447,7 +447,7 @@ func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint) error {
 		return err
 	}
 
-	num := int2word.Sentence(len(pk.Columns) * 2)
+	num := int2word.Capitalized(int64(len(pk.Columns) * 2))
 	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, dbsql2go.TitleInclusive, t.name, t.structName, dbsql2go.LowerInclusive, num, t.buf.String()), 80)
 	if err != nil {
 		return err
