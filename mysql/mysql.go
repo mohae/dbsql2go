@@ -40,7 +40,7 @@ const (
 
 type DB struct {
 	Conn        *sql.DB
-	dbName      string
+	Name        string
 	tables      []dbsql2go.Tabler
 	indexes     []Index
 	constraints []Constraint
@@ -55,8 +55,8 @@ func New(server, user, password, database string) (dbsql2go.DBer, error) {
 		return nil, err
 	}
 	return &DB{
-		Conn:   conn,
-		dbName: database,
+		Conn: conn,
+		Name: database,
 	}, nil
 }
 
@@ -99,7 +99,7 @@ func (m *DB) GetTables() error {
 		FROM tables
 		WHERE table_schema = ?`
 
-	rows, err := m.Conn.Query(tableS, m.dbName)
+	rows, err := m.Conn.Query(tableS, m.Name)
 	if err != nil {
 		return err
 	}
@@ -187,7 +187,7 @@ func (m *DB) GetIndexes() error {
 		where TABLE_SCHEMA = ?
 		order by TABLE_NAME, INDEX_NAME, SEQ_IN_INDEX`
 
-	rows, err := m.Conn.Query(sel, m.dbName)
+	rows, err := m.Conn.Query(sel, m.Name)
 	if err != nil {
 		return err
 	}
@@ -223,7 +223,7 @@ WHERE k.table_schema = ?
 GROUP BY k.table_name,
 	k.constraint_name,
 	k.ordinal_position`
-	rows, err := m.Conn.Query(sel, m.dbName)
+	rows, err := m.Conn.Query(sel, m.Name)
 	if err != nil {
 		return err
 	}
@@ -252,7 +252,7 @@ func (m *DB) GetViews() error {
 		where TABLE_SCHEMA = ?
 		order by TABLE_NAME`
 
-	rows, err := m.Conn.Query(viewS, m.dbName)
+	rows, err := m.Conn.Query(viewS, m.Name)
 	if err != nil {
 		return err
 	}
@@ -382,20 +382,25 @@ func (m *DB) UpdateTableIndexes() {
 	}
 }
 
-// SelectRangeSQL creates in range select funcs for each table that has a
-// primary key. Both an exclusive and inclusive func will be created. The
-// Range funcs are written to the writer. Any error is returned.
-func (m *DB) SelectRangeSQLFuncs(w io.Writer) error {
+// SelectRangeSQL creates range select funcs for the specified table if it has
+// a primary key. Tables without priamry keys wiill have nothing written to the
+// writer and 0 will be returned for the number of bytes written along with nil
+// for the error. Any error encountered is written along with the number of
+// bytes for the table.
+func (m *DB) SelectRangeSQLFunc(w io.Writer, table string) (n int64, err error) {
 	// Go through each table
 	for _, tbl := range m.tables {
+		if tbl.Name() != table {
+			continue
+		}
 		t, ok := tbl.(*Table)
 		if !ok {
-			return fmt.Errorf("Invalid assertion, %s is not type mysql.Table", tbl.Name())
+			return 0, fmt.Errorf("Invalid assertion, %s is not type mysql.Table", table)
 		}
 		// If the table has a primary key
 		pk := tbl.GetPK()
-		if pk == nil { // skip anything that doesn't have a pk
-			continue
+		if pk == nil { // If no primary key return 0 for bytes written and nil for the error.
+			return 0, nil
 		}
 
 		// Set-up the TableSQL struct for inclusive
@@ -419,24 +424,14 @@ func (m *DB) SelectRangeSQLFuncs(w io.Writer) error {
 
 		err := selectInRangeInclusiveFunc(t, pk)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
-		_, err = t.buf.WriteTo(w)
-		if err != nil {
-			return err
-		}
-		/*
-			selectInRangeInclusiveFunc(tbl.StructName(), w, parm)
-			// Set-up the TableSQL struct for exclusive
-			for i, v := range parm.WhereCompaisonOps {
-				parm.WhereComparisonOps[i] = v[1]
-			}
-
-		*/
-		//		buf.Reset()
+		n, err = t.buf.WriteTo(w)
+		return n, err
 	}
-	return nil
+
+	return 0, nil
 }
 
 func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint) error {

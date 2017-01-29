@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"sort"
-	"strings"
 	"testing"
 
 	"github.com/mohae/dbsql2go"
@@ -2492,7 +2491,8 @@ func TestUpdateSQL(t *testing.T) {
 }
 
 func TestSelectInRangeSqlFuncs(t *testing.T) {
-	expected := `
+	expected := map[string]string{
+		"abc": `
 // AbcSelectInRangeInclusive SELECTs a range of rows from the abc table whose PK
 // values are within the specified range and returns a slice of Abc structs. The
 // range values are inclusive. Two args must be passed for the values of the
@@ -2517,7 +2517,8 @@ func AbcSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Abc, 
 
 	return results, nil
 }
-
+`,
+		"abc_nn": `
 // AbcNnSelectInRangeInclusive SELECTs a range of rows from the abc_nn table
 // whose PK values are within the specified range and returns a slice of AbcNn
 // structs. The range values are inclusive. Two args must be passed for the
@@ -2542,7 +2543,8 @@ func AbcNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Abc
 
 	return results, nil
 }
-
+`,
+		"def": `
 // DefSelectInRangeInclusive SELECTs a range of rows from the def table whose PK
 // values are within the specified range and returns a slice of Def structs. The
 // range values are inclusive. Two args must be passed for the values of the
@@ -2567,7 +2569,8 @@ func DefSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def, 
 
 	return results, nil
 }
-
+`,
+		"def_nn": `
 // DefNnSelectInRangeInclusive SELECTs a range of rows from the def_nn table
 // whose PK values are within the specified range and returns a slice of DefNn
 // structs. The range values are inclusive. Two args must be passed for the
@@ -2592,7 +2595,8 @@ func DefNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def
 
 	return results, nil
 }
-
+`,
+		"jkl": `
 // JklSelectInRangeInclusive SELECTs a range of rows from the jkl table whose PK
 // values are within the specified range and returns a slice of Jkl structs. The
 // range values are inclusive. Four args must be passed for the values of the
@@ -2618,7 +2622,8 @@ func JklSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Jkl, 
 
 	return results, nil
 }
-
+`,
+		"jkl_nn": `
 // JklNnSelectInRangeInclusive SELECTs a range of rows from the jkl_nn table
 // whose PK values are within the specified range and returns a slice of JklNn
 // structs. The range values are inclusive. Four args must be passed for the
@@ -2644,7 +2649,8 @@ func JklNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Jkl
 
 	return results, nil
 }
-
+`,
+		"mno": `
 // MnoSelectInRangeInclusive SELECTs a range of rows from the mno table whose PK
 // values are within the specified range and returns a slice of Mno structs. The
 // range values are inclusive. Two args must be passed for the values of the
@@ -2669,7 +2675,8 @@ func MnoSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Mno, 
 
 	return results, nil
 }
-
+`,
+		"mno_nn": `
 // MnoNnSelectInRangeInclusive SELECTs a range of rows from the mno_nn table
 // whose PK values are within the specified range and returns a slice of MnoNn
 // structs. The range values are inclusive. Two args must be passed for the
@@ -2694,7 +2701,7 @@ func MnoNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Mno
 
 	return results, nil
 }
-`
+`}
 
 	m, err := New(server, user, password, testDB)
 	if err != nil {
@@ -2708,16 +2715,15 @@ func MnoNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Mno
 	}
 
 	var buf bytes.Buffer
-	err = m.(*DB).SelectRangeSQLFuncs(&buf)
-	if err != nil {
-		t.Errorf("unexpected error generating InRangeSQLFuncs")
-	}
-	got := strings.Split(buf.String(), "\n")
-	want := strings.Split(expected, "\n")
-	for i, v := range got {
-		if v != want[i] {
-			t.Errorf("%d: got\n%q\nwant:\n%q", i, v, want[i])
+	for _, tbl := range tableDefs {
+		_, err = m.(*DB).SelectRangeSQLFunc(&buf, tbl.Name())
+		if err != nil {
+			t.Errorf("unexpected error generating InRangeSQLFuncs")
 		}
+		if buf.String() != expected[tbl.Name()] {
+			t.Errorf("%s: got\n%q\nwant:\n%q", tbl.Name(), buf.String(), expected[tbl.Name()])
+		}
+		buf.Reset()
 	}
 }
 
