@@ -1616,6 +1616,16 @@ func DefNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def
 	MedStuff    []byte
 	LongStuff   []byte
 }
+
+// Insert INSERTs the data in the struct into ghi. The ID from the INSERT, if
+// applicable, is returned. If an error occurs that is returned along with a 0.
+func (g *Ghi) Insert(db *sql.DB) (id int64, err error) {
+	res, err := db.Exec("INSERT INTO ghi (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", &g.ID, &g.Val, &g.DefID, &g.DefDatetime, &g.TinyStuff, &g.Stuff, &g.MedStuff, &g.LongStuff)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertID()
+}
 `,
 	`type GhiNn struct {
 	ID        int32
@@ -1626,6 +1636,16 @@ func DefNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def
 	Stuff     []byte
 	MedStuff  []byte
 	LongStuff []byte
+}
+
+// Insert INSERTs the data in the struct into ghi_nn. The ID from the INSERT, if
+// applicable, is returned. If an error occurs that is returned along with a 0.
+func (g *GhiNn) Insert(db *sql.DB) (id int64, err error) {
+	res, err := db.Exec("INSERT INTO ghi_nn (id, val, def_id, def_datetime, tiny_stuff, stuff, med_stuff, long_stuff) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", &g.ID, &g.Val, &g.DefID, &g.DefDatetime, &g.TinyStuff, &g.Stuff, &g.MedStuff, &g.LongStuff)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertID()
 }
 `,
 	`type Jkl struct {

@@ -900,8 +900,8 @@ func (t *Table) deleteSQLPK() error {
 // along with any error that may occur, if any. If the table is a view, no
 // insert method will be generated.
 func (t *Table) InsertMethod(w io.Writer) (n int64, err error) {
-	if t.pk < 0 {
-		return 0, nil // nothing to do
+	if t.IsView() {
+		return 0, nil
 	}
 
 	t.buf.Reset()
