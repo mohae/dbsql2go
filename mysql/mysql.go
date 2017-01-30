@@ -436,7 +436,6 @@ func (t *Table) Collation() string {
 // Definition creates the struct definition and appends it to the  internal
 // buffer. The number of bytes written to the buffer is returned along with
 // an error, if one occurs.
-// TODO: should this accept a writer instead
 func (t *Table) Definition(w io.Writer) error {
 	_, err := w.Write([]byte("type "))
 	if err != nil {
@@ -485,24 +484,24 @@ func (t *Table) Go(w io.Writer) error {
 	}
 
 	// add the select method
-	err = t.SelectPKMethod(w)
+	_, err = t.SelectPKMethod(w)
 	if err != nil {
 		return err
 	}
 
 	// add the delete method
-	err = t.DeletePKMethod(w)
+	_, err = t.DeletePKMethod(w)
 	if err != nil {
 		return err
 	}
 
 	// add the insert method
-	err = t.InsertMethod(w)
+	_, err = t.InsertMethod(w)
 	if err != nil {
 		return err
 	}
 
-	err = t.UpdateMethod(w)
+	_, err = t.UpdateMethod(w)
 	if err != nil {
 		return err
 	}
@@ -600,121 +599,119 @@ func (t *Table) IsView() bool {
 	return false
 }
 
-// SelectPKMethod generates the method for selecting a table row using its PK.
-func (t *Table) SelectPKMethod(w io.Writer) error {
-	pk := t.PK()
-	if pk == nil {
+// SelectPKMethod generates the method for selecting a table row using its PK
+// and writes it to the writer. The number of bytes written is returned. If an
+// error occurs that is returned along with the number of bytes written. If the
+// table does not have a primary key, nothing will be written and the error will
+// be nil as this is not an error.
+func (t *Table) SelectPKMethod(w io.Writer) (n int64, err error) {
+	if t.pk < 0 {
 		// nothing to do
-		return nil
+		return 0, nil
 	}
-
-	_, err := w.Write([]byte("\n"))
+	// reset before usage. Everything is written to the buffer first. If the
+	// creation of this method is successful, the buffer is written to the writer.
+	t.buf.Reset()
+	err = t.buf.WriteByte(dbsql2go.LF)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// write the comment
 	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKComment, t.name), 80)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte(c))
+	_, err = t.buf.WriteString(c)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte(fmt.Sprintf("func(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.r, t.structName)))
+	_, err = t.buf.WriteString(fmt.Sprintf("func(%c *%s) Select(db *sql.DB) error {\n\terr := db.QueryRow(\"", t.r, t.structName))
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	err = t.SelectSQLPK(w)
+	err = t.selectSQLPK()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte("\", "))
+	_, err = t.buf.WriteString("\", ")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	for i, v := range pk.Fields {
+	for i, v := range t.constraints[t.pk].Fields {
 		if i == 0 {
-			_, err = w.Write([]byte(fmt.Sprintf("%c.%s", t.r, v)))
+			_, err = t.buf.WriteString(fmt.Sprintf("%c.%s", t.r, v))
 			if err != nil {
-				return err
+				return 0, err
 			}
 			continue
 		}
-		_, err = w.Write([]byte(fmt.Sprintf(", %c.%s", t.r, v)))
+		_, err = t.buf.WriteString(fmt.Sprintf(", %c.%s", t.r, v))
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	_, err = w.Write([]byte(").Scan("))
+	_, err = t.buf.WriteString(").Scan(")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// buld the struct field stuff
 	for i, v := range t.columns {
 		if i == 0 {
-			_, err = w.Write([]byte(fmt.Sprintf("&%c.%s", t.r, v.fieldName)))
+			_, err = t.buf.WriteString(fmt.Sprintf("&%c.%s", t.r, v.fieldName))
 			if err != nil {
-				return err
+				return 0, err
 			}
 			continue
 		}
-		_, err = w.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, v.fieldName)))
+		_, err = t.buf.WriteString(fmt.Sprintf(", &%c.%s", t.r, v.fieldName))
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn err\n\t}\n\treturn nil\n}"))
+	_, err = t.buf.WriteString(")\n\tif err != nil {\n\t\treturn err\n\t}\n\treturn nil\n}")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte{'\n'})
+	err = t.buf.WriteByte(dbsql2go.LF)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return t.buf.WriteTo(w)
 }
 
-// SelectSQLPK returns a SELECT statement for the table that selects all the
+// selectSQLPK returns a SELECT statement for the table that selects all the
 // table columns using the tables PK. If the table does not have a PK, a nil
 // will be returned and the error will also be nil as this is not an error
 // state.
-func (t *Table) SelectSQLPK(w io.Writer) error {
-	pk := t.PK()
-	if pk == nil { // the table doesn't have a primary key; this is not an error.
-		return nil
-	}
-
+func (t *Table) selectSQLPK() error {
 	// set up the relevant infor for the SQL generation; Table is already set.
 	t.sqlInf.Columns = t.ColumnNames()
-	t.sqlInf.WhereColumns = pk.Columns
-	err := dbsql2go.SelectSQL.Execute(w, t.sqlInf)
+	t.sqlInf.WhereColumns = t.constraints[t.pk].Columns
+	err := dbsql2go.SelectSQL.Execute(&t.buf, t.sqlInf)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// SelectRangeSQL creates in range SELECT funcs for the table if it has a
+// SelectInRangeSQL creates in range SELECT funcs for the table if it has a
 // primary key. Tables without priamry keys wiill have nothing written to the
 // writer and 0 will be returned for the number of bytes written along with nil
 // for the error. Any error encountered is written along with the number of
 // bytes for the table.
 func (t *Table) SelectInRangeFunc(w io.Writer) (n int64, err error) {
-	// If the table has a primary key
-	pk := t.PK()
-	if pk == nil { // If no primary key return 0 for bytes written and nil for the error.
+	if t.pk < 0 { // If no primary key return 0 for bytes written and nil for the error.
 		return 0, nil
 	}
 
@@ -726,7 +723,7 @@ func (t *Table) SelectInRangeFunc(w io.Writer) (n int64, err error) {
 	t.sqlInf.WhereConditions = t.sqlInf.WhereConditions[:0]
 
 	// for Where columns, each pk column is used twice to set up >= <=.
-	for i, col := range pk.Columns {
+	for i, col := range t.constraints[t.pk].Columns {
 		if i != 0 {
 			t.sqlInf.WhereConditions = append(t.sqlInf.WhereConditions, "AND")
 		}
@@ -822,77 +819,76 @@ func (t *Table) selectInRangeInclusive(w io.Writer) (n int64, err error) {
 	return t.buf.WriteTo(w)
 }
 
-// DeletePKMethod generates the method for deleting a table row using its PK.
-func (t *Table) DeletePKMethod(w io.Writer) error {
-	pk := t.PK()
-	if pk == nil {
-		// nothing to do
-		return nil
+// DeletePKMethod generates the method for deleting a table row using its PK
+// and writes it to the writer. The number of bytes written is returned. If an
+// error occurs that is returned along with the number of bytes written. If the
+// table does not have a primary key, nothing will be written and the error will
+// be nil as this is not an error.
+func (t *Table) DeletePKMethod(w io.Writer) (n int64, err error) {
+	if t.pk < 0 {
+		return 0, nil // nothing to do
 	}
-
-	_, err := w.Write([]byte("\n"))
+	// Reset the buffer so this method can use it.
+	t.buf.Reset()
+	err = t.buf.WriteByte(dbsql2go.LF)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// write the comment
 	c, err := dbsql2go.StringToComments(fmt.Sprintf(deletePKComment, t.name), 80)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte(c))
+	_, err = t.buf.WriteString(c)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte(fmt.Sprintf("func(%c *%s) Delete(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	_, err = t.buf.WriteString(fmt.Sprintf("func(%c *%s) Delete(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName))
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	err = t.DeleteSQLPK(w)
+	err = t.deleteSQLPK()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte("\", "))
+	_, err = t.buf.WriteString("\", ")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	for i, v := range pk.Fields {
+	for i, v := range t.constraints[t.pk].Fields {
 		if i == 0 {
-			_, err = w.Write([]byte(fmt.Sprintf("%c.%s", t.r, v)))
+			_, err = t.buf.WriteString(fmt.Sprintf("%c.%s", t.r, v))
 			if err != nil {
-				return err
+				return 0, err
 			}
 			continue
 		}
-		_, err = w.Write([]byte(fmt.Sprintf(", %c.%s", t.r, v)))
+		_, err = t.buf.WriteString(fmt.Sprintf(", %c.%s", t.r, v))
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.RowsAffected()\n}\n"))
+	_, err = t.buf.WriteString(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.RowsAffected()\n}\n")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return t.buf.WriteTo(w)
 }
 
-// DeleteSQLPK returns a DELETE statement for the table that deletes a row
+// deleteSQLPK returns a DELETE statement for the table that deletes a row
 // using the tables PK. If the table does not have a PK, no SQL will be
 // generated and a nil will be returned as this is not an error state.
-func (t *Table) DeleteSQLPK(w io.Writer) error {
-	pk := t.PK()
-	if pk == nil { // the table doesn't have a primary key; this is not an error.
-		return nil
-	}
-	t.sqlInf.WhereColumns = pk.Columns
-	err := dbsql2go.DeleteSQL.Execute(w, t.sqlInf)
+func (t *Table) deleteSQLPK() error {
+	t.sqlInf.WhereColumns = t.constraints[t.pk].Columns
+	err := dbsql2go.DeleteSQL.Execute(&t.buf, t.sqlInf)
 	if err != nil {
 		return err
 	}
@@ -900,43 +896,45 @@ func (t *Table) DeleteSQLPK(w io.Writer) error {
 }
 
 // InsertMethod generates the method for inserting the Table's data into the
-// db table.
-func (t *Table) InsertMethod(w io.Writer) error {
-	pk := t.PK()
-	if pk == nil {
-		// nothing to do
-		return nil
+// db table as a row. The number of bytes written to the writer is returned
+// along with any error that may occur, if any. If the table is a view, no
+// insert method will be generated.
+func (t *Table) InsertMethod(w io.Writer) (n int64, err error) {
+	if t.pk < 0 {
+		return 0, nil // nothing to do
 	}
 
-	_, err := w.Write([]byte("\n"))
+	t.buf.Reset()
+
+	err = t.buf.WriteByte(dbsql2go.LF)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// write the comment
 	c, err := dbsql2go.StringToComments(fmt.Sprintf(insertPKComment, t.name), 80)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte(c))
+	_, err = t.buf.WriteString(c)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte(fmt.Sprintf("func(%c *%s) Insert(db *sql.DB) (id int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	_, err = t.buf.WriteString(fmt.Sprintf("func(%c *%s) Insert(db *sql.DB) (id int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName))
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	err = t.InsertSQL(w)
+	err = t.insertSQL()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte("\", "))
+	_, err = t.buf.WriteString("\", ")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// buld the struct field stuff: skip the pk Columns and only use the fields
@@ -949,87 +947,86 @@ func (t *Table) InsertMethod(w io.Writer) error {
 		}
 		j++         // point to next column
 		if j == 1 { // if this is the first element added, don't prefix with ', '
-			_, err = w.Write([]byte(fmt.Sprintf("&%c.%s", t.r, v.fieldName)))
+			_, err = t.buf.WriteString(fmt.Sprintf("&%c.%s", t.r, v.fieldName))
 			if err != nil {
-				return err
+				return 0, err
 			}
 			continue
 		}
-		_, err = w.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, v.fieldName)))
+		_, err = t.buf.WriteString(fmt.Sprintf(", &%c.%s", t.r, v.fieldName))
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.LastInsertID()\n}\n"))
+	_, err = t.buf.WriteString(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.LastInsertID()\n}\n")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return t.buf.WriteTo(w)
 }
 
-// InsertSQL returns an INSERT statement for the table.
-func (t *Table) InsertSQL(w io.Writer) error {
-	// don't generate sql for views
-	if t.IsView() {
-		return nil
-	}
-
+// insertSQL returns an INSERT statement for the table.
+func (t *Table) insertSQL() error {
 	// set up the relevant infor for the SQL generation; Table is already set.
 	t.sqlInf.Columns = t.NonAutoIncrementColumnNames()
 
-	err := dbsql2go.InsertSQL.Execute(w, t.sqlInf)
+	err := dbsql2go.InsertSQL.Execute(&t.buf, t.sqlInf)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// UpdateMethod generates the method for updatating a table row using its PK.
-func (t *Table) UpdateMethod(w io.Writer) error {
-	pk := t.PK()
-	if pk == nil {
+// UpdateMethod generates the method for updatating a table row using its PK
+// and writes it to the writer. The number of bytes written is returned. If an
+// error occurs that is returned along with the number of bytes written. If the
+// table does not have a primary key, nothing will be written and the error will
+// be nil as this is not an error.
+func (t *Table) UpdateMethod(w io.Writer) (n int64, err error) {
+	if t.pk < 0 {
 		// nothing to do
-		return nil
+		return 0, nil
 	}
 
-	_, err := w.Write([]byte("\n"))
+	err = t.buf.WriteByte(dbsql2go.LF)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// write the comment
 	c, err := dbsql2go.StringToComments(fmt.Sprintf(updatePKComment, t.name), 80)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte(c))
+	_, err = t.buf.WriteString(c)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte(fmt.Sprintf("func(%c *%s) Update(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName)))
+	_, err = t.buf.WriteString(fmt.Sprintf("func(%c *%s) Update(db *sql.DB) (n int64, err error) {\n\tres, err := db.Exec(\"", t.r, t.structName))
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	err = t.UpdateSQL(w)
+	err = t.updateSQL()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte("\", "))
+	_, err = t.buf.WriteString("\", ")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte(""))
-	if err != nil {
-		return err
-	}
-
+	/*
+		_, err = w.Write([]byte(""))
+		if err != nil {
+			return err
+		}
+	*/
 	var j int //keep track of what's been added
 
 	// buld the struct field stuff
@@ -1047,52 +1044,47 @@ func (t *Table) UpdateMethod(w io.Writer) error {
 		}
 		j++
 		if j == 1 {
-			_, err = w.Write([]byte(fmt.Sprintf("&%c.%s", t.r, v.fieldName)))
+			_, err = t.buf.WriteString(fmt.Sprintf("&%c.%s", t.r, v.fieldName))
 			if err != nil {
-				return err
+				return 0, err
 			}
 			continue
 		}
-		_, err = w.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, v.fieldName)))
+		_, err = t.buf.WriteString(fmt.Sprintf(", &%c.%s", t.r, v.fieldName))
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	for _, v := range pk.Fields {
-		_, err = w.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, v)))
+	for _, v := range t.constraints[t.pk].Fields {
+		_, err = t.buf.WriteString(fmt.Sprintf(", &%c.%s", t.r, v))
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	_, err = w.Write([]byte(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.RowsAffected()\n}"))
+	_, err = t.buf.WriteString(")\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn res.RowsAffected()\n}")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = w.Write([]byte{'\n'})
+	err = t.buf.WriteByte(dbsql2go.LF)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return t.buf.WriteTo(w)
 }
 
-// UpdateSQLPK returns an UPDATE statement for the table that updates all
+// updateSQLPK returns an UPDATE statement for the table that updates all
 // non-auto increment columns using the table's pk in the WHERE clause. If
 // the table does not have a PK, no UPDATE statement will be generated and a
 // nil will be returned as this is not an error state.
-func (t *Table) UpdateSQL(w io.Writer) error {
-	pk := t.PK()
-	if pk == nil { // the table doesn't have a primary key; this is not an error.
-		return nil
-	}
-
+func (t *Table) updateSQL() error {
 	// set up the relevant infor for the SQL generation; Table is already set.
 	t.sqlInf.Columns = t.NonAutoIncrementColumnNames()
-	t.sqlInf.WhereColumns = pk.Columns
-	err := dbsql2go.UpdateSQL.Execute(w, t.sqlInf)
+	t.sqlInf.WhereColumns = t.constraints[t.pk].Columns
+	err := dbsql2go.UpdateSQL.Execute(&t.buf, t.sqlInf)
 	if err != nil {
 		return err
 	}

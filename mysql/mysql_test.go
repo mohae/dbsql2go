@@ -2551,16 +2551,17 @@ func TestSelectSQLPK(t *testing.T) {
 		"SELECT id, geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection FROM mno_nn WHERE id = ?",
 	}
 
-	var buf bytes.Buffer
 	for i, tbl := range tableDefs {
-		buf.Reset()
-		err := tbl.SelectSQLPK(&buf)
+		if tbl.pk < 0 {
+			continue
+		}
+		err := tbl.selectSQLPK()
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
 			continue
 		}
-		if buf.String() != expected[i] {
-			t.Errorf("%d: got %q; want %q", i, buf.String(), expected[i])
+		if tbl.buf.String() != expected[i] {
+			t.Errorf("%d: got %q; want %q", i, tbl.buf.String(), expected[i])
 		}
 	}
 }
@@ -2580,16 +2581,17 @@ func TestDeleteSQLPK(t *testing.T) {
 		"DELETE FROM mno WHERE id = ?",
 		"DELETE FROM mno_nn WHERE id = ?",
 	}
-	var buf bytes.Buffer
 	for i, tbl := range tableDefs {
-		buf.Reset()
-		err := tbl.DeleteSQLPK(&buf)
+		if tbl.pk < 0 {
+			continue
+		}
+		err := tbl.deleteSQLPK()
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
 			continue
 		}
-		if buf.String() != expected[i] {
-			t.Errorf("%d: got %q; want %q", i, buf.String(), expected[i])
+		if tbl.buf.String() != expected[i] {
+			t.Errorf("%d: got %q; want %q", i, tbl.buf.String(), expected[i])
 		}
 	}
 }
@@ -2610,16 +2612,18 @@ func TestInsertSQL(t *testing.T) {
 		"INSERT INTO mno_nn (geo, pt, lstring, poly, multi_pt, multi_lstring, multi_polygon, geo_collection) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 	}
 
-	var buf bytes.Buffer
 	for i, tbl := range tableDefs {
-		buf.Reset()
-		err := tbl.InsertSQL(&buf)
+		if tbl.Typ == "VIEW" {
+			continue
+		}
+		tbl.buf.Reset()
+		err := tbl.insertSQL()
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
 			continue
 		}
-		if buf.String() != expected[i] {
-			t.Errorf("%d: got %q; want %q", i, buf.String(), expected[i])
+		if tbl.buf.String() != expected[i] {
+			t.Errorf("%d: got %q; want %q", i, tbl.buf.String(), expected[i])
 		}
 	}
 }
@@ -2640,16 +2644,18 @@ func TestUpdateSQL(t *testing.T) {
 		"UPDATE mno_nn SET geo = ?, pt = ?, lstring = ?, poly = ?, multi_pt = ?, multi_lstring = ?, multi_polygon = ?, geo_collection = ? WHERE id = ?",
 	}
 
-	var buf bytes.Buffer
 	for i, tbl := range tableDefs {
-		buf.Reset()
-		err := tbl.UpdateSQL(&buf)
+		if tbl.pk < 0 {
+			continue
+		}
+		tbl.buf.Reset()
+		err := tbl.updateSQL()
 		if err != nil {
 			t.Errorf("%d: unexpected error: got %q", i, err)
 			continue
 		}
-		if buf.String() != expected[i] {
-			t.Errorf("%d: got %q; want %q", i, buf.String(), expected[i])
+		if tbl.buf.String() != expected[i] {
+			t.Errorf("%d: got %q; want %q", i, tbl.buf.String(), expected[i])
 		}
 	}
 }

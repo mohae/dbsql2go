@@ -83,6 +83,7 @@ const (
 	commentStart   = "// "
 	LowerInclusive = "inclusive"
 	TitleInclusive = "Inclusive"
+	LF             = 0x0A // Line Feed (NL) byte value
 )
 
 type DBer interface {
@@ -111,9 +112,6 @@ type Tabler interface {
 	Indexes() []Index
 	Constraints() []Constraint
 	IsView() bool // If this is actually a view
-	SelectSQLPK(io.Writer) error
-	DeleteSQLPK(io.Writer) error
-	InsertSQL(io.Writer) error
 	PK() *Constraint
 	StructName() string
 	// SelectSQL
