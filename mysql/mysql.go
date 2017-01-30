@@ -161,6 +161,7 @@ func (m *DB) GetTables() error {
 		mTbl.structName = mixedcase.Exported(tbl.Name())
 		r, _ := utf8.DecodeRuneInString(tbl.StructName())
 		mTbl.r = unicode.ToLower(r)
+		mTbl.db = m
 		m.tables[i] = mTbl
 	}
 	return nil
@@ -382,131 +383,8 @@ func (m *DB) UpdateTableIndexes() {
 	}
 }
 
-// SelectRangeSQL creates range select funcs for the specified table if it has
-// a primary key. Tables without priamry keys wiill have nothing written to the
-// writer and 0 will be returned for the number of bytes written along with nil
-// for the error. Any error encountered is written along with the number of
-// bytes for the table.
-func (m *DB) SelectRangeSQLFunc(w io.Writer, table string) (n int64, err error) {
-	// Go through each table
-	for _, tbl := range m.tables {
-		if tbl.Name() != table {
-			continue
-		}
-		t, ok := tbl.(*Table)
-		if !ok {
-			return 0, fmt.Errorf("Invalid assertion, %s is not type mysql.Table", table)
-		}
-		// If the table has a primary key
-		pk := tbl.GetPK()
-		if pk == nil { // If no primary key return 0 for bytes written and nil for the error.
-			return 0, nil
-		}
-
-		// Set-up the TableSQL struct for inclusive
-		t.sqlInf.Table = t.name
-		t.sqlInf.Columns = tbl.ColumnNames()
-		t.sqlInf.WhereColumns = nil
-		t.sqlInf.WhereComparisonOps = nil
-		t.sqlInf.WhereConditions = nil
-
-		// for Where columns, each pk column is used twice to set up >= <=.
-		for i, col := range pk.Columns {
-			if i != 0 {
-				t.sqlInf.WhereConditions = append(t.sqlInf.WhereConditions, "AND")
-			}
-			t.sqlInf.WhereColumns = append(t.sqlInf.WhereColumns, col)
-			t.sqlInf.WhereColumns = append(t.sqlInf.WhereColumns, col)
-			t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, ">=")
-			t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, "<=")
-			t.sqlInf.WhereConditions = append(t.sqlInf.WhereConditions, "AND")
-		}
-
-		err := selectInRangeInclusiveFunc(t, pk)
-		if err != nil {
-			return 0, err
-		}
-
-		n, err = t.buf.WriteTo(w)
-		return n, err
-	}
-
-	return 0, nil
-}
-
-func selectInRangeInclusiveFunc(t *Table, pk *dbsql2go.Constraint) error {
-	t.buf.Reset()
-
-	err := dbsql2go.SelectAndOrWhereComment.Execute(&t.buf, t.sqlInf)
-	if err != nil {
-		return err
-	}
-
-	num := int2word.Capitalized(int64(len(pk.Columns) * 2))
-	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, dbsql2go.TitleInclusive, t.name, t.structName, dbsql2go.LowerInclusive, num, t.buf.String()), 80)
-	if err != nil {
-		return err
-	}
-
-	t.buf.Reset()
-
-	err = t.buf.WriteByte('\n')
-	if err != nil {
-		return err
-	}
-
-	_, err = t.buf.WriteString(c)
-	if err != nil {
-		return err
-	}
-
-	_, err = t.buf.WriteString(fmt.Sprintf("func %sSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []%s, err error) {\n\trows, err := db.Query(\"", t.structName, t.structName))
-	if err != nil {
-		return err
-	}
-
-	// write the sql
-	err = dbsql2go.SelectAndOrSQL.Execute(&t.buf, t.sqlInf)
-	if err != nil {
-		return err
-	}
-
-	_, err = t.buf.WriteString("\", args...)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\tdefer rows.Close()\n\n\tfor rows.Next() {\n\t\tvar ")
-	if err != nil {
-		return err
-	}
-
-	_, err = t.buf.WriteString(fmt.Sprintf("%c %s\n\t\terr = rows.Scan(", t.r, t.structName))
-	if err != nil {
-		return err
-	}
-
-	_, err = t.buf.WriteString(fmt.Sprintf("&%c.%s", t.r, t.columns[0].fieldName))
-	if err != nil {
-		return err
-	}
-
-	for i := 1; i < len(t.columns); i++ {
-		_, err = t.buf.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, t.columns[i].fieldName)))
-		if err != nil {
-			return err
-		}
-	}
-
-	_, err = t.buf.WriteString(")\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tresults = append(results, ")
-	if err != nil {
-		return err
-	}
-
-	_, err = t.buf.WriteString(fmt.Sprintf("%c)\n\t}\n\n\treturn results, nil\n}\n", t.r))
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 type Table struct {
+	db          *DB
 	name        string
 	r           rune   // the first letter of the name, in lower-case. Used as the receiver name.
 	structName  string // the name of the struct for this table
@@ -618,6 +496,8 @@ func (t *Table) Go(w io.Writer) error {
 	if err != nil {
 		return err
 	}
+
+	_, err = t.SelectInRangeFunc(w)
 	return nil
 }
 
@@ -814,6 +694,122 @@ func (t *Table) SelectSQLPK(w io.Writer) error {
 		return err
 	}
 	return nil
+}
+
+// SelectRangeSQL creates in range SELECT funcs for the table if it has a
+// primary key. Tables without priamry keys wiill have nothing written to the
+// writer and 0 will be returned for the number of bytes written along with nil
+// for the error. Any error encountered is written along with the number of
+// bytes for the table.
+func (t *Table) SelectInRangeFunc(w io.Writer) (n int64, err error) {
+	// If the table has a primary key
+	pk := t.GetPK()
+	if pk == nil { // If no primary key return 0 for bytes written and nil for the error.
+		return 0, nil
+	}
+
+	// Prepare the Table Information for the SQL
+	t.sqlInf.Columns = t.ColumnNames()
+	// Reset the where info
+	t.sqlInf.WhereColumns = t.sqlInf.WhereColumns[:0]
+	t.sqlInf.WhereComparisonOps = t.sqlInf.WhereComparisonOps[:0]
+	t.sqlInf.WhereConditions = t.sqlInf.WhereConditions[:0]
+
+	// for Where columns, each pk column is used twice to set up >= <=.
+	for i, col := range pk.Columns {
+		if i != 0 {
+			t.sqlInf.WhereConditions = append(t.sqlInf.WhereConditions, "AND")
+		}
+		t.sqlInf.WhereColumns = append(t.sqlInf.WhereColumns, col)
+		t.sqlInf.WhereColumns = append(t.sqlInf.WhereColumns, col)
+		t.sqlInf.WhereConditions = append(t.sqlInf.WhereConditions, "AND")
+	}
+
+	n, err = t.selectInRangeInclusive(w)
+	if err != nil {
+		return 0, nil
+	}
+
+	return n, nil
+}
+
+func (t *Table) selectInRangeInclusive(w io.Writer) (n int64, err error) {
+
+	// Set the Comparison ops for inclusive
+	for i := 0; i < len(t.sqlInf.WhereColumns)/2; i++ {
+		t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, ">=")
+		t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, "<=")
+	}
+	// reset the buffer: everything gets written to the buffer first
+	t.buf.Reset()
+
+	err = dbsql2go.SelectAndOrWhereComment.Execute(&t.buf, t.sqlInf)
+	if err != nil {
+		return 0, err
+	}
+
+	num := int2word.Capitalized(int64(len(t.sqlInf.WhereColumns)))
+	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, dbsql2go.TitleInclusive, t.name, t.structName, dbsql2go.LowerInclusive, num, t.buf.String()), 80)
+	if err != nil {
+		return 0, err
+	}
+
+	t.buf.Reset()
+
+	err = t.buf.WriteByte('\n')
+	if err != nil {
+		return 0, err
+	}
+
+	_, err = t.buf.WriteString(c)
+	if err != nil {
+		return 0, err
+	}
+
+	_, err = t.buf.WriteString(fmt.Sprintf("func %sSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []%s, err error) {\n\trows, err := db.Query(\"", t.structName, t.structName))
+	if err != nil {
+		return 0, err
+	}
+
+	// write the sql
+	err = dbsql2go.SelectAndOrSQL.Execute(&t.buf, t.sqlInf)
+	if err != nil {
+		return 0, err
+	}
+
+	_, err = t.buf.WriteString("\", args...)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\tdefer rows.Close()\n\n\tfor rows.Next() {\n\t\tvar ")
+	if err != nil {
+		return 0, err
+	}
+
+	_, err = t.buf.WriteString(fmt.Sprintf("%c %s\n\t\terr = rows.Scan(", t.r, t.structName))
+	if err != nil {
+		return 0, err
+	}
+
+	_, err = t.buf.WriteString(fmt.Sprintf("&%c.%s", t.r, t.columns[0].fieldName))
+	if err != nil {
+		return 0, err
+	}
+
+	for i := 1; i < len(t.columns); i++ {
+		_, err = t.buf.Write([]byte(fmt.Sprintf(", &%c.%s", t.r, t.columns[i].fieldName)))
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	_, err = t.buf.WriteString(")\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tresults = append(results, ")
+	if err != nil {
+		return 0, err
+	}
+
+	_, err = t.buf.WriteString(fmt.Sprintf("%c)\n\t}\n\n\treturn results, nil\n}\n", t.r))
+	if err != nil {
+		return 0, err
+	}
+
+	return t.buf.WriteTo(w)
 }
 
 // DeletePKMethod generates the method for deleting a table row using its PK.
