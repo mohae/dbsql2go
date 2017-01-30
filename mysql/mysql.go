@@ -504,15 +504,15 @@ func (t *Table) Go(w io.Writer) error {
 // GoFmt creates a formatted struct definition and methods and returns the
 // resulting bytes.
 func (t *Table) GoFmt(w io.Writer) error {
-	// use the buffer for the defintion so that it can be formatted before writing
-	t.buf.Reset()
-	err := t.Go(&t.buf)
+	// use a buffer for the defintion so that it can be formatted before writing
+	var buf bytes.Buffer
+	err := t.Go(&buf)
 	if err != nil {
 		return fmt.Errorf("%s: create definition: %s", t.name, err)
 	}
 
 	// format the definition
-	b, err := format.Source(t.buf.Bytes())
+	b, err := format.Source(buf.Bytes())
 	if err != nil {
 		return fmt.Errorf("%s: format definition: %s", t.name, err)
 	}
