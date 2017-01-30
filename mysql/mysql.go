@@ -719,7 +719,6 @@ func (t *Table) SelectInRangeFunc(w io.Writer) (n int64, err error) {
 	t.sqlInf.Columns = t.ColumnNames()
 	// Reset the where info
 	t.sqlInf.WhereColumns = t.sqlInf.WhereColumns[:0]
-	t.sqlInf.WhereComparisonOps = t.sqlInf.WhereComparisonOps[:0]
 	t.sqlInf.WhereConditions = t.sqlInf.WhereConditions[:0]
 
 	// for Where columns, each pk column is used twice to set up >= <=.
@@ -732,21 +731,41 @@ func (t *Table) SelectInRangeFunc(w io.Writer) (n int64, err error) {
 		t.sqlInf.WhereConditions = append(t.sqlInf.WhereConditions, "AND")
 	}
 
-	n, err = t.selectInRangeInclusive(w)
+	n, err = t.selectInRangeExclusive(w)
 	if err != nil {
-		return 0, nil
+		return n, err
+	}
+
+	nn, err := t.selectInRangeInclusive(w)
+	n += nn
+	if err != nil {
+		return n, err
 	}
 
 	return n, nil
 }
 
-func (t *Table) selectInRangeInclusive(w io.Writer) (n int64, err error) {
+func (t *Table) selectInRangeExclusive(w io.Writer) (n int64, err error) {
+	t.sqlInf.WhereComparisonOps = t.sqlInf.WhereComparisonOps[:0]
+	// Set the Comparison ops for inclusive
+	for i := 0; i < len(t.sqlInf.WhereColumns)/2; i++ {
+		t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, ">")
+		t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, "<")
+	}
+	return t.selectInRange(w, dbsql2go.TitleExclusive, dbsql2go.LowerExclusive)
+}
 
+func (t *Table) selectInRangeInclusive(w io.Writer) (n int64, err error) {
+	t.sqlInf.WhereComparisonOps = t.sqlInf.WhereComparisonOps[:0]
 	// Set the Comparison ops for inclusive
 	for i := 0; i < len(t.sqlInf.WhereColumns)/2; i++ {
 		t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, ">=")
 		t.sqlInf.WhereComparisonOps = append(t.sqlInf.WhereComparisonOps, "<=")
 	}
+	return t.selectInRange(w, dbsql2go.TitleInclusive, dbsql2go.LowerInclusive)
+}
+
+func (t *Table) selectInRange(w io.Writer, title, lower string) (n int64, err error) {
 	// reset the buffer: everything gets written to the buffer first
 	t.buf.Reset()
 
@@ -756,7 +775,7 @@ func (t *Table) selectInRangeInclusive(w io.Writer) (n int64, err error) {
 	}
 
 	num := int2word.Capitalized(int64(len(t.sqlInf.WhereColumns)))
-	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, dbsql2go.TitleInclusive, t.name, t.structName, dbsql2go.LowerInclusive, num, t.buf.String()), 80)
+	c, err := dbsql2go.StringToComments(fmt.Sprintf(selectPKInRangeComment, t.structName, title, t.name, t.structName, lower, num, t.buf.String()), 80)
 	if err != nil {
 		return 0, err
 	}
@@ -773,7 +792,7 @@ func (t *Table) selectInRangeInclusive(w io.Writer) (n int64, err error) {
 		return 0, err
 	}
 
-	_, err = t.buf.WriteString(fmt.Sprintf("func %sSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []%s, err error) {\n\trows, err := db.Query(\"", t.structName, t.structName))
+	_, err = t.buf.WriteString(fmt.Sprintf("func %sSelectInRange%s(db *sql.DB, args ...interface{}) (results []%s, err error) {\n\trows, err := db.Query(\"", t.structName, title, t.structName))
 	if err != nil {
 		return 0, err
 	}

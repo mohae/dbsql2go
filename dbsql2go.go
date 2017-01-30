@@ -81,6 +81,8 @@ func (u UnsupportedDBErr) Error() string {
 
 const (
 	commentStart   = "// "
+	LowerExclusive = "exclusive"
+	TitleExclusive = "Exclusive"
 	LowerInclusive = "inclusive"
 	TitleInclusive = "Inclusive"
 	LF             = 0x0A // Line Feed (NL) byte value

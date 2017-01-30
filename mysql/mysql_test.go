@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/mohae/dbsql2go"
@@ -1330,6 +1331,31 @@ func (a *Abc) Update(db *sql.DB) (n int64, err error) {
 	return res.RowsAffected()
 }
 
+// AbcSelectInRangeExclusive SELECTs a range of rows from the abc table whose PK
+// values are within the specified range and returns a slice of Abc structs. The
+// range values are exclusive. Two args must be passed for the values of the
+// query's range boundaries in the WHERE clause. The WHERE clause is in the form
+// of "WHERE id > arg[0] AND id < arg[1]". If there is an error, the error will
+// be returned and the results slice will be nil.
+func AbcSelectInRangeExclusive(db *sql.DB, args ...interface{}) (results []Abc, err error) {
+	rows, err := db.Query("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc WHERE id > ? AND id < ?", args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var a Abc
+		err = rows.Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, a)
+	}
+
+	return results, nil
+}
+
 // AbcSelectInRangeInclusive SELECTs a range of rows from the abc table whose PK
 // values are within the specified range and returns a slice of Abc structs. The
 // range values are inclusive. Two args must be passed for the values of the
@@ -1409,6 +1435,31 @@ func (a *AbcNn) Update(db *sql.DB) (n int64, err error) {
 		return 0, err
 	}
 	return res.RowsAffected()
+}
+
+// AbcNnSelectInRangeExclusive SELECTs a range of rows from the abc_nn table
+// whose PK values are within the specified range and returns a slice of AbcNn
+// structs. The range values are exclusive. Two args must be passed for the
+// values of the query's range boundaries in the WHERE clause. The WHERE clause
+// is in the form of "WHERE id > arg[0] AND id < arg[1]". If there is an error,
+// the error will be returned and the results slice will be nil.
+func AbcNnSelectInRangeExclusive(db *sql.DB, args ...interface{}) (results []AbcNn, err error) {
+	rows, err := db.Query("SELECT id, code, description, tiny, small, medium, ger, big, cost, created FROM abc_nn WHERE id > ? AND id < ?", args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var a AbcNn
+		err = rows.Scan(&a.ID, &a.Code, &a.Description, &a.Tiny, &a.Small, &a.Medium, &a.Ger, &a.Big, &a.Cost, &a.Created)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, a)
+	}
+
+	return results, nil
 }
 
 // AbcNnSelectInRangeInclusive SELECTs a range of rows from the abc_nn table
@@ -1495,6 +1546,31 @@ func (d *Def) Update(db *sql.DB) (n int64, err error) {
 	return res.RowsAffected()
 }
 
+// DefSelectInRangeExclusive SELECTs a range of rows from the def table whose PK
+// values are within the specified range and returns a slice of Def structs. The
+// range values are exclusive. Two args must be passed for the values of the
+// query's range boundaries in the WHERE clause. The WHERE clause is in the form
+// of "WHERE id > arg[0] AND id < arg[1]". If there is an error, the error will
+// be returned and the results slice will be nil.
+func DefSelectInRangeExclusive(db *sql.DB, args ...interface{}) (results []Def, err error) {
+	rows, err := db.Query("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def WHERE id > ? AND id < ?", args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var d Def
+		err = rows.Scan(&d.ID, &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, d)
+	}
+
+	return results, nil
+}
+
 // DefSelectInRangeInclusive SELECTs a range of rows from the def table whose PK
 // values are within the specified range and returns a slice of Def structs. The
 // range values are inclusive. Two args must be passed for the values of the
@@ -1571,6 +1647,31 @@ func (d *DefNn) Update(db *sql.DB) (n int64, err error) {
 		return 0, err
 	}
 	return res.RowsAffected()
+}
+
+// DefNnSelectInRangeExclusive SELECTs a range of rows from the def_nn table
+// whose PK values are within the specified range and returns a slice of DefNn
+// structs. The range values are exclusive. Two args must be passed for the
+// values of the query's range boundaries in the WHERE clause. The WHERE clause
+// is in the form of "WHERE id > arg[0] AND id < arg[1]". If there is an error,
+// the error will be returned and the results slice will be nil.
+func DefNnSelectInRangeExclusive(db *sql.DB, args ...interface{}) (results []DefNn, err error) {
+	rows, err := db.Query("SELECT id, d_date, d_datetime, d_time, d_year, size, a_set FROM def_nn WHERE id > ? AND id < ?", args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var d DefNn
+		err = rows.Scan(&d.ID, &d.DDate, &d.DDatetime, &d.DTime, &d.DYear, &d.Size, &d.ASet)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, d)
+	}
+
+	return results, nil
 }
 
 // DefNnSelectInRangeInclusive SELECTs a range of rows from the def_nn table
@@ -1702,6 +1803,32 @@ func (j *Jkl) Update(db *sql.DB) (n int64, err error) {
 	return res.RowsAffected()
 }
 
+// JklSelectInRangeExclusive SELECTs a range of rows from the jkl table whose PK
+// values are within the specified range and returns a slice of Jkl structs. The
+// range values are exclusive. Four args must be passed for the values of the
+// query's range boundaries in the WHERE clause. The WHERE clause is in the form
+// of "WHERE id > arg[0] AND id < arg[1] AND fid > arg[2] AND fid < arg[3]". If
+// there is an error, the error will be returned and the results slice will be
+// nil.
+func JklSelectInRangeExclusive(db *sql.DB, args ...interface{}) (results []Jkl, err error) {
+	rows, err := db.Query("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl WHERE id > ? AND id < ? AND fid > ? AND fid < ?", args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var j Jkl
+		err = rows.Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j.MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, j)
+	}
+
+	return results, nil
+}
+
 // JklSelectInRangeInclusive SELECTs a range of rows from the jkl table whose PK
 // values are within the specified range and returns a slice of Jkl structs. The
 // range values are inclusive. Four args must be passed for the values of the
@@ -1780,6 +1907,32 @@ func (j *JklNn) Update(db *sql.DB) (n int64, err error) {
 		return 0, err
 	}
 	return res.RowsAffected()
+}
+
+// JklNnSelectInRangeExclusive SELECTs a range of rows from the jkl_nn table
+// whose PK values are within the specified range and returns a slice of JklNn
+// structs. The range values are exclusive. Four args must be passed for the
+// values of the query's range boundaries in the WHERE clause. The WHERE clause
+// is in the form of "WHERE id > arg[0] AND id < arg[1] AND fid > arg[2] AND fid
+// = arg[3]". If there is an error, the error will be returned and the results
+// slice will be nil.
+func JklNnSelectInRangeExclusive(db *sql.DB, args ...interface{}) (results []JklNn, err error) {
+	rows, err := db.Query("SELECT id, fid, tiny_txt, txt, med_txt, long_txt, bin, var_bin FROM jkl_nn WHERE id > ? AND id < ? AND fid > ? AND fid < ?", args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var j JklNn
+		err = rows.Scan(&j.ID, &j.Fid, &j.TinyTxt, &j.Txt, &j.MedTxt, &j.LongTxt, &j.Bin, &j.VarBin)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, j)
+	}
+
+	return results, nil
 }
 
 // JklNnSelectInRangeInclusive SELECTs a range of rows from the jkl_nn table
@@ -2549,8 +2702,12 @@ func TestStructDefs(t *testing.T) {
 			t.Errorf("%s: %s", def.Name(), err)
 			continue
 		}
-		if structDefs[i] != buf.String() {
-			t.Errorf("%s: got %q; want %q", def.Name(), buf.String(), structDefs[i])
+		got := strings.Split(buf.String(), "\n")
+		want := strings.Split(structDefs[i], "\n")
+		for j, v := range got {
+			if v != want[j] {
+				t.Errorf("%s:%d got %q; want %q", def.Name(), j, v, want[j])
+			}
 		}
 	}
 }
