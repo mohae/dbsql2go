@@ -270,6 +270,7 @@ var tableDefs = []Table{
 				RefColumns: nil, RefFields: nil,
 			},
 		},
+		pk: 1,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "abc",
 		},
@@ -376,6 +377,7 @@ var tableDefs = []Table{
 				RefColumns: nil, RefFields: nil,
 			},
 		},
+		pk: 1,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "abc_nn",
 		},
@@ -410,6 +412,7 @@ var tableDefs = []Table{
 		},
 		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
+		pk: -1,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "abc_v",
 		},
@@ -487,6 +490,7 @@ var tableDefs = []Table{
 				RefColumns: nil, RefFields: nil,
 			},
 		},
+		pk: 0,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "def",
 		},
@@ -564,6 +568,7 @@ var tableDefs = []Table{
 				RefColumns: nil, RefFields: nil,
 			},
 		},
+		pk: 0,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "def_nn",
 		},
@@ -614,6 +619,7 @@ var tableDefs = []Table{
 		},
 		Typ: "VIEW", Engine: sql.NullString{String: "", Valid: false},
 		collation: sql.NullString{String: "", Valid: false}, Comment: "VIEW",
+		pk: -1,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "defghi_v",
 		},
@@ -699,6 +705,7 @@ var tableDefs = []Table{
 				RefColumns: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
 			},
 		},
+		pk: -1,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "ghi",
 		},
@@ -784,6 +791,7 @@ var tableDefs = []Table{
 				RefColumns: []string{"id", "d_datetime"}, RefFields: []string{"ID", "DDatetime"},
 			},
 		},
+		pk: -1,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "ghi_nn",
 		},
@@ -874,6 +882,7 @@ var tableDefs = []Table{
 				RefColumns: nil, RefFields: nil,
 			},
 		},
+		pk: 1,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "jkl",
 		},
@@ -964,6 +973,7 @@ var tableDefs = []Table{
 				RefColumns: nil, RefFields: nil,
 			},
 		},
+		pk: 1,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "jkl_nn",
 		},
@@ -1056,6 +1066,7 @@ var tableDefs = []Table{
 				RefColumns: nil, RefFields: nil,
 			},
 		},
+		pk: 0,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "mno",
 		},
@@ -1148,6 +1159,7 @@ var tableDefs = []Table{
 				RefColumns: nil, RefFields: nil,
 			},
 		},
+		pk: 0,
 		sqlInf: dbsql2go.TableSQL{
 			Table: "mno_nn",
 		},

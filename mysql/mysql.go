@@ -104,13 +104,13 @@ func (m *DB) GetTables() error {
 		return err
 	}
 	for rows.Next() {
-		var t Table
+		t := NewTable()
 		err = rows.Scan(&t.schema, &t.name, &t.Typ, &t.Engine, &t.collation, &t.Comment)
 		if err != nil {
 			rows.Close()
 			return err
 		}
-		m.tables = append(m.tables, &t)
+		m.tables = append(m.tables, t)
 	}
 	rows.Close()
 
@@ -401,6 +401,13 @@ type Table struct {
 	pk          int               // index of the pk constraint in constraints, if there is one
 	sqlInf      dbsql2go.TableSQL // caches all columns for the table for SQL generation
 	buf         bytes.Buffer      // buffer for holding generated stuff; this is not thread-safe
+}
+
+// NewTable creates a new Table. It is intended to ensure that the Table is
+// ready for usage.
+func NewTable() *Table {
+	// set pk to a negative value to indicate there isn't one.
+	return &Table{pk: -1}
 }
 
 // Name returns the name of the table.
