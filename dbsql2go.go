@@ -114,7 +114,7 @@ type Tabler interface {
 	SelectSQLPK(io.Writer) error
 	DeleteSQLPK(io.Writer) error
 	InsertSQL(io.Writer) error
-	GetPK() *Constraint
+	PK() *Constraint
 	StructName() string
 	// SelectSQL
 	//InsertSQL() string

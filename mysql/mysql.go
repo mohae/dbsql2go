@@ -161,7 +161,6 @@ func (m *DB) GetTables() error {
 		mTbl.structName = mixedcase.Exported(tbl.Name())
 		r, _ := utf8.DecodeRuneInString(tbl.StructName())
 		mTbl.r = unicode.ToLower(r)
-		mTbl.db = m
 		m.tables[i] = mTbl
 	}
 	return nil
@@ -307,6 +306,9 @@ func (m *DB) UpdateTableConstraints() error {
 				continue
 			}
 			m.tables[j].(*Table).constraints = append(m.tables[j].(*Table).constraints, c)
+			if c.Type == dbsql2go.PK { // if the constraint type is pk, set the index for pk
+				m.tables[j].(*Table).pk = len(m.tables[j].(*Table).constraints) - 1
+			}
 			break
 		}
 	process:
@@ -384,7 +386,7 @@ func (m *DB) UpdateTableIndexes() {
 }
 
 type Table struct {
-	db          *DB
+	//db          *DB
 	name        string
 	r           rune   // the first letter of the name, in lower-case. Used as the receiver name.
 	structName  string // the name of the struct for this table
@@ -396,6 +398,7 @@ type Table struct {
 	Comment     string
 	indexes     []dbsql2go.Index
 	constraints []dbsql2go.Constraint
+	pk          int               // index of the pk constraint in constraints, if there is one
 	sqlInf      dbsql2go.TableSQL // caches all columns for the table for SQL generation
 	buf         bytes.Buffer      // buffer for holding generated stuff; this is not thread-safe
 }
@@ -536,7 +539,7 @@ func (t *Table) ColumnNames() []string {
 // NonPKColumnNames returns the names of all the non-pk columns in the table
 // TODO: is this still necessary?
 func (t *Table) NonPKColumnNames() []string {
-	pk := t.GetPK()
+	pk := t.PK()
 	if pk == nil {
 		return t.ColumnNames() // if there isn't a pk on this table, return all columns
 	}
@@ -592,7 +595,7 @@ func (t *Table) IsView() bool {
 
 // SelectPKMethod generates the method for selecting a table row using its PK.
 func (t *Table) SelectPKMethod(w io.Writer) error {
-	pk := t.GetPK()
+	pk := t.PK()
 	if pk == nil {
 		// nothing to do
 		return nil
@@ -681,7 +684,7 @@ func (t *Table) SelectPKMethod(w io.Writer) error {
 // will be returned and the error will also be nil as this is not an error
 // state.
 func (t *Table) SelectSQLPK(w io.Writer) error {
-	pk := t.GetPK()
+	pk := t.PK()
 	if pk == nil { // the table doesn't have a primary key; this is not an error.
 		return nil
 	}
@@ -703,7 +706,7 @@ func (t *Table) SelectSQLPK(w io.Writer) error {
 // bytes for the table.
 func (t *Table) SelectInRangeFunc(w io.Writer) (n int64, err error) {
 	// If the table has a primary key
-	pk := t.GetPK()
+	pk := t.PK()
 	if pk == nil { // If no primary key return 0 for bytes written and nil for the error.
 		return 0, nil
 	}
@@ -814,7 +817,7 @@ func (t *Table) selectInRangeInclusive(w io.Writer) (n int64, err error) {
 
 // DeletePKMethod generates the method for deleting a table row using its PK.
 func (t *Table) DeletePKMethod(w io.Writer) error {
-	pk := t.GetPK()
+	pk := t.PK()
 	if pk == nil {
 		// nothing to do
 		return nil
@@ -877,7 +880,7 @@ func (t *Table) DeletePKMethod(w io.Writer) error {
 // using the tables PK. If the table does not have a PK, no SQL will be
 // generated and a nil will be returned as this is not an error state.
 func (t *Table) DeleteSQLPK(w io.Writer) error {
-	pk := t.GetPK()
+	pk := t.PK()
 	if pk == nil { // the table doesn't have a primary key; this is not an error.
 		return nil
 	}
@@ -892,7 +895,7 @@ func (t *Table) DeleteSQLPK(w io.Writer) error {
 // InsertMethod generates the method for inserting the Table's data into the
 // db table.
 func (t *Table) InsertMethod(w io.Writer) error {
-	pk := t.GetPK()
+	pk := t.PK()
 	if pk == nil {
 		// nothing to do
 		return nil
@@ -978,7 +981,7 @@ func (t *Table) InsertSQL(w io.Writer) error {
 
 // UpdateMethod generates the method for updatating a table row using its PK.
 func (t *Table) UpdateMethod(w io.Writer) error {
-	pk := t.GetPK()
+	pk := t.PK()
 	if pk == nil {
 		// nothing to do
 		return nil
@@ -1074,7 +1077,7 @@ func (t *Table) UpdateMethod(w io.Writer) error {
 // the table does not have a PK, no UPDATE statement will be generated and a
 // nil will be returned as this is not an error state.
 func (t *Table) UpdateSQL(w io.Writer) error {
-	pk := t.GetPK()
+	pk := t.PK()
 	if pk == nil { // the table doesn't have a primary key; this is not an error.
 		return nil
 	}
@@ -1089,15 +1092,13 @@ func (t *Table) UpdateSQL(w io.Writer) error {
 	return nil
 }
 
-// GetPK returns a tables primary key information, if it has a primary key, or
+// PK returns a tables primary key information, if it has a primary key, or
 // nil if it doesn't have a primary key
-func (t *Table) GetPK() *dbsql2go.Constraint {
-	for _, v := range t.constraints {
-		if v.Type == dbsql2go.PK {
-			return &v
-		}
+func (t *Table) PK() *dbsql2go.Constraint {
+	if t.pk < 0 { // if the index is negative this table doesn't have a pk
+		return nil
 	}
-	return nil
+	return &t.constraints[t.pk]
 }
 
 // Column holds all information about the columns in a database as provided by
