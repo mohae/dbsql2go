@@ -30,15 +30,14 @@ import (
 var appname string
 
 var (
-	dbType        string
-	dbName        string
-	pkgName       string
-	server        string
-	user          string
-	password      string
-	out           string
-	filePerTable  bool
-	includeDBName bool
+	dbType       string
+	dbName       string
+	pkgName      string
+	server       string
+	user         string
+	password     string
+	out          string
+	filePerTable bool
 )
 
 func init() {
@@ -52,7 +51,6 @@ func init() {
 	flag.StringVar(&pkgName, "package", "", "name of the package of which the generated code is a part; if empty,the database name will be used")
 	flag.StringVar(&out, "out", "", "the output destination: if it doesn't end with a .go extension it will be assumed to be a path relative to the GOPATH/src dir. If empty, it will be the WD.")
 	flag.BoolVar(&filePerTable, "separatefiles", false, "use a file per table; each file will use the table's name")
-	flag.BoolVar(&includeDBName, "includedbname", false, "prefix each table file with the db name; only used with separate files")
 }
 
 func main() {
