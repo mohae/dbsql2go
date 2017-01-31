@@ -1168,7 +1168,8 @@ var tableDefs = []Table{
 }
 
 var tableDefsString = []string{
-	`type Abc struct {
+	`// Abc is the Go representation of the "abc" table.
+type Abc struct {
 	ID int32
 	Code string
 	Description string
@@ -1181,7 +1182,8 @@ var tableDefsString = []string{
 	Created mysql.NullTime
 }
 `,
-	`type AbcNn struct {
+	`// AbcNn is the Go representation of the "abc_nn" table.
+type AbcNn struct {
 	ID int32
 	Code string
 	Description string
@@ -1194,13 +1196,15 @@ var tableDefsString = []string{
 	Created mysql.NullTime
 }
 `,
-	`type AbcV struct {
+	`// AbcV is the Go representation of the "abc_v" view.
+type AbcV struct {
 	ID int32
 	Code string
 	Description string
 }
 `,
-	`type Def struct {
+	`// Def is the Go representation of the "def" table.
+type Def struct {
 	ID int32
 	DDate mysql.NullTime
 	DDatetime mysql.NullTime
@@ -1210,7 +1214,8 @@ var tableDefsString = []string{
 	ASet sql.NullString
 }
 `,
-	`type DefNn struct {
+	`// DefNn is the Go representation of the "def_nn" table.
+type DefNn struct {
 	ID int32
 	DDate mysql.NullTime
 	DDatetime mysql.NullTime
@@ -1220,7 +1225,8 @@ var tableDefsString = []string{
 	ASet string
 }
 `,
-	`type DefghiV struct {
+	`// DefghiV is the Go representation of the "defghi_v" view.
+type DefghiV struct {
 	Aid int32
 	Bid sql.NullInt64
 	DDatetime mysql.NullTime
@@ -1228,7 +1234,8 @@ var tableDefsString = []string{
 	Stuff []byte
 }
 `,
-	`type Ghi struct {
+	`// Ghi is the Go representation of the "ghi" table.
+type Ghi struct {
 	ID sql.NullInt64
 	Val sql.NullInt64
 	DefID sql.NullInt64
@@ -1239,7 +1246,8 @@ var tableDefsString = []string{
 	LongStuff []byte
 }
 `,
-	`type GhiNn struct {
+	`// GhiNn is the Go representation of the "ghi_nn" table.
+type GhiNn struct {
 	ID int32
 	Val int32
 	DefID int32
@@ -1250,7 +1258,8 @@ var tableDefsString = []string{
 	LongStuff []byte
 }
 `,
-	`type Jkl struct {
+	`// Jkl is the Go representation of the "jkl" table.
+type Jkl struct {
 	ID int32
 	Fid sql.NullInt64
 	TinyTxt []byte
@@ -1261,7 +1270,8 @@ var tableDefsString = []string{
 	VarBin []byte
 }
 `,
-	`type JklNn struct {
+	`// JklNn is the Go representation of the "jkl_nn" table.
+type JklNn struct {
 	ID int32
 	Fid int32
 	TinyTxt []byte
@@ -1275,7 +1285,8 @@ var tableDefsString = []string{
 }
 
 var structDefs = []string{
-	`type Abc struct {
+	`// Abc is the Go representation of the "abc" table.
+type Abc struct {
 	ID          int32
 	Code        string
 	Description string
@@ -1381,7 +1392,8 @@ func AbcSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Abc, 
 	return results, nil
 }
 `,
-	`type AbcNn struct {
+	`// AbcNn is the Go representation of the "abc_nn" table.
+type AbcNn struct {
 	ID          int32
 	Code        string
 	Description string
@@ -1487,13 +1499,15 @@ func AbcNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Abc
 	return results, nil
 }
 `,
-	`type AbcV struct {
+	`// AbcV is the Go representation of the "abc_v" view.
+type AbcV struct {
 	ID          int32
 	Code        string
 	Description string
 }
 `,
-	`type Def struct {
+	`// Def is the Go representation of the "def" table.
+type Def struct {
 	ID        int32
 	DDate     mysql.NullTime
 	DDatetime mysql.NullTime
@@ -1596,7 +1610,8 @@ func DefSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def, 
 	return results, nil
 }
 `,
-	`type DefNn struct {
+	`// DefNn is the Go representation of the "def_nn" table.
+type DefNn struct {
 	ID        int32
 	DDate     mysql.NullTime
 	DDatetime mysql.NullTime
@@ -1699,7 +1714,8 @@ func DefNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def
 	return results, nil
 }
 `,
-	`type DefghiV struct {
+	`// DefghiV is the Go representation of the "defghi_v" view.
+type DefghiV struct {
 	Aid       int32
 	Bid       sql.NullInt64
 	DDatetime mysql.NullTime
@@ -1707,7 +1723,8 @@ func DefNnSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Def
 	Stuff     []byte
 }
 `,
-	`type Ghi struct {
+	`// Ghi is the Go representation of the "ghi" table.
+type Ghi struct {
 	ID          sql.NullInt64
 	Val         sql.NullInt64
 	DefID       sql.NullInt64
@@ -1728,7 +1745,8 @@ func (g *Ghi) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 `,
-	`type GhiNn struct {
+	`// GhiNn is the Go representation of the "ghi_nn" table.
+type GhiNn struct {
 	ID        int32
 	Val       int32
 	DefID     int32
@@ -1749,7 +1767,8 @@ func (g *GhiNn) Insert(db *sql.DB) (id int64, err error) {
 	return res.LastInsertID()
 }
 `,
-	`type Jkl struct {
+	`// Jkl is the Go representation of the "jkl" table.
+type Jkl struct {
 	ID      int32
 	Fid     sql.NullInt64
 	TinyTxt []byte
@@ -1855,7 +1874,8 @@ func JklSelectInRangeInclusive(db *sql.DB, args ...interface{}) (results []Jkl, 
 	return results, nil
 }
 `,
-	`type JklNn struct {
+	`// JklNn is the Go representation of the "jkl_nn" table.
+type JklNn struct {
 	ID      int32
 	Fid     int32
 	TinyTxt []byte

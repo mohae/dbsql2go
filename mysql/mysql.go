@@ -433,11 +433,18 @@ func (t *Table) Collation() string {
 	return ""
 }
 
-// Definition creates the struct definition and appends it to the  internal
-// buffer. The number of bytes written to the buffer is returned along with
-// an error, if one occurs.
+// Definition writes the struct definition.
 func (t *Table) Definition(w io.Writer) error {
-	_, err := w.Write([]byte("type "))
+	var typ string
+	if t.Typ == "BASE TABLE" {
+		typ = "table"
+	} else {
+		typ = "view"
+	}
+	// write the type def comment
+	_, err := w.Write([]byte(fmt.Sprintf("// %s is the Go representation of the %q %s.\n", t.structName, t.name, typ)))
+
+	_, err = w.Write([]byte("type "))
 	if err != nil {
 		return err
 	}
