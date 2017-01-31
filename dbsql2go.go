@@ -10,6 +10,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// package dbsql2go enables the gathering of schema data about a database from
+// RDBMSs system catalogs and the generation of Go code from this data.
 package dbsql2go
 
 import (
