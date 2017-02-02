@@ -27,7 +27,7 @@ import (
 	"github.com/mohae/dbsql2go/mysql"
 )
 
-var appname string
+var exe = filepath.Base(os.Args[0]) // name of executable
 
 var (
 	dbType       string
@@ -44,39 +44,57 @@ func init() {
 	flag.StringVar(&dbType, "rdbms", "", "the target RDBMS")
 	flag.StringVar(&dbName, "db", "", "database name")
 	flag.StringVar(&user, "user", "", "login user")
-	flag.StringVar(&user, "u", "", "login user")
+	flag.StringVar(&user, "u", "", "login 'user'")
 	flag.StringVar(&password, "password", "", "user's password")
-	flag.StringVar(&password, "p", "", "user's password")
+	flag.StringVar(&password, "p", "", "user's 'password'")
 	flag.StringVar(&server, "server", "", "server location")
 	flag.StringVar(&pkgName, "package", "", "name of the package of which the generated code is a part; if empty,the database name will be used")
 	flag.StringVar(&out, "out", "", "the output destination: if it doesn't end with a .go extension it will be assumed to be a path relative to the GOPATH/src dir. If empty, it will be the WD.")
 	flag.BoolVar(&filePerTable, "separatefiles", false, "use a file per table; each file will use the table's name")
 }
 
+func usage() {
+	fmt.Fprint(os.Stderr, "Usage:\n")
+	fmt.Fprintf(os.Stderr, "  %s [FLAGS] -rdbms mysql -db dbname -user username -password password \n", exe)
+	fmt.Fprint(os.Stderr, "\n")
+	fmt.Fprint(os.Stderr, "Creates Go structs from a database.\n")
+	fmt.Fprint(os.Stderr, "\n")
+	fmt.Fprint(os.Stderr, "Options:\n")
+	flag.PrintDefaults()
+}
+
 func main() {
+	// take care of flag stuff first
+	flag.Usage = usage
+	flag.Parse()
+	if flag.NFlag() < 4 {
+		fmt.Fprintln(os.Stderr, "At least -rdbms, -db, -user (-u), and -password (-p) flags must be passed.\nAdditional flags may be required, depending on the target RDBMS.\n")
+		flag.Usage()
+		os.Exit(2)
+	}
+	if dbType == "" {
+		fmt.Fprintln(os.Stderr, "a rdbms must be specified")
+		os.Exit(2)
+	}
+	if dbName == "" {
+		fmt.Fprintln(os.Stderr, "a db must be specified")
+		os.Exit(2)
+	}
+	if user == "" {
+		fmt.Fprintln(os.Stderr, "a user must be specified")
+		os.Exit(2)
+	}
+	if password == "" {
+		fmt.Fprintln(os.Stderr, "a password must be specified")
+		os.Exit(2)
+	}
+	// server is optional, depending on the db being used (for now). As such
+	// it should be checked when applicable.
+
 	os.Exit(realMain())
 }
 
 func realMain() int {
-	flag.Parse()
-	if dbType == "" {
-		fmt.Fprintln(os.Stderr, "a rdbms must be specified")
-		return 1
-	}
-	if dbName == "" {
-		fmt.Fprintln(os.Stderr, "a db must be specified")
-		return 1
-	}
-	if user == "" {
-		fmt.Fprintln(os.Stderr, "a user must be specified")
-		return 1
-	}
-	if password == "" {
-		fmt.Fprintln(os.Stderr, "a password must be specified")
-		return 1
-	}
-	// server is optional, depending on the db being used (for now). As such
-	// it should be checked when applicable.
 
 	// TODO: thinking about having it use the current dir as the package name
 	// and adding a flag to use the dbname as the package name with that flag
@@ -109,7 +127,7 @@ func realMain() int {
 	// Get gets all of the information for the specified db.
 	err = DB.Get()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s: error: gathering of ", appname)
+		fmt.Fprintf(os.Stderr, "%s: error: gathering of ", dbName)
 	}
 
 	// we don't defer close
